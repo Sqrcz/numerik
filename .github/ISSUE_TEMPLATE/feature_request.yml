@@ -1,0 +1,28 @@
+name: Feature Request
+description: Suggest a new identifier, method, or improvement.
+labels: ["type: feature", "status: needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+
+  - type: dropdown
+    id: breaking
+    attributes:
+      label: Would this be a breaking change?
+      options:
+        - "No"
+        - "Yes"
+        - "Not sure"
+    validations:
+      required: true
