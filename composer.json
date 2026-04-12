@@ -42,7 +42,7 @@
   },
   "scripts": {
     "test": "phpunit --configuration phpunit.xml",
-    "test:cover": "phpunit --configuration phpunit.xml --coverage-html coverage/",
+    "test:cover": "phpunit --configuration phpunit.xml --coverage-html coverage/html --coverage-clover coverage/clover.xml",
     "stan": "phpstan analyse --memory-limit=512M",
     "cs-fix": "php-cs-fixer fix",
     "cs-check": "php-cs-fixer fix --dry-run --diff",
