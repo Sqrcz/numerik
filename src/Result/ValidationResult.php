@@ -45,6 +45,9 @@ final readonly class ValidationResult
         return ! $this->isValid;
     }
 
+    /**
+     * @return list<ValidationFailure>
+     */
     public function getFailures(): array
     {
         return $this->failures;
