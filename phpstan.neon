@@ -1,8 +1,12 @@
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
 parameters:
     level: 10
     paths:
         - src
         - tests
-    strictRules: true
-    checkMissingIterableValueType: true
-    checkGenericClassInNonGenericObjectType: true
+    ignoreErrors:
+        -
+            identifier: staticMethod.dynamicCall
+            path: tests/*
