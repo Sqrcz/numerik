@@ -1,0 +1,33 @@
+/vendor/
+/node_modules/
+
+# PHPUnit
+/.phpunit.cache/
+/.phpunit.result.cache
+
+# PHP CS Fixer
+/.php-cs-fixer.cache
+
+# Infection
+/infection.log
+/.infection/
+
+# Coverage reports
+/coverage/
+
+# Environment
+.env
+.env.backup
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+/.idea/
+/.vscode/
+*.swp
+*.swo
+
+# Libraries do NOT commit their lock file
+composer.lock

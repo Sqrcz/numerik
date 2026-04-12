@@ -1,2 +1,76 @@
-# numerik
-Modern PHP 8.2+ library for validating and parsing Polish identification numbers (PESEL, NIP, REGON, KRS)
+# Numerik
+
+[![Tests](https://github.com/Sqrcz/numerik/actions/workflows/tests.yml/badge.svg)](https://github.com/Sqrcz/numerik/actions/workflows/tests.yml)
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%2010-brightgreen.svg)](https://phpstan.org)
+[![Latest Version](https://img.shields.io/packagist/v/sqrcz/numerik.svg)](https://packagist.org/packages/sqrcz/numerik)
+[![PHP Version](https://img.shields.io/packagist/php-v/sqrcz/numerik.svg)](https://packagist.org/packages/sqrcz/numerik)
+[![License](https://img.shields.io/github/license/Sqrcz/numerik.svg)](LICENSE)
+
+> Modern PHP 8.2+ library for validating and parsing Polish identification
+> numbers — PESEL, NIP, REGON, and KRS. Rich value objects, detailed error
+> reasons, zero production dependencies.
+
+## Installation
+
+```bash
+composer require sqrcz/numerik
+```
+
+## Quick Start
+
+```php
+use SlashLab\Numerik\Numerik;
+
+// Simple boolean check
+Numerik::pesel()->isValid('92060512181');  // true
+Numerik::nip()->isValid('5260250274');     // true
+
+// Rich validation result with failure reasons
+$result = Numerik::pesel()->validate('92060512181');
+$result->isValid;                          // true
+
+$result = Numerik::pesel()->validate('00000000000');
+$result->isFailed();                       // true
+$result->getFirstFailure()->reason;        // ValidationFailureReason::AllZeros
+
+// Parse to value object
+$pesel = Numerik::pesel()->parse('92060512181');
+$pesel->getBirthDate()->format('Y-m-d');  // '1992-06-05'
+$pesel->getGender();                      // Gender::Female
+$pesel->getAge();                         // 32
+$pesel->isAdult();                        // true
+```
+
+## Documentation
+
+Full documentation at **[numerik.slashlab.pl](https://numerik.slashlab.pl)**
+_(coming soon)_
+
+## Laravel Integration
+
+```bash
+composer require sqrcz/numerik-laravel
+```
+
+```php
+// In a Form Request
+public function rules(): array
+{
+    return [
+        'pesel' => ['required', new PeselRule()],
+        'nip'   => ['required', new NipRule()],
+    ];
+}
+```
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+MIT — see [LICENSE](LICENSE).
