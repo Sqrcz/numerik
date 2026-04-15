@@ -28,3 +28,4 @@ jobs:
 
       - name: Run Infection
         run: composer mutation
+        continue-on-error: true

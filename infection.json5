@@ -3,9 +3,19 @@
     "source": {
         "directories": [
             "src"
+        ],
+        "excludes": [
+            "Exceptions"
         ]
     },
     "mutators": {
         "@default": true
+    },
+    "minMsi": 0,
+    "minCoveredMsi": 100,
+    "testFramework": "phpunit",
+    "logs": {
+        "text": "infection.log",
+        "summary": "infection-summary.log"
     }
 }

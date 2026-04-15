@@ -1,5 +1,5 @@
-/vendor/
 /node_modules/
+/vendor/
 
 # PHPUnit
 /.phpunit.cache/
@@ -9,8 +9,9 @@
 /.php-cs-fixer.cache
 
 # Infection
-/infection.log
 /.infection/
+/infection-summary.log
+/infection.log
 
 # Coverage reports
 /coverage/
@@ -24,10 +25,10 @@
 Thumbs.db
 
 # IDEs
+*.swo
+*.swp
 /.idea/
 /.vscode/
-*.swp
-*.swo
 
 # Libraries do NOT commit their lock file
 composer.lock
