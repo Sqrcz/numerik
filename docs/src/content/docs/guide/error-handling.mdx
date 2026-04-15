@@ -1,0 +1,108 @@
+---
+title: Error Handling
+description: How Numerik uses exceptions. The ValidationException hierarchy and when each exception is thrown.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Numerik follows a clear rule:
+
+- `isValid()` and `validate()` — **never throw**. They always return a value.
+- `parse()` — **throws** a `ValidationException` subclass on invalid input.
+- `tryParse()` — **never throws**. Returns `null` on failure.
+
+All three methods live on the same identifier class (e.g. `PeselIdentifier`). There is no separate parser class — validation and parsing are a single unified concern.
+
+## Exception hierarchy
+
+All exceptions extend `SlashLab\Numerik\Exceptions\ValidationException`, which itself extends `\RuntimeException`.
+
+```
+\RuntimeException
+└── ValidationException
+    ├── InvalidFormatException    — wrong length or invalid characters
+    ├── InvalidChecksumException  — checksum digit mismatch
+    └── InvalidDateException      — impossible date encoded inside the identifier
+```
+
+All exception classes live in the `SlashLab\Numerik\Exceptions` namespace.
+
+## When each exception is thrown
+
+| Exception | Thrown when |
+|-----------|-------------|
+| `InvalidFormatException` | Input length is wrong, unexpected characters are present, or a structural rule is violated (e.g. NIP tax office `000`). |
+| `InvalidChecksumException` | The checksum digit does not match the computed value. |
+| `InvalidDateException` | The date encoded inside a PESEL is impossible (invalid month, non-existent calendar date, or birth date in the future). |
+
+## Catching exceptions
+
+```php
+use SlashLab\Numerik\Numerik;
+use SlashLab\Numerik\Exceptions\ValidationException;
+use SlashLab\Numerik\Exceptions\InvalidFormatException;
+use SlashLab\Numerik\Exceptions\InvalidChecksumException;
+use SlashLab\Numerik\Exceptions\InvalidDateException;
+
+// Catch any validation failure
+try {
+    $pesel = Numerik::pesel()->parse($input);
+} catch (ValidationException $e) {
+    // handle any parse failure
+    echo $e->getMessage();
+}
+
+// Catch specific failures
+try {
+    $pesel = Numerik::pesel()->parse($input);
+} catch (InvalidFormatException $e) {
+    // wrong length or characters
+} catch (InvalidChecksumException $e) {
+    // checksum mismatch
+} catch (InvalidDateException $e) {
+    // impossible birth date encoded inside
+}
+```
+
+## Choosing between parse() and validate()
+
+<Aside type="tip">
+If you only need to know *whether* input is valid — use `validate()` or `isValid()`. These never throw and are safe to call on arbitrary untrusted input without wrapping in a try/catch.
+</Aside>
+
+Use `parse()` when:
+- You need the value object's extracted data.
+- You prefer the exception-based control flow (e.g. inside a service that already has a catch block).
+
+Use `tryParse()` when:
+- You need the value object, but you want `null` instead of an exception on bad input.
+- You are in a context where throwing would be inconvenient (e.g. inside a loop or a data import pipeline).
+
+```php
+// Exception-based — throws on invalid input
+$pesel = Numerik::pesel()->parse($input);
+
+// Null-based — returns null on invalid input
+$pesel = Numerik::pesel()->tryParse($input);
+if ($pesel === null) {
+    // handle invalid input
+}
+```
+
+## Strict mode
+
+All identifier classes accept a `strict` constructor parameter (default `true`). In strict mode, inputs that pass every algorithmic check but are semantically suspicious — such as all-same-digit patterns — are rejected with `ValidationFailureReason::AllSameDigit`.
+
+```php
+// Strict mode on (default) — rejects suspicious-but-valid inputs
+Numerik::pesel()->validate('11111111111');           // fails: AllSameDigit
+
+// Strict mode off — accepts anything structurally and algorithmically valid
+Numerik::pesel(strict: false)->validate('11111111111'); // passes
+```
+
+Turn strict mode off when processing legacy data that may contain placeholder values, or when you want to distinguish "structurally invalid" from "algorithmically valid but suspicious" in a data quality pipeline.
+
+## Input length guard
+
+All identifier methods reject inputs over **32 characters** immediately before any processing. This prevents potential DoS via very large strings.

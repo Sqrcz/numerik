@@ -1,0 +1,93 @@
+---
+title: Contributing
+description: How to set up Numerik locally, run checks, and submit a pull request.
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+Thank you for your interest in contributing to Numerik!
+
+## Development setup
+
+<Steps>
+
+1. **Fork and clone**
+
+   ```bash
+   git clone https://github.com/Sqrcz/numerik.git
+   cd numerik
+   ```
+
+2. **Install PHP dependencies**
+
+   ```bash
+   composer install
+   ```
+
+3. **Run the test suite**
+
+   ```bash
+   composer test
+   ```
+
+</Steps>
+
+## Local checks
+
+| Command | What it runs |
+|---------|-------------|
+| `composer test` | PHPUnit test suite |
+| `composer test:cover` | PHPUnit with HTML + Clover coverage reports |
+| `composer stan` | PHPStan at level 10 |
+| `composer cs-fix` | PHP CS Fixer — auto-fix |
+| `composer cs-check` | PHP CS Fixer — check only (used in CI) |
+| `composer mutation` | Infection mutation testing |
+| `composer check` | `cs-check` + `stan` + `test` in sequence |
+
+Run `composer check` before opening a PR to catch all issues locally.
+
+## Adding a new identifier
+
+Adding a new identifier (e.g. Dowód Osobisty, IBAN PL) requires touching several files. Work through this checklist:
+
+- [ ] Create `src/ValueObjects/NewIdentifier.php` (readonly class implementing `IdentifierInterface`)
+- [ ] Create `src/Identifiers/NewIdentifierIdentifier.php` (implements both `ValidatorInterface` and `ParserInterface`; accepts `bool $strict = true`)
+- [ ] Add new `ValidationFailureReason` cases if the identifier introduces new failure types
+- [ ] Add a factory method to `src/Numerik.php` (`Numerik::newIdentifier(bool $strict = true)`)
+- [ ] Add `tests/Fixtures/new_identifier_valid.txt` and `new_identifier_invalid.txt`
+- [ ] Add unit tests for the validator, parser, and value object
+- [ ] Add an identifier page under `docs/src/content/docs/identifiers/`
+- [ ] Update `CHANGELOG.md`
+
+## Commit style
+
+Use [Conventional Commits](https://www.conventionalcommits.org):
+
+```
+feat: add Dowód Osobisty validation
+fix: correct PESEL checksum for 2100s birth dates
+docs: update REGON algorithm description
+test: add NIP fixtures for invalid tax office codes
+chore: update PHPStan to 2.x
+```
+
+Types: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `ci`.
+
+## Pull request process
+
+1. Create a branch from `main` (e.g. `feature/dowod-osobisty`).
+2. Make your changes.
+3. Ensure `composer check` passes.
+4. Open a PR against `main` and fill in the template.
+
+<Aside type="note">
+Even as a solo contributor PRs go through the branch protection rules on `main`. This is intentional — it ensures CI passes before merging.
+</Aside>
+
+## Reporting a bug
+
+Use the [Bug Report](https://github.com/Sqrcz/numerik/issues/new?template=bug_report.yml) template on GitHub.
+
+## Security vulnerabilities
+
+**Do not open a public issue.** Report via [GitHub's private advisory system](https://github.com/Sqrcz/numerik/security/advisories/new). See [SECURITY.md](https://github.com/Sqrcz/numerik/blob/main/SECURITY.md).

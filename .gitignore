@@ -1,6 +1,11 @@
 /node_modules/
 /vendor/
 
+# Docs build output
+/docs/.astro/
+/docs/dist/
+/docs/node_modules/
+
 # PHPUnit
 /.phpunit.cache/
 /.phpunit.result.cache
