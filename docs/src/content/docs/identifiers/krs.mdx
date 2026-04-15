@@ -1,0 +1,80 @@
+---
+title: KRS
+description: Validate and parse Polish KRS court register numbers with Numerik.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+KRS (*Krajowy Rejestr Sądowy*) is Poland's national court register number assigned to legal entities. It is a 10-digit sequential registry number.
+
+<Aside type="caution" title="Offline validation limitation">
+KRS has no publicly documented checksum algorithm. Numerik validates **format and structure only** — it cannot verify whether a given KRS number is actually assigned in the registry. For authoritative verification, query the official [KRS registry API](https://api-krs.ms.gov.pl).
+</Aside>
+
+## Usage
+
+```php
+use SlashLab\Numerik\Numerik;
+
+// Boolean
+Numerik::krs()->isValid('0000127206');   // true
+
+// Numbers without leading zeros are accepted and normalised
+Numerik::krs()->isValid('127206');       // true
+
+// Rich result
+$result = Numerik::krs()->validate('0000127206');
+$result->isValid;   // true
+
+// Parse to value object
+$krs = Numerik::krs()->parse('0000127206');
+
+// Null on failure instead of exception
+$krs = Numerik::krs()->tryParse('bad-input'); // null
+```
+
+## Value object API
+
+`parse()` and `tryParse()` return a `SlashLab\Numerik\ValueObjects\Krs` instance.
+
+### Core
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getRaw()` | `string` | The original input, untouched. |
+| `getNormalized()` | `string` | Raw digits as provided (no extra padding stored). |
+| `__toString()` | `string` | Same as `getNormalized()`. |
+
+### Formatting & metadata
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getFormatted()` | `string` | Zero-padded to 10 digits, e.g. `0000127206`. |
+| `getNumericValue()` | `int` | Numeric integer value of the KRS number. |
+
+## Examples
+
+```php
+$krs = Numerik::krs()->parse('0000127206');
+
+$krs->getRaw();           // '0000127206'
+$krs->getNormalized();    // '0000127206'
+$krs->getFormatted();     // '0000127206'
+$krs->getNumericValue();  // 127206
+
+// Short form — leading zeros are not required on input
+$krs = Numerik::krs()->parse('127206');
+
+$krs->getRaw();           // '127206'
+$krs->getNormalized();    // '127206'
+$krs->getFormatted();     // '0000127206'
+$krs->getNumericValue();  // 127206
+```
+
+## Failure reasons
+
+| Reason | Value | When |
+|--------|-------|------|
+| `InvalidLength` | `invalid_length` | Input has more than 10 digits after normalisation. |
+| `InvalidCharacters` | `invalid_characters` | Non-digit characters remain after stripping whitespace. |
+| `AllZeros` | `all_zeros` | All digits are zero — numeric value is 0, which is not a valid registry number. |

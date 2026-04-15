@@ -1,0 +1,68 @@
+---
+title: Numerik
+description: Modern PHP 8.2+ library for validating and parsing Polish identification numbers — PESEL, NIP, REGON, and KRS.
+template: splash
+hero:
+  tagline: Validate and parse Polish identification numbers with rich value objects and detailed error reasons.
+  actions:
+    - text: Get started
+      link: /getting-started/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/Sqrcz/numerik
+      icon: github
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Overview
+
+Numerik is a zero-dependency PHP 8.2+ library built around the principle that validation should return *why* something failed, not just *that* it failed.
+
+<CardGrid stagger>
+  <Card title="PESEL" icon="information">
+    Validates and parses Poland's universal citizen identifier. Extracts birth date, gender, century, age, and ordinal number directly from the number.
+  </Card>
+  <Card title="NIP" icon="document">
+    Validates tax identification numbers for individuals and legal entities. Returns the issuing tax office code and formatted display form.
+  </Card>
+  <Card title="REGON" icon="setting">
+    Handles both 9-digit (individual) and 14-digit (legal entity with local unit) REGON numbers, including multi-stage checksum validation.
+  </Card>
+  <Card title="KRS" icon="approve-check">
+    Validates court register numbers with automatic zero-padding normalisation. Clearly documents the offline vs. online verification limitation.
+  </Card>
+</CardGrid>
+
+## At a glance
+
+```php
+use SlashLab\Numerik\Numerik;
+
+// Simple boolean check
+Numerik::pesel()->isValid('92060512186');   // true
+Numerik::nip()->isValid('5260250274');      // true
+
+// Rich result with failure details
+$result = Numerik::pesel()->validate('00000000000');
+$result->isFailed();                        // true
+$result->getFirstFailure()->reason;         // ValidationFailureReason::AllZeros
+
+// Parse to a value object
+$pesel = Numerik::pesel()->parse('92060512186');
+$pesel->getBirthDate()->format('Y-m-d');    // '1992-06-05'
+$pesel->getGender();                        // Gender::Female
+$pesel->getAge();                           // calculated from today
+$pesel->isAdult();                          // true
+```
+
+## Key properties
+
+- **Zero production dependencies** — `require` only `php: ^8.2`.
+- **Immutable value objects** — all value objects are `readonly` classes.
+- **Strict types everywhere** — `declare(strict_types=1)` in every file.
+- **Rich failure reasons** — `ValidationFailureReason` enum covers format, checksum, encoded-date, and semantic failures.
+- **No regular expressions** for validation logic — all checks are digit-array operations safe from ReDoS.
+- **Input length guard** — inputs over 32 characters are rejected immediately.

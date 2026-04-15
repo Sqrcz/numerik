@@ -1,0 +1,104 @@
+---
+title: Installation & Quick Start
+description: Install Numerik via Composer and validate your first Polish identifier in under a minute.
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+## Requirements
+
+- PHP **8.2** or higher
+- Composer
+
+## Installation
+
+<Steps>
+
+1. **Require the package**
+
+   ```bash
+   composer require slashlab/numerik
+   ```
+
+2. **No configuration needed**
+
+   The package is autoloaded via PSR-4. There is no service provider, config file, or bootstrap step for the core library.
+
+3. **Use it**
+
+   ```php
+   use SlashLab\Numerik\Numerik;
+
+   Numerik::pesel()->isValid('92060512186'); // true
+   ```
+
+</Steps>
+
+## Quick start
+
+### Boolean validation
+
+The simplest entry point — returns `true` or `false`.
+
+```php
+use SlashLab\Numerik\Numerik;
+
+Numerik::pesel()->isValid('92060512186');  // true
+Numerik::nip()->isValid('5260250274');     // true
+Numerik::regon()->isValid('691761365');    // true
+Numerik::krs()->isValid('0000127206');     // true
+```
+
+### Rich validation result
+
+`validate()` never throws. It returns a `ValidationResult` that carries the list of failures when validation does not pass.
+
+```php
+use SlashLab\Numerik\Numerik;
+
+$result = Numerik::pesel()->validate('92060512186');
+$result->isValid;               // true
+$result->failures;              // []
+
+$result = Numerik::pesel()->validate('00000000000');
+$result->isFailed();            // true
+$result->getFirstFailure()->reason->value;  // 'all_zeros'
+$result->getFirstFailure()->message;        // human-readable message
+```
+
+See [Validation Results](/guide/validation-results/) for the full API.
+
+### Parsing to a value object
+
+`parse()` validates the input and, on success, returns a rich value object. It **throws** a `ValidationException` on failure.
+
+```php
+use SlashLab\Numerik\Numerik;
+
+$pesel = Numerik::pesel()->parse('92060512186');
+$pesel->getBirthDate()->format('Y-m-d');  // '1992-06-05'
+$pesel->getGender();                      // Gender::Female
+$pesel->getAge();                         // int — calculated from today
+$pesel->isAdult();                        // true
+```
+
+Use `tryParse()` when you prefer `null` on failure instead of an exception:
+
+```php
+$pesel = Numerik::pesel()->tryParse('bad-input'); // null
+```
+
+### Choosing the right method
+
+| Method | Returns | Throws | Use when |
+|--------|---------|--------|----------|
+| `isValid()` | `bool` | never | Simple existence check |
+| `validate()` | `ValidationResult` | never | You need the failure reason |
+| `parse()` | value object | `ValidationException` | You need extracted data and want exceptions |
+| `tryParse()` | value object or `null` | never | You need extracted data but prefer null over exceptions |
+
+## Next steps
+
+- Browse the [PESEL](/identifiers/pesel/), [NIP](/identifiers/nip/), [REGON](/identifiers/regon/), or [KRS](/identifiers/krs/) reference for full method listings.
+- Read [Error Handling](/guide/error-handling/) to understand the exception hierarchy.
+- Read [Validation Results](/guide/validation-results/) for the complete `ValidationResult` API.
