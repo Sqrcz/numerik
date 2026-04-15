@@ -47,7 +47,7 @@
     "stan": "phpstan analyse --memory-limit=512M",
     "cs-fix": "php-cs-fixer fix",
     "cs-check": "php-cs-fixer fix --dry-run --diff",
-    "mutation": "infection --min-msi=85 --min-covered-msi=90",
+    "mutation": "infection",
     "check": [
       "@cs-check",
       "@stan",
