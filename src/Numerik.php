@@ -4,30 +4,30 @@ declare(strict_types=1);
 
 namespace SlashLab\Numerik;
 
-use SlashLab\Numerik\Validators\KrsValidator;
-use SlashLab\Numerik\Validators\NipValidator;
-use SlashLab\Numerik\Validators\PeselValidator;
-use SlashLab\Numerik\Validators\RegonValidator;
+use SlashLab\Numerik\Identifiers\KrsIdentifier;
+use SlashLab\Numerik\Identifiers\NipIdentifier;
+use SlashLab\Numerik\Identifiers\PeselIdentifier;
+use SlashLab\Numerik\Identifiers\RegonIdentifier;
 
 final class Numerik
 {
-    public static function pesel(): PeselValidator
+    public static function pesel(bool $strict = true): PeselIdentifier
     {
-        return new PeselValidator();
+        return new PeselIdentifier(strict: $strict);
     }
 
-    public static function nip(): NipValidator
+    public static function nip(bool $strict = true): NipIdentifier
     {
-        return new NipValidator();
+        return new NipIdentifier(strict: $strict);
     }
 
-    public static function regon(): RegonValidator
+    public static function regon(bool $strict = true): RegonIdentifier
     {
-        return new RegonValidator();
+        return new RegonIdentifier(strict: $strict);
     }
 
-    public static function krs(): KrsValidator
+    public static function krs(bool $strict = true): KrsIdentifier
     {
-        return new KrsValidator();
+        return new KrsIdentifier(strict: $strict);
     }
 }
