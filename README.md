@@ -22,11 +22,11 @@ composer require sqrcz/numerik
 use SlashLab\Numerik\Numerik;
 
 // Simple boolean check
-Numerik::pesel()->isValid('92060512181');  // true
+Numerik::pesel()->isValid('92060512186');  // true
 Numerik::nip()->isValid('5260250274');     // true
 
 // Rich validation result with failure reasons
-$result = Numerik::pesel()->validate('92060512181');
+$result = Numerik::pesel()->validate('92060512186');
 $result->isValid;                          // true
 
 $result = Numerik::pesel()->validate('00000000000');
@@ -34,11 +34,9 @@ $result->isFailed();                       // true
 $result->getFirstFailure()->reason;        // ValidationFailureReason::AllZeros
 
 // Parse to value object
-$pesel = Numerik::pesel()->parse('92060512181');
+$pesel = Numerik::pesel()->parse('92060512186');
 $pesel->getBirthDate()->format('Y-m-d');  // '1992-06-05'
 $pesel->getGender();                      // Gender::Female
-$pesel->getAge();                         // 32
-$pesel->isAdult();                        // true
 ```
 
 ## Documentation
