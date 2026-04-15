@@ -74,6 +74,7 @@ $nip->getNormalized();     // '5260250274'
 | `InvalidCharacters` | `invalid_characters` | Characters other than digits, hyphens, and spaces are present. |
 | `InvalidFormat` | `invalid_format` | First 3 digits are `000` (no valid tax office has code 000). |
 | `InvalidChecksum` | `invalid_checksum` | Checksum digit does not match. |
+| `AllSameDigit` | `all_same_digit` | All digits are identical — strict mode only. |
 
 ## Validation algorithm
 
