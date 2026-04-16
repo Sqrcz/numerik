@@ -15,9 +15,9 @@ This page documents the checksum and structural validation algorithms implemente
 
 1. Strip whitespace. Reject inputs longer than 32 characters. Assert exactly 11 digits; fail with `InvalidLength` otherwise.
 2. Reject non-digit characters; fail with `InvalidCharacters`.
-3. Decode the birth date using the century encoding table below. Fail with `InvalidMonth` if the stored month does not fall in any known range. Fail with `InvalidDate` if the decoded date is not a real calendar date. Fail with `FutureDate` if the birth date is in the future.
+3. Decode the birth date using the century encoding table below. Fail with `InvalidMonth` if the stored month does not fall in any known range. Fail with `InvalidDate` if the decoded date is not a real calendar date. In strict mode, fail with `FutureDate` if the birth date is in the future.
 4. Compute the checksum: multiply each of the first 10 digits by its corresponding weight and sum the results. Take `sum mod 10`, subtract from `10`, take `mod 10` again. The result must equal digit 11; fail with `InvalidChecksum` otherwise.
-5. Reject `00000000000`; fail with `AllZeros`.
+5. In strict mode, reject inputs where all 11 digits are identical; fail with `AllSameDigit`.
 
 ### Century encoding
 
@@ -53,7 +53,7 @@ Sum = 9 + 6 + 0 + 54 + 0 + 15 + 7 + 18 + 1 + 24 = **134**
 `134 mod 10 = 4` → `10 - 4 = 6` → `6 mod 10 = 6` — digit 11 is `6` ✓
 
 <Aside type="note">
-The PESEL `92060512186` is used as an example throughout the docs. Its encoded date is `1992-06-05`, gender is Female (digit 10 is `8`, an even digit), ordinal is `121` (digits 7–9).
+The PESEL `92060512186` is used as an example throughout the docs. Its encoded date is `1992-06-05`, gender is Female (digit 10 is `8`, an even digit), ordinal is `1218` (digits 7–10).
 </Aside>
 
 ---

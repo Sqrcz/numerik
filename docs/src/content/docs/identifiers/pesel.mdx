@@ -44,7 +44,7 @@ $pesel = Numerik::pesel()->tryParse('bad-input'); // null
 |--------|-------------|-------------|
 | `getBirthDate()` | `DateTimeImmutable` | Birth date decoded from the PESEL. |
 | `getGender()` | `Gender` | `Gender::Male` or `Gender::Female`. |
-| `getOrdinalNumber()` | `int` | The 3-digit ordinal serial within the birth date + gender group (digits 7–9). |
+| `getOrdinalNumber()` | `int` | The 4-digit ordinal serial (digits 7–10). The last digit also encodes gender: odd = male, even = female. |
 | `getCentury()` | `int` | The birth century as a base year, e.g. `1900`, `2000`, `2100`. |
 
 ### Utility
@@ -66,7 +66,7 @@ $pesel->getNormalized();                  // '92060512186'
 $pesel->getBirthDate()->format('Y-m-d'); // '1992-06-05'
 $pesel->getGender();                      // Gender::Female
 $pesel->isFemale();                       // true
-$pesel->getOrdinalNumber();               // 121 (digits 7–9)
+$pesel->getOrdinalNumber();               // 1218 (digits 7–10)
 $pesel->getCentury();                     // 1900
 $pesel->getAge();                         // calculated from today
 $pesel->isAdult();                        // true
@@ -92,17 +92,17 @@ The month digits in a PESEL encode both the real month and the birth century:
 | `InvalidCharacters` | `invalid_characters` | Non-digit characters remain after stripping whitespace. |
 | `InvalidMonth` | `invalid_month` | Month encoding does not match any known century range. |
 | `InvalidDate` | `invalid_date` | The decoded date is not a real calendar date. |
-| `FutureDate` | `future_date` | The decoded birth date is in the future. |
+| `FutureDate` | `future_date` | The decoded birth date is in the future (strict mode only). |
 | `InvalidChecksum` | `invalid_checksum` | Checksum digit does not match the computed value. |
-| `AllZeros` | `all_zeros` | Input is `00000000000` — structurally valid but semantically invalid. |
+| `AllSameDigit` | `all_same_digit` | All 11 digits are identical (strict mode only). |
 
 ## Validation algorithm
 
 Weights: `1, 3, 7, 9, 1, 3, 7, 9, 1, 3`
 
-1. Strip whitespace. Assert exactly 11 digits.
-2. Decode birth date using the century encoding table above. Assert the date is a real date and not in the future.
+1. Reject inputs longer than 32 characters. Strip whitespace. Assert exactly 11 digits.
+2. Decode birth date using the century encoding table above. Assert the date is a real calendar date. In strict mode, also reject birth dates in the future.
 3. Compute checksum: multiply each of the first 10 digits by its weight, sum the products, take `mod 10`, subtract from `10`, take `mod 10` again. The result must equal digit 11.
-4. Reject `00000000000`.
+4. In strict mode, reject inputs where all 11 digits are identical.
 
 See [Algorithms](/guide/algorithms/) for the full reference.
