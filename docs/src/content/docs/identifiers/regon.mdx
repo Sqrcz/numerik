@@ -16,15 +16,15 @@ REGON (*Rejestr Gospodarki Narodowej*) is Poland's business registry identifier.
 use SlashLab\Numerik\Numerik;
 
 // Boolean
-Numerik::regon()->isValid('691761365');      // true (9-digit)
-Numerik::regon()->isValid('12345678512347'); // true (14-digit)
+Numerik::regon()->isValid('850518457');      // true (9-digit)
+Numerik::regon()->isValid('85051845749370'); // true (14-digit)
 
 // Rich result
-$result = Numerik::regon()->validate('691761365');
+$result = Numerik::regon()->validate('850518457');
 $result->isValid;   // true
 
 // Parse to value object
-$regon = Numerik::regon()->parse('691761365');
+$regon = Numerik::regon()->parse('850518457');
 
 // Null on failure instead of exception
 $regon = Numerik::regon()->tryParse('bad-input'); // null
@@ -55,19 +55,19 @@ $regon = Numerik::regon()->tryParse('bad-input'); // null
 
 ```php
 // 9-digit REGON
-$regon = Numerik::regon()->parse('691761365');
+$regon = Numerik::regon()->parse('850518457');
 
 $regon->getType();             // RegonType::Individual
-$regon->getBaseRegon();        // '691761365'
+$regon->getBaseRegon();        // '850518457'
 $regon->getLocalUnitSuffix();  // null
 $regon->isLocalUnit();         // false
 
 // 14-digit REGON
-$regon = Numerik::regon()->parse('12345678512347');
+$regon = Numerik::regon()->parse('85051845749370');
 
 $regon->getType();             // RegonType::LegalEntity
-$regon->getBaseRegon();        // '123456785'
-$regon->getLocalUnitSuffix();  // '12347'
+$regon->getBaseRegon();        // '850518457'
+$regon->getLocalUnitSuffix();  // '49370'
 $regon->isLocalUnit();         // true
 ```
 
