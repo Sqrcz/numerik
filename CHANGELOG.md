@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- REGON validation and parsing — `Numerik::regon()->validate()`, `isValid()`, `parse()`, `tryParse()`
 - KRS validation and parsing — `Numerik::krs()->validate()`, `isValid()`, `parse()`, `tryParse()`
 - NIP validation and parsing — `Numerik::nip()->validate()`, `isValid()`, `parse()`, `tryParse()`
 - Documentation site using Astro Starlight with Flexoki theme
