@@ -43,6 +43,17 @@ final readonly class Nip implements IdentifierInterface
         );
     }
 
+    public function getFormattedAlternative(): string
+    {
+        return sprintf(
+            '%s-%s-%s-%s',
+            substr($this->normalized, 0, 3),
+            substr($this->normalized, 3, 2),
+            substr($this->normalized, 5, 2),
+            substr($this->normalized, 7, 3),
+        );
+    }
+
     public function getTaxOfficeCode(): string
     {
         return substr($this->normalized, 0, 3);
