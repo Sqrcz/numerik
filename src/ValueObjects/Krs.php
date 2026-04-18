@@ -14,16 +14,19 @@ final readonly class Krs implements IdentifierInterface
     ) {
     }
 
+    #[\Override]
     public function getRaw(): string
     {
         return $this->raw;
     }
 
+    #[\Override]
     public function getNormalized(): string
     {
         return $this->normalized;
     }
 
+    #[\Override]
     public function __toString(): string
     {
         return $this->normalized;
