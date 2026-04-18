@@ -71,3 +71,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+---
+
+If this saved you time → [☕ Buy me a coffee](https://buymeacoffee.com/sqrcz)
