@@ -11,7 +11,7 @@
 Please **do not** open a public GitHub issue for security vulnerabilities.
 
 Report privately via GitHub's Security Advisory system:
-👉 https://github.com/Sqrcz/numerik/security/advisories/new
+👉 https://github.com/sqrcz/numerik/security/advisories/new
 
 You will receive a response within 48 hours. If confirmed, a patch
 will be released as soon as possible depending on severity.

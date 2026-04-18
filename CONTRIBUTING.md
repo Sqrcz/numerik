@@ -5,7 +5,7 @@ Thank you for your interest in contributing!
 ## Development Setup
 
 ```bash
-git clone https://github.com/Sqrcz/numerik.git
+git clone https://github.com/sqrcz/numerik.git
 cd numerik
 composer install
 ```
@@ -56,7 +56,7 @@ Run `composer cs-fix` before committing — CI will reject style violations.
 
 ## Reporting Bugs
 
-Use the [Bug Report](https://github.com/Sqrcz/numerik/issues/new?template=bug_report.yml) template.
+Use the [Bug Report](https://github.com/sqrcz/numerik/issues/new?template=bug_report.yml) template.
 
 ## Security
 
