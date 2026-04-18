@@ -196,11 +196,25 @@ final class RegonIdentifierTest extends TestCase
         $this->assertNull(Numerik::regon()->tryParse('not-a-regon'));
     }
 
+    public function test_validate_does_not_reject_input_of_exactly_32_characters(): void
+    {
+        $result  = Numerik::regon()->validate(str_repeat('8', 32));
+        $failure = $result->getFirstFailure();
+
+        $this->assertNotNull($failure);
+        $this->assertStringNotContainsString('exceeds maximum', $failure->message);
+    }
+
     // --- isStrict() ---
 
     public function test_strict_mode_is_enabled_by_default(): void
     {
         $this->assertTrue(Numerik::regon()->isStrict());
+    }
+
+    public function test_strict_mode_is_enabled_by_default_when_constructed_directly(): void
+    {
+        $this->assertTrue((new RegonIdentifier())->isStrict());
     }
 
     public function test_strict_mode_can_be_disabled(): void
