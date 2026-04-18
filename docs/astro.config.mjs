@@ -7,7 +7,7 @@ export default defineConfig({
     integrations: [
         starlight({
             title: 'Numerik',
-            description: 'Modern PHP 8.2+ library for validating and parsing Polish identification numbers (PESEL, NIP, REGON, KRS).',
+            description: 'Modern PHP 8.3+ library for validating and parsing Polish identification numbers (PESEL, NIP, REGON, KRS).',
             favicon: '/favicon.png',
             logo: {
                 alt: 'Numerik',
@@ -53,6 +53,9 @@ export default defineConfig({
                     attrs: { property: 'og:image', content: 'https://numerik.slashlab.pl/og.png' },
                 },
             ],
+            components: {
+                Footer: './src/components/Footer.astro',
+            },
             lastUpdated: true,
             pagination: true,
             plugins: [starlightThemeFlexoki(
