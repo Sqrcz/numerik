@@ -13,8 +13,8 @@ use SlashLab\Numerik\ValueObjects\Krs;
 
 final class KrsIdentifier implements ValidatorInterface, ParserInterface
 {
-    private const MAX_LENGTH = 32;
-    private const MAX_DIGITS = 10;
+    private const int MAX_LENGTH = 32;
+    private const int MAX_DIGITS = 10;
 
     public function __construct(
         private readonly bool $strict = true,
@@ -26,6 +26,7 @@ final class KrsIdentifier implements ValidatorInterface, ParserInterface
         return $this->strict;
     }
 
+    #[\Override]
     public function validate(string $input): ValidationResult
     {
         if (strlen($input) > self::MAX_LENGTH) {
@@ -70,11 +71,13 @@ final class KrsIdentifier implements ValidatorInterface, ParserInterface
         return ValidationResult::pass();
     }
 
+    #[\Override]
     public function isValid(string $input): bool
     {
         return $this->validate($input)->isValid;
     }
 
+    #[\Override]
     public function parse(string $input): Krs
     {
         $result = $this->validate($input);
@@ -89,6 +92,7 @@ final class KrsIdentifier implements ValidatorInterface, ParserInterface
         );
     }
 
+    #[\Override]
     public function tryParse(string $input): ?Krs
     {
         try {

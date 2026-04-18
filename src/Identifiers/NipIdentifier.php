@@ -14,9 +14,9 @@ use SlashLab\Numerik\ValueObjects\Nip;
 
 final class NipIdentifier implements ValidatorInterface, ParserInterface
 {
-    private const WEIGHTS = [6, 5, 7, 2, 3, 4, 5, 6, 7];
-    private const MAX_LENGTH = 32;
-    private const DIGITS = 10;
+    private const array WEIGHTS    = [6, 5, 7, 2, 3, 4, 5, 6, 7];
+    private const int   MAX_LENGTH = 32;
+    private const int   DIGITS     = 10;
 
     public function __construct(
         private readonly bool $strict = true,
@@ -28,6 +28,7 @@ final class NipIdentifier implements ValidatorInterface, ParserInterface
         return $this->strict;
     }
 
+    #[\Override]
     public function validate(string $input): ValidationResult
     {
         if (strlen($input) > self::MAX_LENGTH) {
@@ -84,11 +85,13 @@ final class NipIdentifier implements ValidatorInterface, ParserInterface
         return ValidationResult::pass();
     }
 
+    #[\Override]
     public function isValid(string $input): bool
     {
         return $this->validate($input)->isValid;
     }
 
+    #[\Override]
     public function parse(string $input): Nip
     {
         $result = $this->validate($input);
@@ -106,6 +109,7 @@ final class NipIdentifier implements ValidatorInterface, ParserInterface
         );
     }
 
+    #[\Override]
     public function tryParse(string $input): ?Nip
     {
         try {

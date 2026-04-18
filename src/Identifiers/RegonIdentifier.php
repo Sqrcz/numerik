@@ -15,11 +15,11 @@ use SlashLab\Numerik\ValueObjects\Regon;
 
 final class RegonIdentifier implements ValidatorInterface, ParserInterface
 {
-    private const WEIGHTS_9  = [8, 9, 2, 3, 4, 5, 6, 7];
-    private const WEIGHTS_14 = [2, 4, 8, 5, 0, 9, 7, 3, 6, 1, 2, 4, 8];
-    private const MAX_LENGTH = 32;
-    private const DIGITS_9   = 9;
-    private const DIGITS_14  = 14;
+    private const array WEIGHTS_9  = [8, 9, 2, 3, 4, 5, 6, 7];
+    private const array WEIGHTS_14 = [2, 4, 8, 5, 0, 9, 7, 3, 6, 1, 2, 4, 8];
+    private const int   MAX_LENGTH = 32;
+    private const int   DIGITS_9   = 9;
+    private const int   DIGITS_14  = 14;
 
     public function __construct(
         private readonly bool $strict = true,
@@ -31,6 +31,7 @@ final class RegonIdentifier implements ValidatorInterface, ParserInterface
         return $this->strict;
     }
 
+    #[\Override]
     public function validate(string $input): ValidationResult
     {
         if (strlen($input) > self::MAX_LENGTH) {
@@ -76,11 +77,13 @@ final class RegonIdentifier implements ValidatorInterface, ParserInterface
         return ValidationResult::pass();
     }
 
+    #[\Override]
     public function isValid(string $input): bool
     {
         return $this->validate($input)->isValid;
     }
 
+    #[\Override]
     public function parse(string $input): Regon
     {
         $result = $this->validate($input);
@@ -104,6 +107,7 @@ final class RegonIdentifier implements ValidatorInterface, ParserInterface
         );
     }
 
+    #[\Override]
     public function tryParse(string $input): ?Regon
     {
         try {

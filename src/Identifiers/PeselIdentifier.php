@@ -17,9 +17,9 @@ use SlashLab\Numerik\ValueObjects\Pesel;
 
 final class PeselIdentifier implements ValidatorInterface, ParserInterface
 {
-    private const WEIGHTS    = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3];
-    private const MAX_LENGTH = 32;
-    private const DIGITS     = 11;
+    private const array WEIGHTS    = [1, 3, 7, 9, 1, 3, 7, 9, 1, 3];
+    private const int   MAX_LENGTH = 32;
+    private const int   DIGITS     = 11;
 
     public function __construct(
         private readonly bool $strict = true,
@@ -31,6 +31,7 @@ final class PeselIdentifier implements ValidatorInterface, ParserInterface
         return $this->strict;
     }
 
+    #[\Override]
     public function validate(string $input): ValidationResult
     {
         if (strlen($input) > self::MAX_LENGTH) {
@@ -110,11 +111,13 @@ final class PeselIdentifier implements ValidatorInterface, ParserInterface
         return ValidationResult::pass();
     }
 
+    #[\Override]
     public function isValid(string $input): bool
     {
         return $this->validate($input)->isValid;
     }
 
+    #[\Override]
     public function parse(string $input): Pesel
     {
         $result = $this->validate($input);
@@ -151,6 +154,7 @@ final class PeselIdentifier implements ValidatorInterface, ParserInterface
         );
     }
 
+    #[\Override]
     public function tryParse(string $input): ?Pesel
     {
         try {
