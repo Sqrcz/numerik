@@ -11,4 +11,6 @@ interface ValidatorInterface
     public function validate(string $input): ValidationResult;
 
     public function isValid(string $input): bool;
+
+    public function isStrict(): bool;
 }
