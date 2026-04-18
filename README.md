@@ -1,10 +1,10 @@
 # Numerik
 
-[![Tests](https://github.com/Sqrcz/numerik/actions/workflows/tests.yml/badge.svg)](https://github.com/Sqrcz/numerik/actions/workflows/tests.yml)
+[![Tests](https://github.com/sqrcz/numerik/actions/workflows/tests.yml/badge.svg)](https://github.com/sqrcz/numerik/actions/workflows/tests.yml)
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%2010-brightgreen.svg)](https://phpstan.org)
-[![Latest Version](https://img.shields.io/packagist/v/sqrcz/numerik.svg)](https://packagist.org/packages/sqrcz/numerik)
-[![PHP Version](https://img.shields.io/packagist/php-v/sqrcz/numerik.svg)](https://packagist.org/packages/sqrcz/numerik)
-[![License](https://img.shields.io/github/license/Sqrcz/numerik.svg)](LICENSE)
+[![Latest Version](https://img.shields.io/packagist/v/slashlab/numerik.svg)](https://packagist.org/packages/slashlab/numerik)
+[![PHP Version](https://img.shields.io/packagist/php-v/slashlab/numerik.svg)](https://packagist.org/packages/slashlab/numerik)
+[![License](https://img.shields.io/github/license/sqrcz/numerik.svg)](LICENSE)
 
 > Modern PHP 8.2+ library for validating and parsing Polish identification
 > numbers — PESEL, NIP, REGON, and KRS. Rich value objects, detailed error
@@ -13,7 +13,7 @@
 ## Installation
 
 ```bash
-composer require sqrcz/numerik
+composer require slashlab/numerik
 ```
 
 ## Quick Start
@@ -42,12 +42,11 @@ $pesel->getGender();                      // Gender::Female
 ## Documentation
 
 Full documentation at **[numerik.slashlab.pl](https://numerik.slashlab.pl)**
-_(coming soon)_
 
 ## Laravel Integration
 
 ```bash
-composer require sqrcz/numerik-laravel
+composer require slashlab/numerik-laravel
 ```
 
 ```php
