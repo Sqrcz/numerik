@@ -48,6 +48,7 @@ Numerik::nip()->isValid('526 025 02 74');   // true
 | Method | Return type | Description |
 |--------|-------------|-------------|
 | `getFormatted()` | `string` | Canonical `NNN-NNN-NN-NN` display form. |
+| `getFormattedAlternative()` | `string` | Alternative `NNN-NN-NN-NNN` display form used by some legal entity documents. |
 | `getTaxOfficeCode()` | `string` | First 3 digits — indicates the issuing tax office. |
 
 ## Examples
@@ -55,10 +56,11 @@ Numerik::nip()->isValid('526 025 02 74');   // true
 ```php
 $nip = Numerik::nip()->parse('5260250274');
 
-$nip->getRaw();            // '5260250274'
-$nip->getNormalized();     // '5260250274'
-$nip->getFormatted();      // '526-025-02-74'
-$nip->getTaxOfficeCode();  // '526'
+$nip->getRaw();                       // '5260250274'
+$nip->getNormalized();                // '5260250274'
+$nip->getFormatted();                 // '526-025-02-74'
+$nip->getFormattedAlternative();      // '526-02-50-274'
+$nip->getTaxOfficeCode();             // '526'
 
 // With formatted input
 $nip = Numerik::nip()->parse('526-025-02-74');
