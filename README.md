@@ -6,7 +6,7 @@
 [![PHP Version](https://img.shields.io/packagist/php-v/slashlab/numerik.svg)](https://packagist.org/packages/slashlab/numerik)
 [![License](https://img.shields.io/github/license/sqrcz/numerik.svg)](LICENSE)
 
-> Modern PHP 8.2+ library for validating and parsing Polish identification
+> Modern PHP 8.3+ library for validating and parsing Polish identification
 > numbers — PESEL, NIP, REGON, and KRS. Rich value objects, detailed error
 > reasons, zero production dependencies.
 
