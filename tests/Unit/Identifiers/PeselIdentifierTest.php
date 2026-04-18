@@ -302,11 +302,91 @@ final class PeselIdentifierTest extends TestCase
         $this->assertNull(Numerik::pesel()->tryParse('44023101452'));
     }
 
+    public function test_parse_returns_correct_ordinal_number_when_thousands_digit_is_nonzero(): void
+    {
+        // '90123112340': digits[6..9] = 1,2,3,4 → ordinal = 1234
+        $pesel = Numerik::pesel()->parse('90123112340');
+
+        $this->assertSame(1234, $pesel->getOrdinalNumber());
+    }
+
+    public function test_parse_returns_correct_birth_date_for_2100s(): void
+    {
+        // 00461501232 = born 2100-06-15, encoded month 46 (6+40)
+        $pesel = Numerik::pesel(strict: false)->parse('00461501232');
+
+        $this->assertSame('2100-06-15', $pesel->getBirthDate()->format('Y-m-d'));
+    }
+
+    public function test_parse_returns_correct_birth_date_for_2100s_january(): void
+    {
+        // 00411001232 = born 2100-01-10, encoded month 41 (1+40) — lower boundary
+        $pesel = Numerik::pesel(strict: false)->parse('00411001232');
+
+        $this->assertSame('2100-01-10', $pesel->getBirthDate()->format('Y-m-d'));
+    }
+
+    public function test_parse_returns_correct_birth_date_for_2100s_december(): void
+    {
+        // 00522001228 = born 2100-12-20, encoded month 52 (12+40) — upper boundary
+        $pesel = Numerik::pesel(strict: false)->parse('00522001228');
+
+        $this->assertSame('2100-12-20', $pesel->getBirthDate()->format('Y-m-d'));
+    }
+
+    public function test_parse_returns_correct_birth_date_for_2200s(): void
+    {
+        // 00652001248 = born 2200-05-20, encoded month 65 (5+60)
+        $pesel = Numerik::pesel(strict: false)->parse('00652001248');
+
+        $this->assertSame('2200-05-20', $pesel->getBirthDate()->format('Y-m-d'));
+    }
+
+    public function test_parse_returns_correct_birth_date_for_2200s_january(): void
+    {
+        // 00611501233 = born 2200-01-15, encoded month 61 (1+60) — lower boundary
+        $pesel = Numerik::pesel(strict: false)->parse('00611501233');
+
+        $this->assertSame('2200-01-15', $pesel->getBirthDate()->format('Y-m-d'));
+    }
+
+    public function test_parse_returns_correct_birth_date_for_2200s_december(): void
+    {
+        // 00722001224 = born 2200-12-20, encoded month 72 (12+60) — upper boundary
+        $pesel = Numerik::pesel(strict: false)->parse('00722001224');
+
+        $this->assertSame('2200-12-20', $pesel->getBirthDate()->format('Y-m-d'));
+    }
+
+    public function test_parse_returns_correct_century_for_2100s(): void
+    {
+        $this->assertSame(2100, Numerik::pesel(strict: false)->parse('00461501232')->getCentury());
+    }
+
+    public function test_parse_returns_correct_century_for_2200s(): void
+    {
+        $this->assertSame(2200, Numerik::pesel(strict: false)->parse('00652001248')->getCentury());
+    }
+
+    public function test_validate_does_not_reject_input_of_exactly_32_characters(): void
+    {
+        $result  = Numerik::pesel()->validate(str_repeat('4', 32));
+        $failure = $result->getFirstFailure();
+
+        $this->assertNotNull($failure);
+        $this->assertStringNotContainsString('exceeds maximum', $failure->message);
+    }
+
     // --- isStrict() ---
 
     public function test_strict_mode_is_enabled_by_default(): void
     {
         $this->assertTrue(Numerik::pesel()->isStrict());
+    }
+
+    public function test_strict_mode_is_enabled_by_default_when_constructed_directly(): void
+    {
+        $this->assertTrue((new PeselIdentifier())->isStrict());
     }
 
     public function test_strict_mode_can_be_disabled(): void

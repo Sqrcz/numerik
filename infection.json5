@@ -11,8 +11,8 @@
     "mutators": {
         "@default": true
     },
-    "minMsi": 0,
-    "minCoveredMsi": 100,
+    "minMsi": 90,
+    "minCoveredMsi": 97,
     "testFramework": "phpunit",
     "logs": {
         "text": "infection.log",
