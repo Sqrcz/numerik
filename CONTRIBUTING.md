@@ -40,12 +40,10 @@ composer check       # Run cs-check + stan + test in sequence
 
 Every new identifier requires all of the following — PRs missing any item will not be merged:
 
-- [ ] `src/ValueObjects/NewIdentifier.php` — readonly value object
-- [ ] `src/Validators/NewIdentifierValidator.php`
-- [ ] `src/Parsers/NewIdentifierParser.php`
-- [ ] `tests/Fixtures/new_identifier_valid.txt`
-- [ ] `tests/Fixtures/new_identifier_invalid.txt`
-- [ ] Unit tests for validator, parser, and value object
+- [ ] `src/Identifiers/NewIdentifierIdentifier.php` — implements `ValidatorInterface` and `ParserInterface`
+- [ ] `src/ValueObjects/NewIdentifier.php` — `final readonly class` with domain-specific getters
+- [ ] `tests/Fixtures/NewIdentifierFixtures.php` — PHP fixture class with valid and invalid cases
+- [ ] Unit tests for the identifier and value object
 - [ ] Entry point added to `src/Numerik.php`
 - [ ] CHANGELOG.md updated
 
