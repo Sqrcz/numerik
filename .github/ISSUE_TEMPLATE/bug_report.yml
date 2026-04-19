@@ -6,7 +6,7 @@ body:
     id: php-version
     attributes:
       label: PHP Version
-      placeholder: "8.2.x"
+      placeholder: "8.3.x"
     validations:
       required: true
 
