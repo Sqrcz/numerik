@@ -11,6 +11,7 @@
     "mutators": {
         "@default": true
     },
+    "threads": "max",
     "minMsi": 90,
     "minCoveredMsi": 97,
     "testFramework": "phpunit",

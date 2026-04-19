@@ -14,6 +14,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -23,9 +25,21 @@ jobs:
           coverage: pcov
           tools: composer:v2
 
+      - name: Cache vendor
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-mutation-${{ hashFiles('composer.json') }}
+
       - name: Install dependencies
         run: composer update --prefer-stable --prefer-dist --no-interaction
 
-      - name: Run Infection
-        run: composer mutation
+      - name: Run Infection (changed files only)
+        if: github.event_name == 'pull_request'
+        run: infection --threads=max --git-diff-filter=AM --git-diff-base=origin/${{ github.base_ref }}
+        continue-on-error: true
+
+      - name: Run Infection (full)
+        if: github.event_name != 'pull_request'
+        run: infection --threads=max
         continue-on-error: true
