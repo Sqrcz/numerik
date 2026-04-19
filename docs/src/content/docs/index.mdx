@@ -1,6 +1,6 @@
 ---
 title: Numerik
-description: Modern PHP 8.2+ library for validating and parsing Polish identification numbers — PESEL, NIP, REGON, and KRS.
+description: Modern PHP 8.3+ library for validating and parsing Polish identification numbers — PESEL, NIP, REGON, and KRS.
 template: splash
 hero:
   tagline: Validate and parse Polish identification numbers with rich value objects and detailed error reasons.
@@ -19,7 +19,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 ## Overview
 
-Numerik is a zero-dependency PHP 8.2+ library built around the principle that validation should return *why* something failed, not just *that* it failed.
+Numerik is a zero-dependency PHP 8.3+ library built around the principle that validation should return *why* something failed, not just *that* it failed.
 
 <CardGrid stagger>
   <Card title="PESEL" icon="approve-check">
@@ -60,7 +60,7 @@ $pesel->isAdult();                          // true
 
 ## Key properties
 
-- **Zero production dependencies** — `require` only `php: ^8.2`.
+- **Zero production dependencies** — `require` only `php: ^8.3`.
 - **Immutable value objects** — all value objects are `readonly` classes.
 - **Strict types everywhere** — `declare(strict_types=1)` in every file.
 - **Rich failure reasons** — `ValidationFailureReason` enum covers format, checksum, encoded-date, and semantic failures.
