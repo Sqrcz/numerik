@@ -45,6 +45,12 @@ export default defineConfig({
                         { label: 'Algorithms', slug: 'guide/algorithms' },
                     ],
                 },
+                {
+                    label: 'Integrations',
+                    items: [
+                        { label: 'Laravel', slug: 'integrations/laravel' },
+                    ],
+                },
                 { label: 'Contributing', slug: 'contributing' },
             ],
             head: [
