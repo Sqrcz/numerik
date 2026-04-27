@@ -45,17 +45,40 @@ Full documentation at **[numerik.slashlab.pl](https://numerik.slashlab.pl)**
 
 ## Laravel Integration
 
+A dedicated Laravel package is available at [`slashlab/numerik-laravel`](https://github.com/Sqrcz/numerik-laravel) (requires PHP 8.3+, Laravel 11/12/13). The service provider is auto-discovered — no manual registration needed.
+
 ```bash
 composer require slashlab/numerik-laravel
 ```
 
+Use class-based rules or plain strings — both styles work:
+
 ```php
-// In a Form Request
+use SlashLab\NumerikLaravel\Rules\PeselRule;
+use SlashLab\NumerikLaravel\Rules\NipRule;
+use SlashLab\NumerikLaravel\Rules\RegonRule;
+use SlashLab\NumerikLaravel\Rules\KrsRule;
+
+// Class-based (supports options)
 public function rules(): array
 {
     return [
-        'pesel' => ['required', new PeselRule()],
+        'pesel' => ['required', new PeselRule()],           // strict mode on by default
+        'pesel' => ['required', new PeselRule(strict: false)], // disable strict checks
         'nip'   => ['required', new NipRule()],
+        'regon' => ['required', new RegonRule()],
+        'krs'   => ['required', new KrsRule()],
+    ];
+}
+
+// String-based
+public function rules(): array
+{
+    return [
+        'pesel' => ['required', 'pesel'],
+        'nip'   => ['required', 'nip'],
+        'regon' => ['required', 'regon'],
+        'krs'   => ['required', 'krs'],
     ];
 }
 ```

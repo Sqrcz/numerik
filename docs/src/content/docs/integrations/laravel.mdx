@@ -1,0 +1,94 @@
+---
+title: Laravel Integration
+description: Use Numerik validation rules directly inside Laravel Form Requests and the Validator facade via slashlab/numerik-laravel.
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+[`slashlab/numerik-laravel`](https://github.com/Sqrcz/numerik-laravel) is a dedicated Laravel package that wraps Numerik's validators as first-class Laravel validation rules. It supports both class-based and string-based rule syntax and is auto-discovered — no manual service provider registration needed.
+
+## Requirements
+
+- PHP **8.3** or higher
+- Laravel **11**, **12**, or **13**
+
+## Installation
+
+<Steps>
+
+1. **Require the package**
+
+   ```bash
+   composer require slashlab/numerik-laravel
+   ```
+
+2. **No configuration needed**
+
+   The service provider is auto-discovered. There is no config file to publish or boot step to add.
+
+</Steps>
+
+## Usage
+
+<Tabs>
+  <TabItem label="Class-based rules">
+
+    Import the rule class and pass an instance to your rules array. This approach supports constructor options such as `strict` mode.
+
+    ```php
+    use SlashLab\NumerikLaravel\Rules\PeselRule;
+    use SlashLab\NumerikLaravel\Rules\NipRule;
+    use SlashLab\NumerikLaravel\Rules\RegonRule;
+    use SlashLab\NumerikLaravel\Rules\KrsRule;
+
+    public function rules(): array
+    {
+        return [
+            'pesel' => ['required', new PeselRule()],
+            'nip'   => ['required', new NipRule()],
+            'regon' => ['required', new RegonRule()],
+            'krs'   => ['required', new KrsRule()],
+        ];
+    }
+    ```
+
+  </TabItem>
+  <TabItem label="String-based rules">
+
+    Use plain strings when you don't need constructor options. The rules are registered under the lowercase identifier name.
+
+    ```php
+    public function rules(): array
+    {
+        return [
+            'pesel' => ['required', 'pesel'],
+            'nip'   => ['required', 'nip'],
+            'regon' => ['required', 'regon'],
+            'krs'   => ['required', 'krs'],
+        ];
+    }
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Strict mode (PESEL)
+
+`PeselRule` accepts a `strict` parameter (default `true`). In strict mode, PESELs with a future birth date or suspicious digit patterns (e.g. all identical digits) are rejected.
+
+```php
+// strict on (default) — rejects future dates and suspicious patterns
+new PeselRule()
+
+// strict off — only structural and checksum checks are applied
+new PeselRule(strict: false)
+```
+
+<Aside type="tip">
+  Keep strict mode on for production forms. Disable it only when you need to accept test or synthetic data.
+</Aside>
+
+## Source
+
+- GitHub: [github.com/Sqrcz/numerik-laravel](https://github.com/Sqrcz/numerik-laravel)
+- Packagist: [packagist.org/packages/slashlab/numerik-laravel](https://packagist.org/packages/slashlab/numerik-laravel)
