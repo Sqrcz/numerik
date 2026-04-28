@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightThemeFlexoki from 'starlight-theme-flexoki';
+import starlightLlmsTxt from 'starlight-llms-txt';
 
 export default defineConfig({
     site: 'https://numerik.slashlab.pl',
@@ -64,9 +65,10 @@ export default defineConfig({
             },
             lastUpdated: true,
             pagination: true,
-            plugins: [starlightThemeFlexoki(
-                { accentColor: "cyan" }
-            )],
+            plugins: [
+                starlightLlmsTxt(),
+                starlightThemeFlexoki({ accentColor: "cyan" }),
+            ],
         }),
     ],
 });
