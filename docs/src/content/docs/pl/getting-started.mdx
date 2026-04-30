@@ -38,8 +38,6 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 ### Walidacja boolowska
 
-Najprostszy punkt wejścia — zwraca `true` lub `false`.
-
 ```php
 use SlashLab\Numerik\Numerik;
 
@@ -60,9 +58,9 @@ $result = Numerik::pesel()->validate('92060512186');
 $result->isValid;               // true
 $result->failures;              // []
 
-$result = Numerik::pesel()->validate('00000000000');
+$result = Numerik::pesel()->validate('92060512185');  // zła cyfra kontrolna
 $result->isFailed();            // true
-$result->getFirstFailure()->reason->value;  // 'all_zeros'
+$result->getFirstFailure()->reason->value;  // 'invalid_checksum'
 $result->getFirstFailure()->message;        // komunikat czytelny dla człowieka
 ```
 
@@ -70,7 +68,7 @@ Zobacz [Wyniki walidacji](/pl/guide/validation-results/) aby poznać pełne API.
 
 ### Parsowanie do obiektu wartości
 
-`parse()` waliduje wejście i przy powodzeniu zwraca bogaty obiekt wartości. **Rzuca** wyjątek `ValidationException` przy niepowodzeniu.
+Przy sukcesie `parse()` zwraca obiekt wartości. Przy niepowodzeniu rzuca wyjątek `ValidationException`.
 
 ```php
 use SlashLab\Numerik\Numerik;

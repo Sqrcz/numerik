@@ -5,7 +5,7 @@ description: Use Numerik validation rules directly inside Laravel Form Requests 
 
 import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
-[`slashlab/numerik-laravel`](https://github.com/Sqrcz/numerik-laravel) is a dedicated Laravel package that wraps Numerik's validators as first-class Laravel validation rules. It supports both class-based and string-based rule syntax and is auto-discovered — no manual service provider registration needed.
+[`slashlab/numerik-laravel`](https://github.com/Sqrcz/numerik-laravel) adds Numerik's validators as Laravel validation rules. It supports both class-based and string-based syntax and is auto-discovered — no manual registration needed.
 
 ## Requirements
 
@@ -32,8 +32,6 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 <Tabs>
   <TabItem label="Class-based rules">
-
-    Import the rule class and pass an instance to your rules array. This approach supports constructor options such as `strict` mode and per-reason error messages.
 
     ```php
     use SlashLab\NumerikLaravel\Rules\PeselRule;
@@ -114,7 +112,7 @@ new PeselRule(strict: false)
 The same parameter is accepted by `NipRule`, `RegonRule`, and `KrsRule`.
 
 <Aside type="tip">
-  Keep strict mode on for production forms. Disable it only when you need to accept test or synthetic data.
+  Turn strict mode off when you need to accept test or synthetic data — placeholder PESELs like `22222222222` are common in staging environments.
 </Aside>
 
 ## PESEL constraints

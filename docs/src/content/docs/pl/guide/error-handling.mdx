@@ -5,13 +5,11 @@ description: Jak Numerik używa wyjątków. Hierarchia ValidationException i kie
 
 import { Aside } from '@astrojs/starlight/components';
 
-Numerik stosuje jasną zasadę:
+- `isValid()` i `validate()` nigdy nie rzucają wyjątków — zawsze zwracają wartość.
+- `parse()` rzuca podklasę `ValidationException` przy nieprawidłowym wejściu.
+- `tryParse()` nigdy nie rzuca wyjątków — zwraca `null` przy niepowodzeniu.
 
-- `isValid()` i `validate()` — **nigdy nie rzucają wyjątków**. Zawsze zwracają wartość.
-- `parse()` — **rzuca** podklasę `ValidationException` przy nieprawidłowym wejściu.
-- `tryParse()` — **nigdy nie rzuca wyjątków**. Zwraca `null` przy niepowodzeniu.
-
-Wszystkie trzy metody są dostępne na tej samej klasie identyfikatora (np. `PeselIdentifier`). Nie ma osobnej klasy parsera — walidacja i parsowanie to jeden, zunifikowany mechanizm.
+Wszystkie trzy metody są dostępne na tej samej klasie identyfikatora (np. `PeselIdentifier`).
 
 ## Hierarchia wyjątków
 
@@ -91,7 +89,7 @@ if ($pesel === null) {
 
 ## Tryb ścisły
 
-Wszystkie klasy identyfikatorów przyjmują parametr konstruktora `strict` (domyślnie `true`). W trybie ścisłym wejścia, które przechodzą każde sprawdzenie algorytmiczne, ale są semantycznie podejrzane — jak wzorce wszystkich takich samych cyfr — są odrzucane z `ValidationFailureReason::AllSameDigit`.
+Wszystkie klasy identyfikatorów przyjmują parametr konstruktora `strict` (domyślnie `true`). W trybie ścisłym wejścia, które przechodzą wszystkie sprawdzenia algorytmiczne, ale wyglądają podejrzanie — np. ciąg złożony z jednej powtarzającej się cyfry — są odrzucane z `ValidationFailureReason::AllSameDigit`.
 
 ```php
 // Tryb ścisły włączony (domyślnie) — odrzuca podejrzane-ale-poprawne wejścia
@@ -101,7 +99,7 @@ Numerik::pesel()->validate('11111111111');           // błąd: AllSameDigit
 Numerik::pesel(strict: false)->validate('11111111111'); // przechodzi
 ```
 
-Wyłącz tryb ścisły przy przetwarzaniu danych historycznych, które mogą zawierać wartości zastępcze, lub gdy chcesz rozróżnić „strukturalnie nieprawidłowe" od „algorytmicznie poprawne, ale podejrzane" w potoku jakości danych.
+Wyłącz tryb ścisły gdy przetwarzasz dane historyczne zawierające wartości zastępcze albo gdy chcesz odróżnić „strukturalnie nieprawidłowe" od „algorytmicznie poprawne, ale podejrzane" w potoku jakości danych.
 
 ## Ochrona przed długością wejścia
 

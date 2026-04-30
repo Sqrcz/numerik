@@ -67,7 +67,7 @@ PESEL `92060512186` jest używany jako przykład w całej dokumentacji. Zakodowa
 1. Usuń myślniki i spacje. Odrzuć wejścia dłuższe niż 32 znaki. Wymagaj dokładnie 10 cyfr; w przeciwnym razie zwróć błąd `InvalidLength`.
 2. Odrzuć znaki niebędące cyframi; zwróć błąd `InvalidCharacters`.
 3. Sprawdź, że pierwsze 3 cyfry to nie `000`; w przeciwnym razie zwróć błąd `InvalidFormat`.
-4. Pomnóż każdą z pierwszych 9 cyfr przez jej wagę. Zsumuj iloczyny. Oblicz `suma mod 11`. Wynik musi być równy cyfrze 10. Jeśli wynik modulo wynosi `10`, numer jest strukturalnie nieprawidłowy; zwróć błąd `InvalidChecksum`.
+4. Pomnóż każdą z pierwszych 9 cyfr przez jej wagę. Zsumuj iloczyny. Oblicz `suma mod 11`. Wynik musi być równy cyfrze 10; ponieważ pojedyncza cyfra może przyjmować tylko wartości 0–9, wynik modulo równy `10` nigdy nie pasuje i zawsze kończy się błędem `InvalidChecksum`.
 
 ### Przykład obliczenia
 
@@ -119,5 +119,6 @@ KRS **nie posiada publicznego algorytmu sumy kontrolnej**. Jest to sekwencyjny n
 1. Usuń białe znaki. Odrzuć wejścia dłuższe niż 32 znaki. Wymagaj ≤ 10 cyfr.
 2. Odrzuć znaki niebędące cyframi.
 3. Sprawdź, że wartość numeryczna jest większa od `0`; w przeciwnym razie zwróć błąd `AllZeros`.
+4. W trybie ścisłym dopełnij do 10 cyfr zerami i odrzuć wejścia, w których wszystkie cyfry są identyczne; zwróć błąd `AllSameDigit`.
 
-W celu autorytatywnej weryfikacji, czy dany numer KRS jest rzeczywiście przypisany, skorzystaj z oficjalnego [API rejestru KRS](https://api-krs.ms.gov.pl).
+W celu autorytatywnej weryfikacji, czy dany numer KRS jest rzeczywiście przypisany, skorzystaj z oficjalnego [API rejestru KRS](https://prs.ms.gov.pl/krs/openApi).

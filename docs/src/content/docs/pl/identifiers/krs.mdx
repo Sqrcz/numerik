@@ -78,6 +78,7 @@ KRS to sekwencyjny numer rejestru bez sumy kontrolnej. Walidacja jest wyłączni
 1. Usuń spacje. Wymagaj od 1 do 10 cyfr.
 2. Sprawdź, że wszystkie pozostałe znaki są cyframi.
 3. Sprawdź, że wartość numeryczna nie wynosi zero.
+4. W trybie ścisłym dopełnij do 10 cyfr zerami i odrzuć wejścia, w których wszystkie cyfry są identyczne; zwróć błąd `AllSameDigit`.
 
 Numer, który przechodzi te sprawdzenia, jest **strukturalnie prawidłowy** — odpowiada formatowi KRS. Może, ale nie musi być faktycznie zarejestrowanym podmiotem.
 

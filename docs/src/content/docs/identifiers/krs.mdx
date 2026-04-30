@@ -78,6 +78,7 @@ KRS is a sequential registry number with no checksum. Validation is structural o
 1. Strip spaces. Assert between 1 and 10 digits remain.
 2. Assert all remaining characters are digits.
 3. Assert the numeric value is not zero.
+4. In strict mode, zero-pad to 10 digits and reject inputs where all digits are identical; fail with `AllSameDigit`.
 
 A number that passes these checks is **structurally valid** — it conforms to the KRS format. It may or may not be an actually registered entity.
 

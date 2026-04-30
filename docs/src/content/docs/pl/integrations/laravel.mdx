@@ -5,7 +5,7 @@ description: Używaj reguł walidacji Numerika bezpośrednio w Laravel Form Requ
 
 import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
-[`slashlab/numerik-laravel`](https://github.com/Sqrcz/numerik-laravel) to dedykowany pakiet Laravel, który opakowuje walidatory Numerika jako natywne reguły walidacji Laravel. Obsługuje zarówno składnię klasową jak i łańcuchową i jest automatycznie wykrywany — nie wymaga ręcznej rejestracji dostawcy usług.
+[`slashlab/numerik-laravel`](https://github.com/Sqrcz/numerik-laravel) dodaje walidatory Numerika jako reguły walidacji Laravel. Obsługuje zarówno składnię klasową jak i łańcuchową i jest automatycznie wykrywany — nie wymaga ręcznej rejestracji.
 
 ## Wymagania
 
@@ -32,8 +32,6 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 <Tabs>
   <TabItem label="Reguły klasowe">
-
-    Zaimportuj klasę reguły i przekaż instancję do tablicy reguł. To podejście obsługuje opcje konstruktora takie jak tryb `strict`.
 
     ```php
     use SlashLab\NumerikLaravel\Rules\PeselRule;
@@ -80,7 +78,7 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 Reguły klasowe zwracają osobny komunikat dla każdego powodu błędu. Na przykład NIP z nieprawidłową sumą kontrolną zwraca inny komunikat niż NIP z nieprawidłową długością.
 
-Komunikaty błędów rozpoznają etykietę pola z `validation.attributes` gdy jest dostępna, zachowując się jak wbudowane reguły Laravela. Jeśli etykieta nie jest zarejestrowana, nazwa pola jest humanizowana — podkreślenia zamieniane są na spacje, a pierwsza litera jest wielka.
+Komunikaty błędów rozpoznają etykietę pola z `validation.attributes` gdy jest dostępna, zachowując się jak wbudowane reguły Laravela. Jeśli etykieta nie jest zarejestrowana, nazwa pola jest czytelnie sformatowana: podkreślenia zamieniają się na spacje, pierwsza litera staje się wielka.
 
 ```php
 // lang/en/validation.php
@@ -114,7 +112,7 @@ new PeselRule(strict: false)
 Ten sam parametr jest akceptowany przez `NipRule`, `RegonRule` i `KrsRule`.
 
 <Aside type="tip">
-  Zachowaj tryb ścisły włączony dla formularzy produkcyjnych. Wyłącz go tylko gdy musisz akceptować dane testowe lub syntetyczne.
+  Wyłącz tryb ścisły gdy potrzebujesz akceptować dane testowe lub syntetyczne — zastępcze PESELe jak `22222222222` są powszechne w środowiskach staging.
 </Aside>
 
 ## Ograniczenia PESEL
