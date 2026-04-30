@@ -1,0 +1,93 @@
+---
+title: Współtworzenie
+description: Jak skonfigurować Numerik lokalnie, uruchomić testy i zgłosić pull request.
+---
+
+import { Steps, Aside } from '@astrojs/starlight/components';
+
+Dziękujemy za zainteresowanie współtworzeniem Numerika!
+
+## Konfiguracja środowiska deweloperskiego
+
+<Steps>
+
+1. **Utwórz fork i sklonuj**
+
+   ```bash
+   git clone https://github.com/sqrcz/numerik.git
+   cd numerik
+   ```
+
+2. **Zainstaluj zależności PHP**
+
+   ```bash
+   composer install
+   ```
+
+3. **Uruchom zestaw testów**
+
+   ```bash
+   composer test
+   ```
+
+</Steps>
+
+## Lokalne sprawdzenia
+
+| Polecenie | Co uruchamia |
+|-----------|-------------|
+| `composer test` | Zestaw testów PHPUnit |
+| `composer test:cover` | PHPUnit z raportami pokrycia HTML + Clover |
+| `composer stan` | PHPStan na poziomie 10 |
+| `composer cs-fix` | PHP CS Fixer — automatyczna naprawa |
+| `composer cs-check` | PHP CS Fixer — tylko sprawdzanie (używane w CI) |
+| `composer mutation` | Testy mutacyjne Infection |
+| `composer check` | `cs-check` + `stan` + `test` po kolei |
+
+Uruchom `composer check` przed otwarciem PR, aby wykryć wszystkie problemy lokalnie.
+
+## Dodawanie nowego identyfikatora
+
+Dodanie nowego identyfikatora (np. Dowód Osobisty, IBAN PL) wymaga edycji kilku plików. Postępuj według tej listy kontrolnej:
+
+- [ ] Utwórz `src/ValueObjects/NowyIdentyfikator.php` (klasa readonly implementująca `IdentifierInterface`)
+- [ ] Utwórz `src/Identifiers/NowyIdentyfikatorIdentifier.php` (implementuje `ValidatorInterface` i `ParserInterface`; przyjmuje `bool $strict = true`)
+- [ ] Dodaj nowe przypadki `ValidationFailureReason` jeśli identyfikator wprowadza nowe typy błędów
+- [ ] Dodaj metodę fabryczną do `src/Numerik.php` (`Numerik::nowyIdentyfikator(bool $strict = true)`)
+- [ ] Dodaj `tests/Fixtures/nowy_identyfikator_valid.txt` i `nowy_identyfikator_invalid.txt`
+- [ ] Dodaj testy jednostkowe walidatora, parsera i obiektu wartości
+- [ ] Dodaj stronę identyfikatora w `docs/src/content/docs/identifiers/`
+- [ ] Zaktualizuj `CHANGELOG.md`
+
+## Styl commitów
+
+Używaj [Conventional Commits](https://www.conventionalcommits.org):
+
+```
+feat: add Dowód Osobisty validation
+fix: correct PESEL checksum for 2100s birth dates
+docs: update REGON algorithm description
+test: add NIP fixtures for invalid tax office codes
+chore: update PHPStan to 2.x
+```
+
+Typy: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `ci`.
+
+## Proces pull requestów
+
+1. Utwórz gałąź od `main` (np. `feature/dowod-osobisty`).
+2. Wprowadź zmiany.
+3. Upewnij się, że `composer check` przechodzi.
+4. Otwórz PR względem `main` i wypełnij szablon.
+
+<Aside type="note">
+Nawet jako indywidualny współtwórca PR przechodzą przez reguły ochrony gałęzi `main`. To celowe — zapewnia, że CI przechodzi przed scaleniem.
+</Aside>
+
+## Zgłaszanie błędu
+
+Użyj szablonu [Bug Report](https://github.com/sqrcz/numerik/issues/new?template=bug_report.yml) na GitHub.
+
+## Luki w zabezpieczeniach
+
+**Nie otwieraj publicznego zgłoszenia.** Zgłoś przez [prywatny system zgłoszeń GitHub](https://github.com/sqrcz/numerik/security/advisories/new). Zobacz [SECURITY.md](https://github.com/sqrcz/numerik/blob/main/SECURITY.md).

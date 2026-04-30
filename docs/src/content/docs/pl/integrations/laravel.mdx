@@ -1,0 +1,157 @@
+---
+title: Integracja z Laravel
+description: Używaj reguł walidacji Numerika bezpośrednio w Laravel Form Requests i fasadzie Validator przez slashlab/numerik-laravel.
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+[`slashlab/numerik-laravel`](https://github.com/Sqrcz/numerik-laravel) to dedykowany pakiet Laravel, który opakowuje walidatory Numerika jako natywne reguły walidacji Laravel. Obsługuje zarówno składnię klasową jak i łańcuchową i jest automatycznie wykrywany — nie wymaga ręcznej rejestracji dostawcy usług.
+
+## Wymagania
+
+- PHP **8.3** lub nowszy
+- Laravel **11**, **12** lub **13**
+
+## Instalacja
+
+<Steps>
+
+1. **Dodaj pakiet**
+
+   ```bash
+   composer require slashlab/numerik-laravel
+   ```
+
+2. **Brak konfiguracji**
+
+   Dostawca usług jest automatycznie wykrywany. Nie ma pliku konfiguracyjnego do opublikowania ani kroku inicjalizacji.
+
+</Steps>
+
+## Użycie
+
+<Tabs>
+  <TabItem label="Reguły klasowe">
+
+    Zaimportuj klasę reguły i przekaż instancję do tablicy reguł. To podejście obsługuje opcje konstruktora takie jak tryb `strict`.
+
+    ```php
+    use SlashLab\NumerikLaravel\Rules\PeselRule;
+    use SlashLab\NumerikLaravel\Rules\NipRule;
+    use SlashLab\NumerikLaravel\Rules\RegonRule;
+    use SlashLab\NumerikLaravel\Rules\KrsRule;
+
+    public function rules(): array
+    {
+        return [
+            'pesel' => ['required', new PeselRule()],
+            'nip'   => ['required', new NipRule()],
+            'regon' => ['required', new RegonRule()],
+            'krs'   => ['required', new KrsRule()],
+        ];
+    }
+    ```
+
+  </TabItem>
+  <TabItem label="Reguły łańcuchowe">
+
+    Używaj zwykłych łańcuchów gdy nie potrzebujesz opcji konstruktora. Reguły są rejestrowane pod nazwą identyfikatora pisaną małymi literami.
+
+    ```php
+    public function rules(): array
+    {
+        return [
+            'pesel' => ['required', 'pesel'],
+            'nip'   => ['required', 'nip'],
+            'regon' => ['required', 'regon'],
+            'krs'   => ['required', 'krs'],
+        ];
+    }
+    ```
+
+    <Aside type="caution">
+      Reguły łańcuchowe zawsze zwracają ogólny komunikat walidacji bez względu na powód błędu. Używaj reguł klasowych gdy konkretne komunikaty mają znaczenie (np. rozróżnienie złej sumy kontrolnej od nieprawidłowej długości).
+    </Aside>
+
+  </TabItem>
+</Tabs>
+
+## Komunikaty walidacji
+
+Reguły klasowe zwracają osobny komunikat dla każdego powodu błędu. Na przykład NIP z nieprawidłową sumą kontrolną zwraca inny komunikat niż NIP z nieprawidłową długością.
+
+Komunikaty błędów rozpoznają etykietę pola z `validation.attributes` gdy jest dostępna, zachowując się jak wbudowane reguły Laravela. Jeśli etykieta nie jest zarejestrowana, nazwa pola jest humanizowana — podkreślenia zamieniane są na spacje, a pierwsza litera jest wielka.
+
+```php
+// lang/en/validation.php
+'attributes' => [
+    'nip_number' => 'NIP',
+],
+```
+
+Pakiet zawiera tłumaczenia na **angielski** (`en`) i **polski** (`pl`). Aby opublikować i dostosować je:
+
+```bash
+php artisan vendor:publish --tag=numerik-lang
+```
+
+Polecenie kopiuje pliki tłumaczeń do `lang/vendor/numerik/`. Edytuj komunikaty tam, aby nadpisać dowolny łańcuch.
+
+## Tryb ścisły
+
+Wszystkie reguły przyjmują opcjonalny parametr `strict` (domyślnie `true`). W trybie ścisłym dodatkowe sprawdzenia semantyczne są stosowane ponad walidacją strukturalną i sumy kontrolnej.
+
+Dla PESEL, tryb ścisły odrzuca numery z datą urodzenia w przyszłości lub wszystkimi identycznymi cyframi:
+
+```php
+// Tryb ścisły włączony (domyślnie) — odrzuca daty przyszłe i podejrzane wzorce
+new PeselRule()
+
+// Tryb ścisły wyłączony — stosowane są tylko sprawdzenia strukturalne i sumy kontrolnej
+new PeselRule(strict: false)
+```
+
+Ten sam parametr jest akceptowany przez `NipRule`, `RegonRule` i `KrsRule`.
+
+<Aside type="tip">
+  Zachowaj tryb ścisły włączony dla formularzy produkcyjnych. Wyłącz go tylko gdy musisz akceptować dane testowe lub syntetyczne.
+</Aside>
+
+## Ograniczenia PESEL
+
+`PeselRule` obsługuje dodatkowe ograniczenia sprawdzane po pomyślnej walidacji strukturalnej numeru.
+
+### Płeć
+
+Odrzucaj numery, które nie odpowiadają oczekiwanej płci:
+
+```php
+use SlashLab\Numerik\Enums\Gender;
+
+new PeselRule(gender: Gender::Male)
+new PeselRule(gender: Gender::Female)
+```
+
+### Zakres daty urodzenia
+
+Odrzucaj numery, których zakodowana data urodzenia wykracza poza podany zakres:
+
+```php
+new PeselRule(bornBefore: new DateTimeImmutable('2000-01-01'))
+new PeselRule(bornAfter:  new DateTimeImmutable('1980-12-31'))
+```
+
+Ograniczenia można łączyć:
+
+```php
+new PeselRule(
+    gender:     Gender::Female,
+    bornAfter:  new DateTimeImmutable('1990-01-01'),
+    bornBefore: new DateTimeImmutable('2005-01-01'),
+)
+```
+
+## Źródło
+
+- GitHub: [github.com/Sqrcz/numerik-laravel](https://github.com/Sqrcz/numerik-laravel)
+- Packagist: [packagist.org/packages/slashlab/numerik-laravel](https://packagist.org/packages/slashlab/numerik-laravel)

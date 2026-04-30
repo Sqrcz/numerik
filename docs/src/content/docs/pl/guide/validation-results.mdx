@@ -1,0 +1,120 @@
+---
+title: Wyniki walidacji
+description: Zrozumienie klas ValidationResult i ValidationFailure zwracanych przez walidatory Numerika.
+---
+
+Wszystkie cztery klasy identyfikatorów (`PeselIdentifier`, `NipIdentifier`, `RegonIdentifier`, `KrsIdentifier`) udostępniają te same dwie metody: `isValid()` i `validate()`. Żadna z nich nigdy nie rzuca wyjątku.
+
+## ValidationResult
+
+`validate()` zwraca klasę readonly `SlashLab\Numerik\Result\ValidationResult`.
+
+### Właściwości
+
+| Właściwość | Typ | Opis |
+|------------|-----|------|
+| `$isValid` | `bool` | `true` gdy walidacja przeszła. |
+| `$failures` | `list<ValidationFailure>` | Pusta tablica przy sukcesie; jeden lub więcej błędów przy niepowodzeniu. |
+
+### Metody
+
+| Metoda | Typ zwracany | Opis |
+|--------|-------------|------|
+| `isFailed()` | `bool` | Odwrotność `$isValid`. |
+| `getFailures()` | `list<ValidationFailure>` | Zwraca tablicę błędów. |
+| `getFirstFailure()` | `ValidationFailure\|null` | Pierwszy błąd lub `null` jeśli prawidłowy. |
+| `hasFailureReason(ValidationFailureReason $reason)` | `bool` | `true` jeśli jakikolwiek błąd pasuje do podanego powodu. |
+
+### Przykłady
+
+```php
+use SlashLab\Numerik\Numerik;
+use SlashLab\Numerik\Enums\ValidationFailureReason;
+
+// Wynik pozytywny
+$result = Numerik::pesel()->validate('92060512186');
+
+$result->isValid;           // true
+$result->isFailed();        // false
+$result->failures;          // []
+$result->getFirstFailure(); // null
+
+// Wynik negatywny
+$result = Numerik::nip()->validate('0000000000');
+
+$result->isValid;           // false
+$result->isFailed();        // true
+
+// Sprawdź pierwszy (i zazwyczaj jedyny) błąd
+$failure = $result->getFirstFailure();
+$failure->reason;           // ValidationFailureReason::InvalidFormat
+$failure->message;          // 'NIP tax office code cannot be 000.'
+
+// Sprawdź konkretny powód
+$result->hasFailureReason(ValidationFailureReason::InvalidChecksum); // false
+$result->hasFailureReason(ValidationFailureReason::InvalidFormat);   // true
+```
+
+## ValidationFailure
+
+Każdy element w `$failures` to klasa readonly `SlashLab\Numerik\Result\ValidationFailure`.
+
+### Właściwości
+
+| Właściwość | Typ | Opis |
+|------------|-----|------|
+| `$reason` | `ValidationFailureReason` | Przypadek enum identyfikujący kategorię błędu. |
+| `$message` | `string` | Opis czytelny dla człowieka, w języku angielskim. |
+
+## Enum ValidationFailureReason
+
+`SlashLab\Numerik\Enums\ValidationFailureReason` to backed string enum.
+
+### Błędy formatu
+
+| Przypadek | Wartość | Opis |
+|-----------|---------|------|
+| `InvalidLength` | `invalid_length` | Wejście ma nieprawidłową liczbę cyfr. |
+| `InvalidCharacters` | `invalid_characters` | Obecne są nieoczekiwane znaki po usunięciu dozwolonych separatorów. |
+| `InvalidFormat` | `invalid_format` | Prawidłowa długość i znaki, ale naruszono regułę strukturalną (np. kod urzędu skarbowego NIP `000`). |
+
+### Błędy sumy kontrolnej
+
+| Przypadek | Wartość | Opis |
+|-----------|---------|------|
+| `InvalidChecksum` | `invalid_checksum` | Obliczona suma kontrolna nie zgadza się z cyfrą kontrolną. |
+
+### Błędy zakodowanych danych
+
+| Przypadek | Wartość | Opis |
+|-----------|---------|------|
+| `InvalidDate` | `invalid_date` | Data zakodowana wewnątrz identyfikatora nie jest prawdziwą datą kalendarzową. |
+| `FutureDate` | `future_date` | Zakodowana data urodzenia jest w przyszłości. |
+| `InvalidMonth` | `invalid_month` | Kodowanie miesiąca nie odpowiada żadnemu ze znanych zakresów stulecia. |
+
+### Błędy semantyczne
+
+| Przypadek | Wartość | Opis |
+|-----------|---------|------|
+| `AllZeros` | `all_zeros` | Wszystkie cyfry są zerami — strukturalnie możliwe, ale semantycznie nieprawidłowe. |
+| `AllSameDigit` | `all_same_digit` | Wszystkie cyfry są takie same i niezerowe. |
+
+## Statyczne metody fabryczne
+
+`ValidationResult` udostępnia trzy statyczne konstruktory używane wewnętrznie i w testach:
+
+```php
+// Sukces
+ValidationResult::pass();
+
+// Niepowodzenie z listą błędów
+ValidationResult::fail([
+    new ValidationFailure(ValidationFailureReason::InvalidChecksum, 'Checksum mismatch.'),
+]);
+
+// Niepowodzenie z jednym powodem — skrócona forma
+ValidationResult::failWithReason(
+    ValidationFailureReason::InvalidLength,
+    'Expected 11 digits, got 10.',
+);
+```

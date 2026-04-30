@@ -1,0 +1,108 @@
+---
+title: Obsługa błędów
+description: Jak Numerik używa wyjątków. Hierarchia ValidationException i kiedy każdy wyjątek jest rzucany.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Numerik stosuje jasną zasadę:
+
+- `isValid()` i `validate()` — **nigdy nie rzucają wyjątków**. Zawsze zwracają wartość.
+- `parse()` — **rzuca** podklasę `ValidationException` przy nieprawidłowym wejściu.
+- `tryParse()` — **nigdy nie rzuca wyjątków**. Zwraca `null` przy niepowodzeniu.
+
+Wszystkie trzy metody są dostępne na tej samej klasie identyfikatora (np. `PeselIdentifier`). Nie ma osobnej klasy parsera — walidacja i parsowanie to jeden, zunifikowany mechanizm.
+
+## Hierarchia wyjątków
+
+Wszystkie wyjątki rozszerzają `SlashLab\Numerik\Exceptions\ValidationException`, która sama rozszerza `\RuntimeException`.
+
+```
+\RuntimeException
+└── ValidationException
+    ├── InvalidFormatException    — zła długość lub nieprawidłowe znaki
+    ├── InvalidChecksumException  — niezgodność cyfry kontrolnej
+    └── InvalidDateException      — niemożliwa data zakodowana wewnątrz identyfikatora
+```
+
+Wszystkie klasy wyjątków znajdują się w przestrzeni nazw `SlashLab\Numerik\Exceptions`.
+
+## Kiedy każdy wyjątek jest rzucany
+
+| Wyjątek | Rzucany gdy |
+|---------|-------------|
+| `InvalidFormatException` | Długość wejścia jest nieprawidłowa, obecne są nieoczekiwane znaki lub naruszono regułę strukturalną (np. kod urzędu skarbowego NIP `000`). |
+| `InvalidChecksumException` | Cyfra kontrolna nie zgadza się z obliczoną wartością. |
+| `InvalidDateException` | Data zakodowana wewnątrz PESEL jest niemożliwa (nieprawidłowy miesiąc, nieistniejąca data kalendarzowa lub data urodzenia w przyszłości). |
+
+## Przechwytywanie wyjątków
+
+```php
+use SlashLab\Numerik\Numerik;
+use SlashLab\Numerik\Exceptions\ValidationException;
+use SlashLab\Numerik\Exceptions\InvalidFormatException;
+use SlashLab\Numerik\Exceptions\InvalidChecksumException;
+use SlashLab\Numerik\Exceptions\InvalidDateException;
+
+// Przechwytywanie dowolnego błędu walidacji
+try {
+    $pesel = Numerik::pesel()->parse($input);
+} catch (ValidationException $e) {
+    // obsłuż dowolny błąd parsowania
+    echo $e->getMessage();
+}
+
+// Przechwytywanie konkretnych błędów
+try {
+    $pesel = Numerik::pesel()->parse($input);
+} catch (InvalidFormatException $e) {
+    // zła długość lub znaki
+} catch (InvalidChecksumException $e) {
+    // niezgodność sumy kontrolnej
+} catch (InvalidDateException $e) {
+    // niemożliwa data urodzenia zakodowana wewnątrz
+}
+```
+
+## Wybór między parse() a validate()
+
+<Aside type="tip">
+Jeśli potrzebujesz tylko wiedzieć *czy* wejście jest prawidłowe — używaj `validate()` lub `isValid()`. Nigdy nie rzucają wyjątków i są bezpieczne do wywołania na dowolnym niezaufanym wejściu bez owijania w try/catch.
+</Aside>
+
+Używaj `parse()` gdy:
+- Potrzebujesz wyodrębnionych danych z obiektu wartości.
+- Preferujesz przepływ sterowania oparty na wyjątkach (np. wewnątrz serwisu, który już ma blok catch).
+
+Używaj `tryParse()` gdy:
+- Potrzebujesz obiektu wartości, ale wolisz `null` zamiast wyjątku przy błędnym wejściu.
+- Jesteś w kontekście, gdzie rzucanie byłoby niewygodne (np. wewnątrz pętli lub potoku importu danych).
+
+```php
+// Oparty na wyjątkach — rzuca przy nieprawidłowym wejściu
+$pesel = Numerik::pesel()->parse($input);
+
+// Oparty na null — zwraca null przy nieprawidłowym wejściu
+$pesel = Numerik::pesel()->tryParse($input);
+if ($pesel === null) {
+    // obsłuż nieprawidłowe wejście
+}
+```
+
+## Tryb ścisły
+
+Wszystkie klasy identyfikatorów przyjmują parametr konstruktora `strict` (domyślnie `true`). W trybie ścisłym wejścia, które przechodzą każde sprawdzenie algorytmiczne, ale są semantycznie podejrzane — jak wzorce wszystkich takich samych cyfr — są odrzucane z `ValidationFailureReason::AllSameDigit`.
+
+```php
+// Tryb ścisły włączony (domyślnie) — odrzuca podejrzane-ale-poprawne wejścia
+Numerik::pesel()->validate('11111111111');           // błąd: AllSameDigit
+
+// Tryb ścisły wyłączony — akceptuje wszystko strukturalnie i algorytmicznie poprawne
+Numerik::pesel(strict: false)->validate('11111111111'); // przechodzi
+```
+
+Wyłącz tryb ścisły przy przetwarzaniu danych historycznych, które mogą zawierać wartości zastępcze, lub gdy chcesz rozróżnić „strukturalnie nieprawidłowe" od „algorytmicznie poprawne, ale podejrzane" w potoku jakości danych.
+
+## Ochrona przed długością wejścia
+
+Wszystkie metody identyfikatorów natychmiast odrzucają wejścia dłuższe niż **32 znaki**, zanim jakiekolwiek przetwarzanie się rozpocznie. Zapobiega to potencjalnym atakom DoS przez bardzo duże ciągi.
