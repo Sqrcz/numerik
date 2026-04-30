@@ -1,0 +1,123 @@
+---
+title: Algorytmy
+description: Dokumentacja algorytmów sum kontrolnych używanych przez Numerik do walidacji numerów PESEL, NIP i REGON.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Ta strona dokumentuje algorytmy sum kontrolnych i walidacji strukturalnej zaimplementowane w Numeriku. Cała walidacja opiera się na operacjach arytmetycznych na tablicach cyfr — nie są używane wyrażenia regularne.
+
+## PESEL
+
+**Wagi:** `1, 3, 7, 9, 1, 3, 7, 9, 1, 3`
+
+### Kroki
+
+1. Usuń białe znaki. Odrzuć wejścia dłuższe niż 32 znaki. Wymagaj dokładnie 11 cyfr; w przeciwnym razie zwróć błąd `InvalidLength`.
+2. Odrzuć znaki niebędące cyframi; zwróć błąd `InvalidCharacters`.
+3. Zdekoduj datę urodzenia używając poniższej tabeli kodowania stulecia. Zwróć błąd `InvalidMonth` jeśli zapisany miesiąc nie mieści się w żadnym znanym zakresie. Zwróć błąd `InvalidDate` jeśli zdekodowana data nie jest prawdziwą datą kalendarzową. W trybie ścisłym zwróć błąd `FutureDate` jeśli data urodzenia jest w przyszłości.
+4. Oblicz sumę kontrolną: pomnóż każdą z pierwszych 10 cyfr przez odpowiednią wagę i zsumuj wyniki. Oblicz `suma mod 10`, odejmij od `10`, oblicz `mod 10` ponownie. Wynik musi być równy cyfrze 11; w przeciwnym razie zwróć błąd `InvalidChecksum`.
+5. W trybie ścisłym odrzuć wejścia, w których wszystkie 11 cyfr jest identycznych; zwróć błąd `AllSameDigit`.
+
+### Kodowanie stulecia
+
+Cyfry miesiąca w PESEL kodują zarówno rzeczywisty miesiąc urodzenia jak i stulecie, dodając przesunięcie:
+
+| Zapisany zakres miesięcy | Rzeczywisty miesiąc | Stulecie urodzenia |
+|--------------------------|--------------------|--------------------|
+| 01 – 12 | 01 – 12 | 1900 – 1999 |
+| 21 – 32 | 01 – 12 | 2000 – 2099 |
+| 41 – 52 | 01 – 12 | 2100 – 2199 |
+| 61 – 72 | 01 – 12 | 2200 – 2299 |
+| 81 – 92 | 01 – 12 | 1800 – 1899 |
+
+### Przykład obliczenia
+
+Wejście: `9 2 0 6 0 5 1 2 1 8 6`
+
+| Pozycja | Cyfra | Waga | Iloczyn |
+|---------|-------|------|---------|
+| 1 | 9 | 1 | 9 |
+| 2 | 2 | 3 | 6 |
+| 3 | 0 | 7 | 0 |
+| 4 | 6 | 9 | 54 |
+| 5 | 0 | 1 | 0 |
+| 6 | 5 | 3 | 15 |
+| 7 | 1 | 7 | 7 |
+| 8 | 2 | 9 | 18 |
+| 9 | 1 | 1 | 1 |
+| 10 | 8 | 3 | 24 |
+
+Suma = 9 + 6 + 0 + 54 + 0 + 15 + 7 + 18 + 1 + 24 = **134**
+
+`134 mod 10 = 4` → `10 - 4 = 6` → `6 mod 10 = 6` — cyfra 11 wynosi `6` ✓
+
+<Aside type="note">
+PESEL `92060512186` jest używany jako przykład w całej dokumentacji. Zakodowana data to `1992-06-05`, płeć to Kobieta (cyfra 10 wynosi `8`, cyfra parzysta), numer porządkowy to `1218` (cyfry 7–10).
+</Aside>
+
+---
+
+## NIP
+
+**Wagi:** `6, 5, 7, 2, 3, 4, 5, 6, 7`
+
+### Kroki
+
+1. Usuń myślniki i spacje. Odrzuć wejścia dłuższe niż 32 znaki. Wymagaj dokładnie 10 cyfr; w przeciwnym razie zwróć błąd `InvalidLength`.
+2. Odrzuć znaki niebędące cyframi; zwróć błąd `InvalidCharacters`.
+3. Sprawdź, że pierwsze 3 cyfry to nie `000`; w przeciwnym razie zwróć błąd `InvalidFormat`.
+4. Pomnóż każdą z pierwszych 9 cyfr przez jej wagę. Zsumuj iloczyny. Oblicz `suma mod 11`. Wynik musi być równy cyfrze 10. Jeśli wynik modulo wynosi `10`, numer jest strukturalnie nieprawidłowy; zwróć błąd `InvalidChecksum`.
+
+### Przykład obliczenia
+
+Wejście: `5 2 6 0 2 5 0 2 7 4`
+
+| Pozycja | Cyfra | Waga | Iloczyn |
+|---------|-------|------|---------|
+| 1 | 5 | 6 | 30 |
+| 2 | 2 | 5 | 10 |
+| 3 | 6 | 7 | 42 |
+| 4 | 0 | 2 | 0 |
+| 5 | 2 | 3 | 6 |
+| 6 | 5 | 4 | 20 |
+| 7 | 0 | 5 | 0 |
+| 8 | 2 | 6 | 12 |
+| 9 | 7 | 7 | 49 |
+
+Suma = 30 + 10 + 42 + 0 + 6 + 20 + 0 + 12 + 49 = **169**
+
+`169 mod 11 = 4` — cyfra 10 wynosi `4` ✓
+
+---
+
+## REGON
+
+REGON używa algorytmu dwuetapowego. Forma 14-cyfrowa najpierw waliduje bazowe 9 cyfr, zanim zwaliduje pełne 14.
+
+### 9-cyfrowy REGON
+
+**Wagi:** `8, 9, 2, 3, 4, 5, 6, 7`
+
+1. Usuń białe znaki. Wymagaj dokładnie 9 cyfr.
+2. Pomnóż pierwsze 8 cyfr przez wagi dla 9 cyfr. Zsumuj. Oblicz `suma mod 11`. Jeśli wynik to `10`, cyfra kontrolna musi wynosić `0`. W przeciwnym razie wynik musi być równy cyfrze 9.
+
+### 14-cyfrowy REGON
+
+**Wagi:** `2, 4, 8, 5, 0, 9, 7, 3, 6, 1, 2, 4, 8`
+
+1. Usuń białe znaki. Wymagaj dokładnie 14 cyfr.
+2. Zwaliduj cyfry 1–9 jako samodzielny 9-cyfrowy REGON (patrz wyżej).
+3. Pomnóż pierwsze 13 cyfr przez wagi dla 14 cyfr. Zsumuj. Oblicz `suma mod 11`. Jeśli wynik to `10`, cyfra 14 musi wynosić `0`. W przeciwnym razie wynik musi być równy cyfrze 14.
+
+---
+
+## KRS
+
+KRS **nie posiada publicznego algorytmu sumy kontrolnej**. Jest to sekwencyjny numer rejestru nadawany przez sąd rejestrowy. Numerik waliduje wyłącznie format i zakres:
+
+1. Usuń białe znaki. Odrzuć wejścia dłuższe niż 32 znaki. Wymagaj ≤ 10 cyfr.
+2. Odrzuć znaki niebędące cyframi.
+3. Sprawdź, że wartość numeryczna jest większa od `0`; w przeciwnym razie zwróć błąd `AllZeros`.
+
+W celu autorytatywnej weryfikacji, czy dany numer KRS jest rzeczywiście przypisany, skorzystaj z oficjalnego [API rejestru KRS](https://api-krs.ms.gov.pl).

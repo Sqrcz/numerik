@@ -1,0 +1,71 @@
+---
+title: Numerik
+description: Nowoczesna biblioteka PHP 8.3+ do walidacji i parsowania polskich numerów identyfikacyjnych — PESEL, NIP, REGON i KRS.
+template: splash
+hero:
+  tagline: Waliduj i parsuj polskie numery identyfikacyjne z bogatymi obiektami wartości i szczegółowymi powodami błędów.
+  actions:
+    - text: Pierwsze kroki
+      link: /pl/getting-started/
+      icon: right-arrow
+      variant: primary
+    - text: Zobacz na GitHub
+      link: https://github.com/sqrcz/numerik
+      icon: github
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Przegląd
+
+Numerik to biblioteka PHP 8.3+ bez zewnętrznych zależności produkcyjnych, zbudowana wokół zasady, że walidacja powinna zwracać *dlaczego* coś jest nieprawidłowe, nie tylko *że* jest nieprawidłowe.
+
+<CardGrid stagger>
+  <Card title="PESEL" icon="approve-check">
+    Waliduje i parsuje powszechny numer ewidencyjny PESEL. Wyodrębnia datę urodzenia, płeć, stulecie, wiek i numer porządkowy bezpośrednio z numeru.
+  </Card>
+  <Card title="NIP" icon="approve-check">
+    Waliduje numery identyfikacji podatkowej osób fizycznych i prawnych. Zwraca kod urzędu skarbowego i sformatowaną postać wyświetlaną.
+  </Card>
+  <Card title="REGON" icon="approve-check">
+    Obsługuje zarówno 9-cyfrowe (podmiot indywidualny) jak i 14-cyfrowe (jednostka lokalna) numery REGON, włącznie z wieloetapową walidacją sumy kontrolnej.
+  </Card>
+  <Card title="KRS" icon="approve-check">
+    Waliduje numery rejestru sądowego z automatyczną normalizacją zer wiodących. Jasno dokumentuje ograniczenie weryfikacji offline kontra online.
+  </Card>
+  <Card title="Laravel" icon="puzzle">
+    Gotowe reguły walidacji Laravel dla wszystkich czterech identyfikatorów przez `slashlab/numerik-laravel`. Obsługuje składnię klasową i łańcuchową z kontrolą trybu ścisłego dla PESEL.
+  </Card>
+</CardGrid>
+
+## W skrócie
+
+```php
+use SlashLab\Numerik\Numerik;
+
+// Proste sprawdzenie boolowskie
+Numerik::pesel()->isValid('92060512186');   // true
+Numerik::nip()->isValid('5260250274');      // true
+
+// Bogaty wynik ze szczegółami błędu
+$result = Numerik::pesel()->validate('00000000000');
+$result->isFailed();                        // true
+$result->getFirstFailure()->reason;         // ValidationFailureReason::AllZeros
+
+// Parsowanie do obiektu wartości
+$pesel = Numerik::pesel()->parse('92060512186');
+$pesel->getBirthDate()->format('Y-m-d');    // '1992-06-05'
+$pesel->getGender();                        // Gender::Female
+$pesel->getAge();                           // obliczony od dzisiaj
+$pesel->isAdult();                          // true
+```
+
+## Kluczowe właściwości
+
+- **Zero zewnętrznych zależności produkcyjnych** — `require` tylko `php: ^8.3`.
+- **Niemutowalne obiekty wartości** — wszystkie obiekty wartości to klasy `readonly`.
+- **Ścisłe typy wszędzie** — `declare(strict_types=1)` w każdym pliku.
+- **Bogate powody błędów** — enum `ValidationFailureReason` obejmuje błędy formatu, sumy kontrolnej, zakodowanej daty i semantyczne.
+- **Bez wyrażeń regularnych** w logice walidacji — wszystkie sprawdzenia to operacje na tablicach cyfr, bezpieczne przed atakami ReDoS.
+- **Ochrona przed długimi wejściami** — wejścia dłuższe niż 32 znaki są natychmiast odrzucane.

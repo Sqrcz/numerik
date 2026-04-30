@@ -1,0 +1,105 @@
+---
+title: Instalacja i szybki start
+description: Zainstaluj Numerik przez Composer i zwaliduj swój pierwszy polski numer identyfikacyjny w mniej niż minutę.
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+## Wymagania
+
+- PHP **8.3** lub nowszy
+- Composer
+
+## Instalacja
+
+<Steps>
+
+1. **Dodaj pakiet**
+
+   ```bash
+   composer require slashlab/numerik
+   ```
+
+2. **Brak konfiguracji**
+
+   Pakiet jest ładowany automatycznie przez PSR-4. Nie ma dostawcy usług, pliku konfiguracyjnego ani kroku inicjalizacji dla samej biblioteki.
+
+3. **Użyj**
+
+   ```php
+   use SlashLab\Numerik\Numerik;
+
+   Numerik::pesel()->isValid('92060512186'); // true
+   ```
+
+</Steps>
+
+## Szybki start
+
+### Walidacja boolowska
+
+Najprostszy punkt wejścia — zwraca `true` lub `false`.
+
+```php
+use SlashLab\Numerik\Numerik;
+
+Numerik::pesel()->isValid('92060512186');  // true
+Numerik::nip()->isValid('5260250274');     // true
+Numerik::regon()->isValid('691761365');    // true
+Numerik::krs()->isValid('0000127206');     // true
+```
+
+### Bogaty wynik walidacji
+
+`validate()` nigdy nie rzuca wyjątku. Zwraca `ValidationResult`, który przechowuje listę błędów gdy walidacja nie przejdzie.
+
+```php
+use SlashLab\Numerik\Numerik;
+
+$result = Numerik::pesel()->validate('92060512186');
+$result->isValid;               // true
+$result->failures;              // []
+
+$result = Numerik::pesel()->validate('00000000000');
+$result->isFailed();            // true
+$result->getFirstFailure()->reason->value;  // 'all_zeros'
+$result->getFirstFailure()->message;        // komunikat czytelny dla człowieka
+```
+
+Zobacz [Wyniki walidacji](/pl/guide/validation-results/) aby poznać pełne API.
+
+### Parsowanie do obiektu wartości
+
+`parse()` waliduje wejście i przy powodzeniu zwraca bogaty obiekt wartości. **Rzuca** wyjątek `ValidationException` przy niepowodzeniu.
+
+```php
+use SlashLab\Numerik\Numerik;
+
+$pesel = Numerik::pesel()->parse('92060512186');
+$pesel->getBirthDate()->format('Y-m-d');  // '1992-06-05'
+$pesel->getGender();                      // Gender::Female
+$pesel->getAge();                         // int — obliczony od dzisiaj
+$pesel->isAdult();                        // true
+```
+
+Użyj `tryParse()` gdy wolisz `null` przy niepowodzeniu zamiast wyjątku:
+
+```php
+$pesel = Numerik::pesel()->tryParse('złe-wejście'); // null
+```
+
+### Wybór właściwej metody
+
+| Metoda | Zwraca | Rzuca | Kiedy używać |
+|--------|--------|-------|--------------|
+| `isValid()` | `bool` | nigdy | Proste sprawdzenie istnienia |
+| `validate()` | `ValidationResult` | nigdy | Gdy potrzebujesz powodu błędu |
+| `parse()` | obiekt wartości | `ValidationException` | Gdy potrzebujesz wyodrębnionych danych i wolisz wyjątki |
+| `tryParse()` | obiekt wartości lub `null` | nigdy | Gdy potrzebujesz wyodrębnionych danych, ale wolisz null zamiast wyjątku |
+
+## Następne kroki
+
+- Przejrzyj dokumentację [PESEL](/pl/identifiers/pesel/), [NIP](/pl/identifiers/nip/), [REGON](/pl/identifiers/regon/) lub [KRS](/pl/identifiers/krs/) z pełną listą metod.
+- Przeczytaj [Obsługę błędów](/pl/guide/error-handling/) aby poznać hierarchię wyjątków.
+- Przeczytaj [Wyniki walidacji](/pl/guide/validation-results/) aby poznać pełne API `ValidationResult`.
+- Używasz Laravela? Zobacz [Integrację z Laravel](/pl/integrations/laravel/) — gotowe reguły walidacji.
