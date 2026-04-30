@@ -19,7 +19,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 ## Przegląd
 
-Numerik to biblioteka PHP 8.3+ bez zewnętrznych zależności produkcyjnych, zbudowana wokół zasady, że walidacja powinna zwracać *dlaczego* coś jest nieprawidłowe, nie tylko *że* jest nieprawidłowe.
+Numerik to biblioteka PHP 8.3+ bez zewnętrznych zależności produkcyjnych. Walidacja mówi *dlaczego* wejście jest nieprawidłowe, nie tylko *że* jest nieprawidłowe.
 
 <CardGrid stagger>
   <Card title="PESEL" icon="approve-check">
@@ -32,7 +32,7 @@ Numerik to biblioteka PHP 8.3+ bez zewnętrznych zależności produkcyjnych, zbu
     Obsługuje zarówno 9-cyfrowe (podmiot indywidualny) jak i 14-cyfrowe (jednostka lokalna) numery REGON, włącznie z wieloetapową walidacją sumy kontrolnej.
   </Card>
   <Card title="KRS" icon="approve-check">
-    Waliduje numery rejestru sądowego z automatyczną normalizacją zer wiodących. Jasno dokumentuje ograniczenie weryfikacji offline kontra online.
+    Waliduje numery rejestru sądowego z automatyczną normalizacją zer wiodących. Dokumentuje ograniczenie weryfikacji offline kontra online.
   </Card>
   <Card title="Laravel" icon="puzzle">
     Gotowe reguły walidacji Laravel dla wszystkich czterech identyfikatorów przez `slashlab/numerik-laravel`. Obsługuje składnię klasową i łańcuchową z kontrolą trybu ścisłego dla PESEL.
@@ -49,9 +49,9 @@ Numerik::pesel()->isValid('92060512186');   // true
 Numerik::nip()->isValid('5260250274');      // true
 
 // Bogaty wynik ze szczegółami błędu
-$result = Numerik::pesel()->validate('00000000000');
+$result = Numerik::pesel()->validate('92060512185');  // zła cyfra kontrolna
 $result->isFailed();                        // true
-$result->getFirstFailure()->reason;         // ValidationFailureReason::AllZeros
+$result->getFirstFailure()->reason;         // ValidationFailureReason::InvalidChecksum
 
 // Parsowanie do obiektu wartości
 $pesel = Numerik::pesel()->parse('92060512186');

@@ -29,9 +29,9 @@ Numerik::nip()->isValid('5260250274');     // true
 $result = Numerik::pesel()->validate('92060512186');
 $result->isValid;                          // true
 
-$result = Numerik::pesel()->validate('00000000000');
+$result = Numerik::pesel()->validate('92060512185');  // wrong checksum digit
 $result->isFailed();                       // true
-$result->getFirstFailure()->reason;        // ValidationFailureReason::AllZeros
+$result->getFirstFailure()->reason;        // ValidationFailureReason::InvalidChecksum
 
 // Parse to value object
 $pesel = Numerik::pesel()->parse('92060512186');

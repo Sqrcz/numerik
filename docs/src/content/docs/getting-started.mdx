@@ -38,8 +38,6 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 ### Boolean validation
 
-The simplest entry point — returns `true` or `false`.
-
 ```php
 use SlashLab\Numerik\Numerik;
 
@@ -70,7 +68,7 @@ See [Validation Results](/guide/validation-results/) for the full API.
 
 ### Parsing to a value object
 
-`parse()` validates the input and, on success, returns a rich value object. It **throws** a `ValidationException` on failure.
+On success, `parse()` returns a value object. On failure, it throws a `ValidationException`.
 
 ```php
 use SlashLab\Numerik\Numerik;

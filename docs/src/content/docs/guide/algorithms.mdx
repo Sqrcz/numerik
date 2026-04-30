@@ -67,7 +67,7 @@ The PESEL `92060512186` is used as an example throughout the docs. Its encoded d
 1. Strip hyphens and spaces. Reject inputs longer than 32 characters. Assert exactly 10 digits; fail with `InvalidLength`.
 2. Reject non-digit characters; fail with `InvalidCharacters`.
 3. Assert the first 3 digits are not `000`; fail with `InvalidFormat`.
-4. Multiply each of the first 9 digits by its weight. Sum the products. Take `sum mod 11`. The result must equal digit 10. If the modulo gives `10`, the number is structurally invalid; fail with `InvalidChecksum`.
+4. Multiply each of the first 9 digits by its weight. Sum the products. Take `sum mod 11`. The result must equal digit 10; since a single digit can only be 0–9, a modulo result of `10` can never match and always fails with `InvalidChecksum`.
 
 ### Worked example
 
@@ -119,5 +119,6 @@ KRS has **no public checksum algorithm**. It is a sequential registry number ass
 1. Strip whitespace. Reject inputs longer than 32 characters. Assert ≤ 10 digits.
 2. Reject non-digit characters.
 3. Assert numeric value is greater than `0`; fail with `AllZeros`.
+4. In strict mode, zero-pad to 10 digits and reject inputs where all digits are identical; fail with `AllSameDigit`.
 
-For authoritative verification that a KRS number is actually assigned, query the official [KRS registry API](https://api-krs.ms.gov.pl).
+For authoritative verification that a KRS number is actually assigned, query the official [KRS registry API](https://prs.ms.gov.pl/krs/openApi).

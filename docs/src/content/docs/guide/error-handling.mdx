@@ -5,13 +5,11 @@ description: How Numerik uses exceptions. The ValidationException hierarchy and 
 
 import { Aside } from '@astrojs/starlight/components';
 
-Numerik follows a clear rule:
+- `isValid()` and `validate()` never throw — they always return a value.
+- `parse()` throws a `ValidationException` subclass on invalid input.
+- `tryParse()` never throws — it returns `null` on failure.
 
-- `isValid()` and `validate()` — **never throw**. They always return a value.
-- `parse()` — **throws** a `ValidationException` subclass on invalid input.
-- `tryParse()` — **never throws**. Returns `null` on failure.
-
-All three methods live on the same identifier class (e.g. `PeselIdentifier`). There is no separate parser class — validation and parsing are a single unified concern.
+All three methods live on the same identifier class (e.g. `PeselIdentifier`).
 
 ## Exception hierarchy
 

@@ -19,7 +19,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 ## Overview
 
-Numerik is a zero-dependency PHP 8.3+ library built around the principle that validation should return *why* something failed, not just *that* it failed.
+Numerik is a zero-dependency PHP 8.3+ library. Validation tells you *why* input failed, not just *that* it failed.
 
 <CardGrid stagger>
   <Card title="PESEL" icon="approve-check">
@@ -32,7 +32,7 @@ Numerik is a zero-dependency PHP 8.3+ library built around the principle that va
     Handles both 9-digit (individual) and 14-digit (legal entity with local unit) REGON numbers, including multi-stage checksum validation.
   </Card>
   <Card title="KRS" icon="approve-check">
-    Validates court register numbers with automatic zero-padding normalisation. Clearly documents the offline vs. online verification limitation.
+    Validates court register numbers with automatic zero-padding normalisation. Documents the offline vs. online verification limitation.
   </Card>
   <Card title="Laravel" icon="puzzle">
     Drop-in Laravel validation rules for all four identifiers via `slashlab/numerik-laravel`. Supports class-based and string-based syntax, with strict-mode control for PESEL.
@@ -49,9 +49,9 @@ Numerik::pesel()->isValid('92060512186');   // true
 Numerik::nip()->isValid('5260250274');      // true
 
 // Rich result with failure details
-$result = Numerik::pesel()->validate('00000000000');
+$result = Numerik::pesel()->validate('92060512185');  // wrong checksum digit
 $result->isFailed();                        // true
-$result->getFirstFailure()->reason;         // ValidationFailureReason::AllZeros
+$result->getFirstFailure()->reason;         // ValidationFailureReason::InvalidChecksum
 
 // Parse to a value object
 $pesel = Numerik::pesel()->parse('92060512186');
