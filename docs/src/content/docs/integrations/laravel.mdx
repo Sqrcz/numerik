@@ -33,7 +33,7 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 <Tabs>
   <TabItem label="Class-based rules">
 
-    Import the rule class and pass an instance to your rules array. This approach supports constructor options such as `strict` mode.
+    Import the rule class and pass an instance to your rules array. This approach supports constructor options such as `strict` mode and per-reason error messages.
 
     ```php
     use SlashLab\NumerikLaravel\Rules\PeselRule;
@@ -69,12 +69,39 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
     }
     ```
 
+    <Aside type="caution">
+      String-based rules always return a generic validation message regardless of the failure reason. Use class-based rules when specific messages matter (e.g. distinguishing a wrong checksum from an invalid length).
+    </Aside>
+
   </TabItem>
 </Tabs>
 
-## Strict mode (PESEL)
+## Validation messages
 
-`PeselRule` accepts a `strict` parameter (default `true`). In strict mode, PESELs with a future birth date or suspicious digit patterns (e.g. all identical digits) are rejected.
+Class-based rules return a distinct message for each failure reason. For example, a NIP with an incorrect checksum returns a different message than one with an invalid length.
+
+Error messages resolve the field label from `validation.attributes` when available, matching the behaviour of Laravel's built-in rules. If no label is registered, the field name is humanised — underscores replaced with spaces, first letter capitalised.
+
+```php
+// lang/en/validation.php
+'attributes' => [
+    'nip_number' => 'NIP',
+],
+```
+
+The package ships with **English** (`en`) and **Polish** (`pl`) translations. To publish and customise them:
+
+```bash
+php artisan vendor:publish --tag=numerik-lang
+```
+
+This copies the translation files to `lang/vendor/numerik/`. Edit the messages there to override any string.
+
+## Strict mode
+
+All rules accept an optional `strict` parameter (default `true`). In strict mode, additional semantic checks are applied on top of structural and checksum validation.
+
+For PESEL, strict mode rejects numbers with a future birth date or all-identical digits:
 
 ```php
 // strict on (default) — rejects future dates and suspicious patterns
@@ -84,9 +111,45 @@ new PeselRule()
 new PeselRule(strict: false)
 ```
 
+The same parameter is accepted by `NipRule`, `RegonRule`, and `KrsRule`.
+
 <Aside type="tip">
   Keep strict mode on for production forms. Disable it only when you need to accept test or synthetic data.
 </Aside>
+
+## PESEL constraints
+
+`PeselRule` supports additional constraints that are checked after the number passes structural validation.
+
+### Gender
+
+Reject numbers that do not match an expected gender:
+
+```php
+use SlashLab\Numerik\Enums\Gender;
+
+new PeselRule(gender: Gender::Male)
+new PeselRule(gender: Gender::Female)
+```
+
+### Birth date range
+
+Reject numbers whose encoded birth date falls outside a given range:
+
+```php
+new PeselRule(bornBefore: new DateTimeImmutable('2000-01-01'))
+new PeselRule(bornAfter:  new DateTimeImmutable('1980-12-31'))
+```
+
+Constraints can be combined:
+
+```php
+new PeselRule(
+    gender:     Gender::Female,
+    bornAfter:  new DateTimeImmutable('1990-01-01'),
+    bornBefore: new DateTimeImmutable('2005-01-01'),
+)
+```
 
 ## Source
 
