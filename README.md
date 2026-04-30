@@ -83,6 +83,10 @@ public function rules(): array
 }
 ```
 
+Class-based rules return a distinct message per failure reason (e.g. wrong checksum vs invalid length). Messages resolve the field label from `validation.attributes` when available, falling back to a humanised field name. The package ships with English and Polish translations — publish them with `php artisan vendor:publish --tag=numerik-lang`.
+
+`PeselRule` also accepts `gender`, `bornBefore`, and `bornAfter` constraints for stricter identity checks. See the [full Laravel documentation](https://numerik.slashlab.pl/integrations/laravel/) for details.
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).
