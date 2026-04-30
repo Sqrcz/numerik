@@ -37,3 +37,6 @@ Thumbs.db
 
 # Libraries do NOT commit their lock file
 composer.lock
+
+# Internal
+/.scratch/
