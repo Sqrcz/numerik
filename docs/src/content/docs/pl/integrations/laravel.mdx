@@ -24,7 +24,7 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 2. **Brak konfiguracji**
 
-   Dostawca usług jest automatycznie wykrywany. Nie ma pliku konfiguracyjnego do opublikowania ani kroku inicjalizacji.
+   Biblioteka jest automatycznie wykrywana — nie ma pliku konfiguracyjnego do opublikowania ani kroku inicjalizacji.
 
 </Steps>
 
@@ -68,7 +68,7 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
     ```
 
     <Aside type="caution">
-      Reguły łańcuchowe zawsze zwracają ogólny komunikat walidacji bez względu na powód błędu. Używaj reguł klasowych gdy konkretne komunikaty mają znaczenie (np. rozróżnienie złej sumy kontrolnej od nieprawidłowej długości).
+      Reguły łańcuchowe zawsze zwracają ogólny komunikat walidacji, niezależnie od przyczyny błędu. Używaj reguł klasowych gdy konkretne komunikaty mają znaczenie — np. gdy chcesz rozróżnić złą sumę kontrolną od nieprawidłowej długości.
     </Aside>
 
   </TabItem>
@@ -76,9 +76,9 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 ## Komunikaty walidacji
 
-Reguły klasowe zwracają osobny komunikat dla każdego powodu błędu. Na przykład NIP z nieprawidłową sumą kontrolną zwraca inny komunikat niż NIP z nieprawidłową długością.
+Reguły klasowe zwracają osobny komunikat dla każdego powodu błędu. NIP z nieprawidłową sumą kontrolną dostanie inny komunikat niż NIP z nieprawidłową długością.
 
-Komunikaty błędów rozpoznają etykietę pola z `validation.attributes` gdy jest dostępna, zachowując się jak wbudowane reguły Laravela. Jeśli etykieta nie jest zarejestrowana, nazwa pola jest czytelnie sformatowana: podkreślenia zamieniają się na spacje, pierwsza litera staje się wielka.
+Komunikaty rozpoznają etykietę pola z `validation.attributes`, jeśli jest zdefiniowana — zachowują się jak wbudowane reguły Laravel. Jeśli etykieta nie jest zarejestrowana, nazwa pola jest automatycznie formatowana: podkreślenia zamieniają się na spacje, pierwsza litera staje się wielka.
 
 ```php
 // lang/en/validation.php
@@ -87,19 +87,19 @@ Komunikaty błędów rozpoznają etykietę pola z `validation.attributes` gdy je
 ],
 ```
 
-Pakiet zawiera tłumaczenia na **angielski** (`en`) i **polski** (`pl`). Aby opublikować i dostosować je:
+Pakiet zawiera tłumaczenia na **angielski** (`en`) i **polski** (`pl`). Aby opublikować i dostosować komunikaty:
 
 ```bash
 php artisan vendor:publish --tag=numerik-lang
 ```
 
-Polecenie kopiuje pliki tłumaczeń do `lang/vendor/numerik/`. Edytuj komunikaty tam, aby nadpisać dowolny łańcuch.
+Pliki tłumaczeń trafią do `lang/vendor/numerik/` — edytuj je, żeby nadpisać dowolny komunikat.
 
 ## Tryb ścisły
 
-Wszystkie reguły przyjmują opcjonalny parametr `strict` (domyślnie `true`). W trybie ścisłym dodatkowe sprawdzenia semantyczne są stosowane ponad walidacją strukturalną i sumy kontrolnej.
+Wszystkie reguły przyjmują opcjonalny parametr `strict` (domyślnie `true`). W trybie ścisłym poza walidacją strukturalną i sumą kontrolną stosowane są dodatkowe sprawdzenia semantyczne.
 
-Dla PESEL, tryb ścisły odrzuca numery z datą urodzenia w przyszłości lub wszystkimi identycznymi cyframi:
+Dla numeru PESEL tryb ścisły odrzuca numery z datą urodzenia w przyszłości lub wszystkimi identycznymi cyframi:
 
 ```php
 // Tryb ścisły włączony (domyślnie) — odrzuca daty przyszłe i podejrzane wzorce
@@ -112,12 +112,12 @@ new PeselRule(strict: false)
 Ten sam parametr jest akceptowany przez `NipRule`, `RegonRule` i `KrsRule`.
 
 <Aside type="tip">
-  Wyłącz tryb ścisły gdy potrzebujesz akceptować dane testowe lub syntetyczne — zastępcze PESELe jak `22222222222` są powszechne w środowiskach staging.
+  Wyłącz tryb ścisły gdy potrzebujesz akceptować dane testowe lub syntetyczne — fikcyjne numery jak `22222222222` są typowe w środowiskach typu staging.
 </Aside>
 
 ## Ograniczenia PESEL
 
-`PeselRule` obsługuje dodatkowe ograniczenia sprawdzane po pomyślnej walidacji strukturalnej numeru.
+`PeselRule` obsługuje dodatkowe ograniczenia weryfikowane po przejściu podstawowej walidacji.
 
 ### Płeć
 
@@ -149,7 +149,7 @@ new PeselRule(
 )
 ```
 
-## Źródło
+## Linki
 
 - GitHub: [github.com/Sqrcz/numerik-laravel](https://github.com/Sqrcz/numerik-laravel)
 - Packagist: [packagist.org/packages/slashlab/numerik-laravel](https://packagist.org/packages/slashlab/numerik-laravel)

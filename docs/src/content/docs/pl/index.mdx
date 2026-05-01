@@ -3,7 +3,7 @@ title: Numerik
 description: Nowoczesna biblioteka PHP 8.3+ do walidacji i parsowania polskich numerów identyfikacyjnych — PESEL, NIP, REGON i KRS.
 template: splash
 hero:
-  tagline: Waliduj i parsuj polskie numery identyfikacyjne z bogatymi obiektami wartości i szczegółowymi powodami błędów.
+  tagline: Walidacja i parsowanie polskich numerów identyfikacyjnych (PESEL, NIP, REGON, KRS). Zwraca czytelne obiekty danych i precyzyjnie wskazuje przyczyny błędów.
   actions:
     - text: Pierwsze kroki
       link: /pl/getting-started/
@@ -19,7 +19,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 ## Przegląd
 
-Numerik to biblioteka PHP 8.3+ bez zewnętrznych zależności produkcyjnych. Walidacja mówi *dlaczego* wejście jest nieprawidłowe, nie tylko *że* jest nieprawidłowe.
+**Numerik** to biblioteka PHP 8.3+ bez zewnętrznych zależności produkcyjnych. Dzięki niej dowiesz się nie tylko czy podany numer jest błędny, ale przede wszystkim dlaczego.
 
 <CardGrid stagger>
   <Card title="PESEL" icon="approve-check">
@@ -29,7 +29,7 @@ Numerik to biblioteka PHP 8.3+ bez zewnętrznych zależności produkcyjnych. Wal
     Waliduje numery identyfikacji podatkowej osób fizycznych i prawnych. Zwraca kod urzędu skarbowego i sformatowaną postać wyświetlaną.
   </Card>
   <Card title="REGON" icon="approve-check">
-    Obsługuje zarówno 9-cyfrowe (podmiot indywidualny) jak i 14-cyfrowe (jednostka lokalna) numery REGON, włącznie z wieloetapową walidacją sumy kontrolnej.
+    Obsługuje zarówno 9-cyfrowy REGON podmiotu, jak i 14-cyfrowy REGON jednostki lokalnej — z pełną walidacją sum kontrolnych dla obu wariantów.
   </Card>
   <Card title="KRS" icon="approve-check">
     Waliduje numery rejestru sądowego z automatyczną normalizacją zer wiodących. Dokumentuje ograniczenie weryfikacji offline kontra online.
@@ -63,9 +63,10 @@ $pesel->isAdult();                          // true
 
 ## Kluczowe właściwości
 
-- **Zero zewnętrznych zależności produkcyjnych** — `require` tylko `php: ^8.3`.
+- **Zero zewnętrznych zależności produkcyjnych** — wymaga jedynie `php: ^8.3`.
 - **Niemutowalne obiekty wartości** — wszystkie obiekty wartości to klasy `readonly`.
 - **Ścisłe typy wszędzie** — `declare(strict_types=1)` w każdym pliku.
 - **Bogate powody błędów** — enum `ValidationFailureReason` obejmuje błędy formatu, sumy kontrolnej, zakodowanej daty i semantyczne.
-- **Bez wyrażeń regularnych** w logice walidacji — wszystkie sprawdzenia to operacje na tablicach cyfr, bezpieczne przed atakami ReDoS.
-- **Ochrona przed długimi wejściami** — wejścia dłuższe niż 32 znaki są natychmiast odrzucane.
+- **Bez wyrażeń regularnych** — walidacja oparta na operacjach tablicowych, co eliminuje podatność na ataki ReDoS.
+- **Wczesne odrzucanie nieprawidłowych wejść** — ciągi dłuższe niż 32 znaki są od razu odrzucane, bez zbędnych obliczeń.
+- **Łatwe do zrozumienia API** — intuicyjne metody `isValid()`, `validate()` i `parse()` z jasnymi kontraktami.

@@ -5,10 +5,10 @@ description: Waliduj i parsuj polskie numery rejestru sądowego KRS w Numeriku.
 
 import { Aside } from '@astrojs/starlight/components';
 
-KRS (*Krajowy Rejestr Sądowy*) to numer rejestru sądowego nadawany podmiotom prawnym w Polsce. Jest to 10-cyfrowy sekwencyjny numer rejestru.
+KRS (*Krajowy Rejestr Sądowy*) to sekwencyjny numer nadawany podmiotom prawnym przy wpisie do rejestru. Składa się z maksymalnie 10 cyfr.
 
 <Aside type="caution" title="Ograniczenie walidacji offline">
-KRS nie posiada publicznie udokumentowanego algorytmu sumy kontrolnej. Numerik waliduje **wyłącznie format i strukturę** — nie może zweryfikować, czy dany numer KRS jest rzeczywiście przypisany w rejestrze. W celu autorytatywnej weryfikacji skorzystaj z oficjalnego [API rejestru KRS](https://prs.ms.gov.pl/krs/openApi).
+KRS nie ma publicznie udokumentowanego algorytmu sumy kontrolnej. Numerik sprawdza **wyłącznie format i strukturę** — nie może zweryfikować, czy dany numer jest rzeczywiście przypisany w rejestrze. Żeby to sprawdzić, skorzystaj z oficjalnego [API rejestru KRS](https://prs.ms.gov.pl/krs/openApi).
 </Aside>
 
 ## Użycie
@@ -19,7 +19,7 @@ use SlashLab\Numerik\Numerik;
 // Boolowskie
 Numerik::krs()->isValid('0000127206');   // true
 
-// Numery bez zer wiodących są akceptowane i normalizowane
+// Zera wiodące nie są wymagane — numer zostanie dopełniony przy formatowaniu
 Numerik::krs()->isValid('127206');       // true
 
 // Bogaty wynik
@@ -30,7 +30,7 @@ $result->isValid;   // true
 $krs = Numerik::krs()->parse('0000127206');
 
 // Null przy niepowodzeniu zamiast wyjątku
-$krs = Numerik::krs()->tryParse('złe-wejście'); // null
+$krs = Numerik::krs()->tryParse('zły-numer'); // null
 ```
 
 ## API obiektu wartości
@@ -39,18 +39,18 @@ $krs = Numerik::krs()->tryParse('złe-wejście'); // null
 
 ### Podstawowe
 
-| Metoda | Typ zwracany | Opis |
-|--------|-------------|------|
-| `getRaw()` | `string` | Oryginalne wejście, bez zmian. |
-| `getNormalized()` | `string` | Surowe cyfry tak jak podane (bez dodatkowego dopełniania). |
-| `__toString()` | `string` | To samo co `getNormalized()`. |
+| Metoda            | Typ zwracany | Opis                                               |
+| ----------------- | ------------ | -------------------------------------------------- |
+| `getRaw()`        | `string`     | Oryginalny numer, bez zmian.                       |
+| `getNormalized()` | `string`     | Same cyfry tak jak podane, bez dopełniania zerami. |
+| `__toString()`    | `string`     | To samo co `getNormalized()`.                      |
 
 ### Formatowanie i metadane
 
-| Metoda | Typ zwracany | Opis |
-|--------|-------------|------|
-| `getFormatted()` | `string` | Dopełniony zerami do 10 cyfr, np. `0000127206`. |
-| `getNumericValue()` | `int` | Numeryczna wartość całkowita numeru KRS. |
+| Metoda              | Typ zwracany | Opis                                                  |
+| ------------------- | ------------ | ----------------------------------------------------- |
+| `getFormatted()`    | `string`     | Numer dopełniony zerami do 10 cyfr, np. `0000127206`. |
+| `getNumericValue()` | `int`        | Numeryczna wartość całkowita numeru KRS.              |
 
 ## Przykłady
 
@@ -62,7 +62,7 @@ $krs->getNormalized();    // '0000127206'
 $krs->getFormatted();     // '0000127206'
 $krs->getNumericValue();  // 127206
 
-// Skrócona forma — zera wiodące nie są wymagane na wejściu
+// Zera wiodące nie są wymagane na wejściu
 $krs = Numerik::krs()->parse('127206');
 
 $krs->getRaw();           // '127206'
@@ -73,20 +73,20 @@ $krs->getNumericValue();  // 127206
 
 ## Algorytm walidacji
 
-KRS to sekwencyjny numer rejestru bez sumy kontrolnej. Walidacja jest wyłącznie strukturalna:
+KRS to numer sekwencyjny bez sumy kontrolnej. Walidacja jest wyłącznie strukturalna:
 
 1. Usuń spacje. Wymagaj od 1 do 10 cyfr.
 2. Sprawdź, że wszystkie pozostałe znaki są cyframi.
 3. Sprawdź, że wartość numeryczna nie wynosi zero.
-4. W trybie ścisłym dopełnij do 10 cyfr zerami i odrzuć wejścia, w których wszystkie cyfry są identyczne; zwróć błąd `AllSameDigit`.
+4. W trybie ścisłym: dopełnij do 10 cyfr zerami i odrzuć wejścia z identycznymi cyframi — błąd `AllSameDigit`.
 
-Numer, który przechodzi te sprawdzenia, jest **strukturalnie prawidłowy** — odpowiada formatowi KRS. Może, ale nie musi być faktycznie zarejestrowanym podmiotem.
+Numer, który przechodzi te sprawdzenia, jest **strukturalnie prawidłowy** — odpowiada formatowi KRS, ale nie gwarantuje, że podmiot o takim numerze istnieje w rejestrze.
 
 ## Powody błędów
 
-| Powód | Wartość | Kiedy |
-|-------|---------|-------|
-| `InvalidLength` | `invalid_length` | Wejście ma więcej niż 10 cyfr po normalizacji. |
-| `InvalidCharacters` | `invalid_characters` | Znaki niebędące cyframi pozostają po usunięciu białych znaków. |
-| `AllZeros` | `all_zeros` | Wszystkie cyfry to zera — wartość numeryczna wynosi 0, co nie jest prawidłowym numerem rejestru. |
-| `AllSameDigit` | `all_same_digit` | Wszystkie 10 cyfr jest identycznych — tylko tryb ścisły. |
+| Powód               | Wartość              | Warunek                                                              |
+| ------------------- | -------------------- | -------------------------------------------------------------------- |
+| `InvalidLength`     | `invalid_length`     | Numer ma więcej niż 10 cyfr po normalizacji.                         |
+| `InvalidCharacters` | `invalid_characters` | Po usunięciu białych znaków pozostały znaki niebędące cyframi.       |
+| `AllZeros`          | `all_zeros`          | Wartość numeryczna wynosi 0 — nie jest prawidłowym numerem rejestru. |
+| `AllSameDigit`      | `all_same_digit`     | Wszystkie 10 cyfr jest identycznych — tylko w trybie ścisłym.        |
