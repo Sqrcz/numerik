@@ -12,22 +12,22 @@ REGON (*Rejestr Gospodarki Narodowej*) to identyfikator podmiotów w polskim rej
 ```php
 use SlashLab\Numerik\Numerik;
 
-// Boolowskie
+// Szybkie sprawdzenie
 Numerik::regon()->isValid('850518457');      // true (9-cyfrowy)
 Numerik::regon()->isValid('85051845749370'); // true (14-cyfrowy)
 
-// Bogaty wynik
+// Pełny obiekt z danymi
 $result = Numerik::regon()->validate('850518457');
 $result->isValid;   // true
 
-// Parsowanie do obiektu wartości
+// Parsowanie do obiektu z danymi
 $regon = Numerik::regon()->parse('850518457');
 
-// Null przy niepowodzeniu zamiast wyjątku
+// Null zamiast wyjątku
 $regon = Numerik::regon()->tryParse('zły-numer'); // null
 ```
 
-## API obiektu wartości
+## Metody zwracanego obiektu
 
 `parse()` i `tryParse()` zwracają instancję `SlashLab\Numerik\ValueObjects\Regon`.
 

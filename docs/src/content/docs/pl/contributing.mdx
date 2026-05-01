@@ -48,14 +48,14 @@ Uruchom `composer check` przed otwarciem PR, aby wykryć wszystkie problemy loka
 
 Dodanie nowego identyfikatora (np. Dowód Osobisty, IBAN PL) wymaga zmian w kilku miejscach:
 
-- [ ] Utwórz `src/ValueObjects/NewIdentifier.php` (klasa readonly implementująca `IdentifierInterface`)
-- [ ] Utwórz `src/Identifiers/NewIdentifierIdentifier.php` (implementuje `ValidatorInterface` i `ParserInterface`; przyjmuje `bool $strict = true`)
-- [ ] Dodaj nowe przypadki `ValidationFailureReason` jeśli identyfikator wprowadza nowe typy błędów
-- [ ] Dodaj metodę fabryczną do `src/Numerik.php` (`Numerik::newIdentifier(bool $strict = true)`)
-- [ ] Dodaj `tests/Fixtures/NewIdentifierFixtures.php` z metodami statycznymi `::valid()` i `::invalid()`
-- [ ] Dodaj testy jednostkowe walidatora, parsera i obiektu wartości
-- [ ] Dodaj stronę identyfikatora w `docs/src/content/docs/identifiers/` i `docs/src/content/docs/pl/identifiers/`
-- [ ] Zaktualizuj `CHANGELOG.md`
+- Utwórz `src/ValueObjects/NewIdentifier.php` (klasa readonly implementująca `IdentifierInterface`)
+- Utwórz `src/Identifiers/NewIdentifierIdentifier.php` (implementuje `ValidatorInterface` i `ParserInterface`; przyjmuje `bool $strict = true`)
+- Dodaj nowe przypadki `ValidationFailureReason` jeśli identyfikator wprowadza nowe typy błędów
+- Dodaj metodę fabryczną do `src/Numerik.php` (`Numerik::newIdentifier(bool $strict = true)`)
+- Dodaj `tests/Fixtures/NewIdentifierFixtures.php` z metodami statycznymi `::valid()` i `::invalid()`
+- Dodaj testy jednostkowe walidatora, parsera i obiektu wartości
+- Dodaj stronę identyfikatora w `docs/src/content/docs/identifiers/` i `docs/src/content/docs/pl/identifiers/`
+- Zaktualizuj `CHANGELOG.md`
 
 ## Styl commitów
 
@@ -77,7 +77,7 @@ chore: update PHPStan to 2.x
 4. Otwórz PR względem `main` i wypełnij szablon.
 
 <Aside type="note">
-PR-y przechodzą przez reguły ochrony gałęzi `main` — CI musi przejść przed scaleniem.
+`main` odrzuca bezpośrednie zmiany, wszystko musi przejść przez dedykowane gałęzie. PR-y przechodzą przez reguły ochrony gałęzi, CI musi zakończyć się sukcesem przed scaleniem.
 </Aside>
 
 ## Zgłaszanie błędu

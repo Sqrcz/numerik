@@ -47,7 +47,7 @@ Numerik::regon()->isValid('691761365');    // true
 Numerik::krs()->isValid('0000127206');     // true
 ```
 
-### Bogaty wynik walidacji
+### Szczegółowa walidacja
 
 `validate()` nigdy nie rzuca wyjątku — zwraca `ValidationResult` z listą błędów, jeśli numer okazał się nieprawidłowy.
 
@@ -66,7 +66,7 @@ $result->getFirstFailure()->message;        // komunikat czytelny dla człowieka
 
 Zobacz [Wyniki walidacji](/pl/guide/validation-results/) aby poznać pełne API.
 
-### Parsowanie do obiektu wartości
+### Pełny obiekt z danymi
 
 `parse()` zwraca obiekt wartości lub — jeśli numer jest nieprawidłowy — rzuca `ValidationException`.
 
