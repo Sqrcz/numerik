@@ -12,21 +12,21 @@ PESEL (*Powszechny Elektroniczny System Ewidencji Ludności*) to 11-cyfrowy nume
 ```php
 use SlashLab\Numerik\Numerik;
 
-// Boolowskie
+// Szybkie sprawdzenie
 Numerik::pesel()->isValid('92060512186');   // true
 
-// Bogaty wynik
+// Pełny obiekt z danymi
 $result = Numerik::pesel()->validate('92060512186');
 $result->isValid;   // true
 
-// Parsowanie do obiektu wartości
+// Parsowanie do obiektu z danymi
 $pesel = Numerik::pesel()->parse('92060512186');
 
-// Null przy niepowodzeniu zamiast wyjątku
+// Null zamiast wyjątku
 $pesel = Numerik::pesel()->tryParse('zły-numer'); // null
 ```
 
-## API obiektu wartości
+## Metody zwracanego obiektu
 
 `parse()` i `tryParse()` zwracają instancję `SlashLab\Numerik\ValueObjects\Pesel`.
 
@@ -38,7 +38,7 @@ $pesel = Numerik::pesel()->tryParse('zły-numer'); // null
 | `getNormalized()` | `string`     | Cyfry po usunięciu białych znaków. |
 | `__toString()`    | `string`     | To samo co `getNormalized()`.      |
 
-### Wyodrębnione dane
+### Zwracające dane
 
 | Metoda               | Typ zwracany        | Opis                                                            |
 | -------------------- | ------------------- | --------------------------------------------------------------- |
@@ -47,7 +47,7 @@ $pesel = Numerik::pesel()->tryParse('zły-numer'); // null
 | `getOrdinalNumber()` | `int`               | Numer porządkowy (cyfry 7–10).                                  |
 | `getCentury()`       | `int`               | Stulecie urodzenia jako rok bazowy, np. `1900`, `2000`, `2100`. |
 
-### Narzędziowe
+### Sprawdzające
 
 | Metoda       | Typ zwracany | Opis                                        |
 | ------------ | ------------ | ------------------------------------------- |

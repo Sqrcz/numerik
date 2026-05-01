@@ -10,17 +10,17 @@ NIP (*Numer Identyfikacji Podatkowej*) to 10-cyfrowy numer używany przez osoby 
 ```php
 use SlashLab\Numerik\Numerik;
 
-// Boolowskie
+// Szybkie sprawdzenie
 Numerik::nip()->isValid('5260250274');   // true
 
-// Bogaty wynik
+// Pełny obiekt z danymi
 $result = Numerik::nip()->validate('5260250274');
 $result->isValid;   // true
 
-// Parsowanie do obiektu wartości
+// Parsowanie do obiektu z danymi
 $nip = Numerik::nip()->parse('5260250274');
 
-// Null przy niepowodzeniu zamiast wyjątku
+// Null zamiast wyjątku
 $nip = Numerik::nip()->tryParse('zły-numer'); // null
 ```
 
@@ -31,7 +31,7 @@ Numerik::nip()->isValid('526-025-02-74');   // true
 Numerik::nip()->isValid('526 025 02 74');   // true
 ```
 
-## API obiektu wartości
+## Metody zwracanego obiektu
 
 `parse()` i `tryParse()` zwracają instancję `SlashLab\Numerik\ValueObjects\Nip`.
 

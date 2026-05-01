@@ -16,24 +16,24 @@ KRS nie ma publicznie udokumentowanego algorytmu sumy kontrolnej. Numerik sprawd
 ```php
 use SlashLab\Numerik\Numerik;
 
-// Boolowskie
+// Szybkie sprawdzenie
 Numerik::krs()->isValid('0000127206');   // true
 
 // Zera wiodące nie są wymagane — numer zostanie dopełniony przy formatowaniu
 Numerik::krs()->isValid('127206');       // true
 
-// Bogaty wynik
+// Pełny obiekt z danymi
 $result = Numerik::krs()->validate('0000127206');
 $result->isValid;   // true
 
-// Parsowanie do obiektu wartości
+// Parsowanie do obiektu z danymi
 $krs = Numerik::krs()->parse('0000127206');
 
-// Null przy niepowodzeniu zamiast wyjątku
+// Null zamiast wyjątku
 $krs = Numerik::krs()->tryParse('zły-numer'); // null
 ```
 
-## API obiektu wartości
+## Metody zwracanego obiektu
 
 `parse()` i `tryParse()` zwracają instancję `SlashLab\Numerik\ValueObjects\Krs`.
 
