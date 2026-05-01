@@ -5,10 +5,7 @@ description: Waliduj i parsuj polskie numery REGON — zarówno 9-cyfrowe jak i 
 
 import { Aside } from '@astrojs/starlight/components';
 
-REGON (*Rejestr Gospodarki Narodowej*) to identyfikator podmiotów w polskim rejestrze gospodarczym. Występuje w dwóch formach:
-
-- **9 cyfr** — dla podmiotów indywidualnych (osoby fizyczne prowadzące działalność).
-- **14 cyfr** — dla podmiotów prawnych z jednostkami lokalnymi (pierwsze 9 cyfr to bazowy REGON, ostatnie 5 identyfikuje jednostkę lokalną).
+REGON (*Rejestr Gospodarki Narodowej*) to identyfikator podmiotów w polskim rejestrze gospodarczym. Występuje w dwóch formach: **9-cyfrowej** dla podmiotów indywidualnych oraz **14-cyfrowej** dla podmiotów prawnych z jednostkami lokalnymi — gdzie pierwsze 9 cyfr to bazowy REGON, a ostatnie 5 identyfikuje jednostkę lokalną.
 
 ## Użycie
 
@@ -27,7 +24,7 @@ $result->isValid;   // true
 $regon = Numerik::regon()->parse('850518457');
 
 // Null przy niepowodzeniu zamiast wyjątku
-$regon = Numerik::regon()->tryParse('złe-wejście'); // null
+$regon = Numerik::regon()->tryParse('zły-numer'); // null
 ```
 
 ## API obiektu wartości
@@ -36,20 +33,20 @@ $regon = Numerik::regon()->tryParse('złe-wejście'); // null
 
 ### Podstawowe
 
-| Metoda | Typ zwracany | Opis |
-|--------|-------------|------|
-| `getRaw()` | `string` | Oryginalne wejście, bez zmian. |
-| `getNormalized()` | `string` | Cyfry po usunięciu białych znaków. |
-| `__toString()` | `string` | To samo co `getNormalized()`. |
+| Metoda            | Typ zwracany | Opis                               |
+| ----------------- | ------------ | ---------------------------------- |
+| `getRaw()`        | `string`     | Oryginalny numer, bez zmian.       |
+| `getNormalized()` | `string`     | Cyfry po usunięciu białych znaków. |
+| `__toString()`    | `string`     | To samo co `getNormalized()`.      |
 
 ### Typ i struktura
 
-| Metoda | Typ zwracany | Opis |
-|--------|-------------|------|
-| `getType()` | `RegonType` | `RegonType::Individual` (9-cyfrowy) lub `RegonType::LegalEntity` (14-cyfrowy). |
-| `getBaseRegon()` | `string` | Pierwsze 9 cyfr — zawsze obecne dla obu typów. |
-| `getLocalUnitSuffix()` | `string\|null` | Ostatnie 5 cyfr dla numerów 14-cyfrowych; `null` dla 9-cyfrowych. |
-| `isLocalUnit()` | `bool` | `true` dla 14-cyfrowych (podmiot prawny z jednostką lokalną). |
+| Metoda                 | Typ zwracany   | Opis                                                                           |
+| ---------------------- | -------------- | ------------------------------------------------------------------------------ |
+| `getType()`            | `RegonType`    | `RegonType::Individual` (9-cyfrowy) lub `RegonType::LegalEntity` (14-cyfrowy). |
+| `getBaseRegon()`       | `string`       | Pierwsze 9 cyfr — obecne w obu wariantach.                                     |
+| `getLocalUnitSuffix()` | `string\|null` | Ostatnie 5 cyfr dla numerów 14-cyfrowych; `null` dla 9-cyfrowych.              |
+| `isLocalUnit()`        | `bool`         | `true` dla numerów 14-cyfrowych.                                               |
 
 ## Przykłady
 
@@ -73,11 +70,11 @@ $regon->isLocalUnit();         // true
 
 ## Powody błędów
 
-| Powód | Wartość | Kiedy |
-|-------|---------|-------|
-| `InvalidLength` | `invalid_length` | Wejście nie ma dokładnie 9 lub 14 cyfr po normalizacji. |
-| `InvalidCharacters` | `invalid_characters` | Znaki niebędące cyframi pozostają po usunięciu białych znaków. |
-| `InvalidChecksum` | `invalid_checksum` | Cyfra kontrolna nie zgadza się. Dla 14-cyfrowych może dotyczyć bazowego sprawdzenia 9-cyfrowego lub pełnego 14-cyfrowego. |
+| Powód               | Wartość              | Warunek                                                                                                                            |
+| ------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `InvalidLength`     | `invalid_length`     | Numer nie ma dokładnie 9 lub 14 cyfr po normalizacji.                                                                              |
+| `InvalidCharacters` | `invalid_characters` | Po usunięciu białych znaków pozostały znaki niebędące cyframi.                                                                     |
+| `InvalidChecksum`   | `invalid_checksum`   | Cyfra kontrolna nie zgadza się. W przypadku numeru 14-cyfrowego błąd może dotyczyć weryfikacji bazowych 9 cyfr lub pełnego numeru. |
 
 ## Algorytm walidacji
 
@@ -85,13 +82,15 @@ $regon->isLocalUnit();         // true
 
 **Wagi 14-cyfrowe:** `2, 4, 8, 5, 0, 9, 7, 3, 6, 1, 2, 4, 8`
 
-**Walidacja 9-cyfrowa:**
+### Walidacja 9-cyfrowa
+
 1. Usuń białe znaki. Wymagaj dokładnie 9 cyfr.
-2. Pomnóż pierwsze 8 cyfr przez wagi 9-cyfrowe, zsumuj, oblicz `mod 11`. Jeśli wynik to `10`, cyfra kontrolna musi wynosić `0`. W przeciwnym razie wynik musi być równy cyfrze 9.
+2. Pomnóż pierwsze 8 cyfr przez wagi i zsumuj. Oblicz `mod 11`. Jeśli wynik to `10`, cyfra kontrolna musi wynosić `0` — w przeciwnym razie wynik musi być równy 9. cyfrze.
 
-**Walidacja 14-cyfrowa:**
+### Walidacja 14-cyfrowa
+
 1. Usuń białe znaki. Wymagaj dokładnie 14 cyfr.
-2. Zwaliduj pierwsze 9 cyfr jako samodzielny 9-cyfrowy REGON.
-3. Pomnóż wszystkie 13 znaczących cyfr przez wagi 14-cyfrowe, zsumuj, oblicz `mod 11`. Jeśli wynik to `10`, cyfra kontrolna musi wynosić `0`. W przeciwnym razie wynik musi być równy cyfrze 14.
+2. Sprawdź pierwsze 9 cyfr jako samodzielny REGON-9 (patrz wyżej).
+3. Pomnóż pierwsze 13 cyfr przez wagi 14-cyfrowe i zsumuj. Oblicz `mod 11`. Jeśli wynik to `10`, cyfra 14 musi wynosić `0` — w przeciwnym razie wynik musi być równy 14. cyfrze.
 
-Zobacz [Algorytmy](/pl/guide/algorithms/) po pełną dokumentację.
+Pełna dokumentacja w sekcji [Algorytmy](/pl/guide/algorithms/).

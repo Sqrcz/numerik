@@ -3,7 +3,7 @@ title: NIP
 description: Waliduj i parsuj polskie numery identyfikacji podatkowej NIP w Numeriku.
 ---
 
-NIP (*Numer Identyfikacji Podatkowej*) to 10-cyfrowy numer identyfikacji podatkowej używany przez osoby fizyczne i prawne w Polsce.
+NIP (*Numer Identyfikacji Podatkowej*) to 10-cyfrowy numer używany przez osoby fizyczne i prawne do identyfikacji podatkowej w Polsce.
 
 ## Użycie
 
@@ -21,10 +21,10 @@ $result->isValid;   // true
 $nip = Numerik::nip()->parse('5260250274');
 
 // Null przy niepowodzeniu zamiast wyjątku
-$nip = Numerik::nip()->tryParse('złe-wejście'); // null
+$nip = Numerik::nip()->tryParse('zły-numer'); // null
 ```
 
-NIP akceptuje myślniki i spacje jako separatory wejścia:
+Myślniki i spacje są akceptowane jako separatory:
 
 ```php
 Numerik::nip()->isValid('526-025-02-74');   // true
@@ -37,19 +37,19 @@ Numerik::nip()->isValid('526 025 02 74');   // true
 
 ### Podstawowe
 
-| Metoda | Typ zwracany | Opis |
-|--------|-------------|------|
-| `getRaw()` | `string` | Oryginalne wejście, bez zmian. |
-| `getNormalized()` | `string` | 10 surowych cyfr (myślniki i spacje usunięte). |
-| `__toString()` | `string` | To samo co `getNormalized()`. |
+| Metoda            | Typ zwracany | Opis                                        |
+| ----------------- | ------------ | ------------------------------------------- |
+| `getRaw()`        | `string`     | Oryginalny numer, bez zmian.                |
+| `getNormalized()` | `string`     | Same cyfry po usunięciu myślników i spacji. |
+| `__toString()`    | `string`     | To samo co `getNormalized()`.               |
 
 ### Formatowanie i metadane
 
-| Metoda | Typ zwracany | Opis |
-|--------|-------------|------|
-| `getFormatted()` | `string` | Kanoniczna postać wyświetlana `NNN-NNN-NN-NN`. |
-| `getFormattedAlternative()` | `string` | Alternatywna postać `NNN-NN-NN-NNN` używana przez niektóre dokumenty podmiotów prawnych. |
-| `getTaxOfficeCode()` | `string` | Pierwsze 3 cyfry — wskazuje wystawiający urząd skarbowy. |
+| Metoda                      | Typ zwracany | Opis                                                     |
+| --------------------------- | ------------ | -------------------------------------------------------- |
+| `getFormatted()`            | `string`     | Domyślnie używany format `NNN-NNN-NN-NN`.                |
+| `getFormattedAlternative()` | `string`     | Alternatywna postać `NNN-NN-NN-NNN`.                     |
+| `getTaxOfficeCode()`        | `string`     | Pierwsze 3 cyfry — kod wystawiającego urzędu skarbowego. |
 
 ## Przykłady
 
@@ -62,7 +62,7 @@ $nip->getFormatted();                 // '526-025-02-74'
 $nip->getFormattedAlternative();      // '526-02-50-274'
 $nip->getTaxOfficeCode();             // '526'
 
-// Z sformatowanym wejściem
+// Ze sformatowanym numerem wejściowym
 $nip = Numerik::nip()->parse('526-025-02-74');
 $nip->getRaw();            // '526-025-02-74'
 $nip->getNormalized();     // '5260250274'
@@ -70,13 +70,13 @@ $nip->getNormalized();     // '5260250274'
 
 ## Powody błędów
 
-| Powód | Wartość | Kiedy |
-|-------|---------|-------|
-| `InvalidLength` | `invalid_length` | Wejście nie ma dokładnie 10 cyfr po usunięciu separatorów. |
-| `InvalidCharacters` | `invalid_characters` | Obecne są znaki inne niż cyfry, myślniki i spacje. |
-| `InvalidFormat` | `invalid_format` | Pierwsze 3 cyfry to `000` (żaden prawidłowy urząd skarbowy nie ma kodu 000). |
-| `InvalidChecksum` | `invalid_checksum` | Cyfra kontrolna nie zgadza się. |
-| `AllSameDigit` | `all_same_digit` | Wszystkie cyfry są identyczne — tylko tryb ścisły. |
+| Powód               | Wartość              | Warunek                                                               |
+| ------------------- | -------------------- | --------------------------------------------------------------------- |
+| `InvalidLength`     | `invalid_length`     | Numer nie ma dokładnie 10 cyfr po usunięciu separatorów.              |
+| `InvalidCharacters` | `invalid_characters` | Obecne są znaki inne niż cyfry, myślniki i spacje.                    |
+| `InvalidFormat`     | `invalid_format`     | Pierwsze 3 cyfry to `000` — żaden urząd skarbowy nie ma takiego kodu. |
+| `InvalidChecksum`   | `invalid_checksum`   | Cyfra kontrolna się nie zgadza.                                       |
+| `AllSameDigit`      | `all_same_digit`     | Wszystkie cyfry są identyczne — tylko w trybie ścisłym.               |
 
 ## Algorytm walidacji
 
@@ -84,6 +84,6 @@ Wagi: `6, 5, 7, 2, 3, 4, 5, 6, 7`
 
 1. Usuń myślniki i spacje. Wymagaj dokładnie 10 cyfr.
 2. Sprawdź, że pierwsze 3 cyfry to nie `000`.
-3. Pomnóż każdą z pierwszych 9 cyfr przez jej wagę, zsumuj, oblicz `mod 11`. Wynik musi być równy cyfrze 10; ponieważ pojedyncza cyfra może przyjmować tylko wartości 0–9, wynik modulo równy `10` nigdy nie pasuje i zawsze kończy się błędem `InvalidChecksum`.
+3. Pomnóż każdą z pierwszych 9 cyfr przez jej wagę i zsumuj. Oblicz `mod 11`. Wynik musi być równy dziesiątej cyfrze. Wynik równy `10` jest niemożliwy do zakodowania jako pojedyncza cyfra — każdy taki numer oznacza błąd `InvalidChecksum`.
 
-Zobacz [Algorytmy](/pl/guide/algorithms/) po pełną dokumentację.
+Pełna dokumentacja w sekcji [Algorytmy](/pl/guide/algorithms/).

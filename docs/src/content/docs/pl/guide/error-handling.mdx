@@ -5,15 +5,15 @@ description: Jak Numerik używa wyjątków. Hierarchia ValidationException i kie
 
 import { Aside } from '@astrojs/starlight/components';
 
-- `isValid()` i `validate()` nigdy nie rzucają wyjątków — zawsze zwracają wartość.
-- `parse()` rzuca podklasę `ValidationException` przy nieprawidłowym wejściu.
-- `tryParse()` nigdy nie rzuca wyjątków — zwraca `null` przy niepowodzeniu.
+- `isValid()` i `validate()` nigdy nie rzucają wyjątków - zawsze zwracają wartość.
+- `parse()` dla nieprawidłowych danych rzuca wyjątek `ValidationException` z konkretnym powodem błędu.
+- `tryParse()` dla nieprawidłowych danych zwraca `null`.
 
-Wszystkie trzy metody są dostępne na tej samej klasie identyfikatora (np. `PeselIdentifier`).
+Wszystkie cztery metody są dostępne w każdej z klas identyfikatora.
 
 ## Hierarchia wyjątków
 
-Wszystkie wyjątki rozszerzają `SlashLab\Numerik\Exceptions\ValidationException`, która sama rozszerza `\RuntimeException`.
+Wszystkie wyjątki dziedziczą po `SlashLab\Numerik\Exceptions\ValidationException`, która dziedziczy po `\RuntimeException`.
 
 ```
 \RuntimeException
@@ -25,13 +25,13 @@ Wszystkie wyjątki rozszerzają `SlashLab\Numerik\Exceptions\ValidationException
 
 Wszystkie klasy wyjątków znajdują się w przestrzeni nazw `SlashLab\Numerik\Exceptions`.
 
-## Kiedy każdy wyjątek jest rzucany
+## Kiedy pojawia się każdy wyjątek
 
-| Wyjątek | Rzucany gdy |
-|---------|-------------|
-| `InvalidFormatException` | Długość wejścia jest nieprawidłowa, obecne są nieoczekiwane znaki lub naruszono regułę strukturalną (np. kod urzędu skarbowego NIP `000`). |
-| `InvalidChecksumException` | Cyfra kontrolna nie zgadza się z obliczoną wartością. |
-| `InvalidDateException` | Data zakodowana wewnątrz PESEL jest niemożliwa (nieprawidłowy miesiąc, nieistniejąca data kalendarzowa lub data urodzenia w przyszłości). |
+| Wyjątek                    | Warunek                                                                                                                            |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `InvalidFormatException`   | Nieprawidłowa długość, niedozwolone znaki lub naruszenie reguły strukturalnej (np. kod urzędu skarbowego NIP `000`).               |
+| `InvalidChecksumException` | Cyfra kontrolna nie zgadza się z obliczoną wartością.                                                                              |
+| `InvalidDateException`     | Data zakodowana w PESEL jest niemożliwa — nieprawidłowy miesiąc, nieistniejąca data kalendarzowa lub data urodzenia w przyszłości. |
 
 ## Przechwytywanie wyjątków
 
@@ -65,25 +65,21 @@ try {
 ## Wybór między parse() a validate()
 
 <Aside type="tip">
-Jeśli potrzebujesz tylko wiedzieć *czy* wejście jest prawidłowe — używaj `validate()` lub `isValid()`. Nigdy nie rzucają wyjątków i są bezpieczne do wywołania na dowolnym niezaufanym wejściu bez owijania w try/catch.
+Jeśli potrzebujesz tylko sprawdzić, czy numer jest prawidłowy — użyj `validate()` lub `isValid()`. Obie metody nigdy nie rzucają wyjątków i są bezpieczne do wywołania na dowolnych niezaufanych danych wejściowych bez owijania w try/catch.
 </Aside>
 
-Używaj `parse()` gdy:
-- Potrzebujesz wyodrębnionych danych z obiektu wartości.
-- Preferujesz przepływ sterowania oparty na wyjątkach (np. wewnątrz serwisu, który już ma blok catch).
+Użyj `parse()`, gdy potrzebujesz wyodrębnionych danych z numeru i wolisz obsługiwać błędy przez wyjątki — np. wewnątrz serwisu, który już ma blok catch.
 
-Używaj `tryParse()` gdy:
-- Potrzebujesz obiektu wartości, ale wolisz `null` zamiast wyjątku przy błędnym wejściu.
-- Jesteś w kontekście, gdzie rzucanie byłoby niewygodne (np. wewnątrz pętli lub potoku importu danych).
+Użyj `tryParse()`, gdy również potrzebujesz wyodrębnionych danych z numeru, ale zamiast wyjątku wolisz dostać `null` — przydatne w pętlach lub potokach importu danych.
 
 ```php
-// Oparty na wyjątkach — rzuca przy nieprawidłowym wejściu
+// Rzuca przy nieprawidłowym numerze
 $pesel = Numerik::pesel()->parse($input);
 
-// Oparty na null — zwraca null przy nieprawidłowym wejściu
+// Zwraca null przy nieprawidłowym numerze
 $pesel = Numerik::pesel()->tryParse($input);
 if ($pesel === null) {
-    // obsłuż nieprawidłowe wejście
+    // obsłuż nieprawidłowy numer
 }
 ```
 
@@ -103,4 +99,4 @@ Wyłącz tryb ścisły gdy przetwarzasz dane historyczne zawierające wartości 
 
 ## Ochrona przed długością wejścia
 
-Wszystkie metody identyfikatorów natychmiast odrzucają wejścia dłuższe niż **32 znaki**, zanim jakiekolwiek przetwarzanie się rozpocznie. Zapobiega to potencjalnym atakom DoS przez bardzo duże ciągi.
+Wszystkie metody natychmiast odrzucają wejścia dłuższe niż **32 znaki**, zanim jakiekolwiek przetwarzanie się rozpocznie — zabezpieczenie przed potencjalnymi atakami DoS przez bardzo duże ciągi.

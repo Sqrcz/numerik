@@ -5,7 +5,7 @@ description: Dokumentacja algorytmów sum kontrolnych używanych przez Numerik d
 
 import { Aside } from '@astrojs/starlight/components';
 
-Ta strona dokumentuje algorytmy sum kontrolnych i walidacji strukturalnej zaimplementowane w Numeriku. Cała walidacja opiera się na operacjach arytmetycznych na tablicach cyfr — nie są używane wyrażenia regularne.
+Algorytmy walidacji w Numeriku opierają się wyłącznie na arytmetyce tablicowej — bez wyrażeń regularnych.
 
 ## PESEL
 
@@ -13,40 +13,40 @@ Ta strona dokumentuje algorytmy sum kontrolnych i walidacji strukturalnej zaimpl
 
 ### Kroki
 
-1. Usuń białe znaki. Odrzuć wejścia dłuższe niż 32 znaki. Wymagaj dokładnie 11 cyfr; w przeciwnym razie zwróć błąd `InvalidLength`.
-2. Odrzuć znaki niebędące cyframi; zwróć błąd `InvalidCharacters`.
-3. Zdekoduj datę urodzenia używając poniższej tabeli kodowania stulecia. Zwróć błąd `InvalidMonth` jeśli zapisany miesiąc nie mieści się w żadnym znanym zakresie. Zwróć błąd `InvalidDate` jeśli zdekodowana data nie jest prawdziwą datą kalendarzową. W trybie ścisłym zwróć błąd `FutureDate` jeśli data urodzenia jest w przyszłości.
-4. Oblicz sumę kontrolną: pomnóż każdą z pierwszych 10 cyfr przez odpowiednią wagę i zsumuj wyniki. Oblicz `suma mod 10`, odejmij od `10`, oblicz `mod 10` ponownie. Wynik musi być równy cyfrze 11; w przeciwnym razie zwróć błąd `InvalidChecksum`.
-5. W trybie ścisłym odrzuć wejścia, w których wszystkie 11 cyfr jest identycznych; zwróć błąd `AllSameDigit`.
+1. Usuń białe znaki. Odrzuć wejścia dłuższe niż 32 znaki. Wymagaj dokładnie 11 cyfr — inaczej błąd `InvalidLength`.
+2. Odrzuć znaki niebędące cyframi — błąd `InvalidCharacters`.
+3. Zdekoduj datę urodzenia według poniższej tabeli kodowania stulecia. Jeśli zapisany miesiąc nie pasuje do żadnego zakresu — błąd `InvalidMonth`. Jeśli zdekodowana data nie istnieje w kalendarzu — błąd `InvalidDate`. W trybie ścisłym: data urodzenia w przyszłości zwraca błąd `FutureDate`.
+4. Oblicz sumę kontrolną: pomnóż każdą z pierwszych 10 cyfr przez odpowiednią wagę i zsumuj wyniki. Następnie: `suma mod 10` → `10 minus wynik` → `mod 10`. Otrzymana wartość musi zgadzać się z 11. cyfrą — inaczej błąd `InvalidChecksum`.
+5. W trybie ścisłym: jeśli wszystkie 11 cyfr jest identycznych — błąd `AllSameDigit`.
 
 ### Kodowanie stulecia
 
-Cyfry miesiąca w PESEL kodują zarówno rzeczywisty miesiąc urodzenia jak i stulecie, dodając przesunięcie:
+Cyfry miesiąca w numerze PESEL kodują zarówno rzeczywisty miesiąc urodzenia, jak i stulecie — poprzez dodanie przesunięcia:
 
 | Zapisany zakres miesięcy | Rzeczywisty miesiąc | Stulecie urodzenia |
-|--------------------------|--------------------|--------------------|
-| 01 – 12 | 01 – 12 | 1900 – 1999 |
-| 21 – 32 | 01 – 12 | 2000 – 2099 |
-| 41 – 52 | 01 – 12 | 2100 – 2199 |
-| 61 – 72 | 01 – 12 | 2200 – 2299 |
-| 81 – 92 | 01 – 12 | 1800 – 1899 |
+| ------------------------ | ------------------- | ------------------ |
+| 01 – 12                  | 01 – 12             | 1900 – 1999        |
+| 21 – 32                  | 01 – 12             | 2000 – 2099        |
+| 41 – 52                  | 01 – 12             | 2100 – 2199        |
+| 61 – 72                  | 01 – 12             | 2200 – 2299        |
+| 81 – 92                  | 01 – 12             | 1800 – 1899        |
 
 ### Przykład obliczenia
 
-Wejście: `9 2 0 6 0 5 1 2 1 8 6`
+Numer: `9 2 0 6 0 5 1 2 1 8 6`
 
 | Pozycja | Cyfra | Waga | Iloczyn |
-|---------|-------|------|---------|
-| 1 | 9 | 1 | 9 |
-| 2 | 2 | 3 | 6 |
-| 3 | 0 | 7 | 0 |
-| 4 | 6 | 9 | 54 |
-| 5 | 0 | 1 | 0 |
-| 6 | 5 | 3 | 15 |
-| 7 | 1 | 7 | 7 |
-| 8 | 2 | 9 | 18 |
-| 9 | 1 | 1 | 1 |
-| 10 | 8 | 3 | 24 |
+| ------- | ----- | ---- | ------- |
+| 1       | 9     | 1    | 9       |
+| 2       | 2     | 3    | 6       |
+| 3       | 0     | 7    | 0       |
+| 4       | 6     | 9    | 54      |
+| 5       | 0     | 1    | 0       |
+| 6       | 5     | 3    | 15      |
+| 7       | 1     | 7    | 7       |
+| 8       | 2     | 9    | 18      |
+| 9       | 1     | 1    | 1       |
+| 10      | 8     | 3    | 24      |
 
 Suma = 9 + 6 + 0 + 54 + 0 + 15 + 7 + 18 + 1 + 24 = **134**
 
@@ -64,26 +64,26 @@ PESEL `92060512186` jest używany jako przykład w całej dokumentacji. Zakodowa
 
 ### Kroki
 
-1. Usuń myślniki i spacje. Odrzuć wejścia dłuższe niż 32 znaki. Wymagaj dokładnie 10 cyfr; w przeciwnym razie zwróć błąd `InvalidLength`.
-2. Odrzuć znaki niebędące cyframi; zwróć błąd `InvalidCharacters`.
-3. Sprawdź, że pierwsze 3 cyfry to nie `000`; w przeciwnym razie zwróć błąd `InvalidFormat`.
-4. Pomnóż każdą z pierwszych 9 cyfr przez jej wagę. Zsumuj iloczyny. Oblicz `suma mod 11`. Wynik musi być równy cyfrze 10; ponieważ pojedyncza cyfra może przyjmować tylko wartości 0–9, wynik modulo równy `10` nigdy nie pasuje i zawsze kończy się błędem `InvalidChecksum`.
+1. Usuń myślniki i spacje. Odrzuć wejścia dłuższe niż 32 znaki. Wymagaj dokładnie 10 cyfr — inaczej błąd `InvalidLength`.
+2. Odrzuć znaki niebędące cyframi — błąd `InvalidCharacters`.
+3. Pierwsze 3 cyfry nie mogą być `000` — inaczej błąd `InvalidFormat`.
+4. Pomnóż każdą z pierwszych 9 cyfr przez jej wagę i zsumuj iloczyny. Oblicz `suma mod 11`. Wynik musi być równy dziesiątej cyfrze. Uwaga: wynik równy `10` jest niemożliwy do zakodowania jako pojedyncza cyfra, więc każdy taki numer zawsze skutkuje błędem `InvalidChecksum`.
 
 ### Przykład obliczenia
 
-Wejście: `5 2 6 0 2 5 0 2 7 4`
+Numer: `5 2 6 0 2 5 0 2 7 4`
 
 | Pozycja | Cyfra | Waga | Iloczyn |
-|---------|-------|------|---------|
-| 1 | 5 | 6 | 30 |
-| 2 | 2 | 5 | 10 |
-| 3 | 6 | 7 | 42 |
-| 4 | 0 | 2 | 0 |
-| 5 | 2 | 3 | 6 |
-| 6 | 5 | 4 | 20 |
-| 7 | 0 | 5 | 0 |
-| 8 | 2 | 6 | 12 |
-| 9 | 7 | 7 | 49 |
+| ------- | ----- | ---- | ------- |
+| 1       | 5     | 6    | 30      |
+| 2       | 2     | 5    | 10      |
+| 3       | 6     | 7    | 42      |
+| 4       | 0     | 2    | 0       |
+| 5       | 2     | 3    | 6       |
+| 6       | 5     | 4    | 20      |
+| 7       | 0     | 5    | 0       |
+| 8       | 2     | 6    | 12      |
+| 9       | 7     | 7    | 49      |
 
 Suma = 30 + 10 + 42 + 0 + 6 + 20 + 0 + 12 + 49 = **169**
 
@@ -93,32 +93,32 @@ Suma = 30 + 10 + 42 + 0 + 6 + 20 + 0 + 12 + 49 = **169**
 
 ## REGON
 
-REGON używa algorytmu dwuetapowego. Forma 14-cyfrowa najpierw waliduje bazowe 9 cyfr, zanim zwaliduje pełne 14.
+REGON używa algorytmu dwuetapowego. Forma 14-cyfrowa najpierw waliduje pierwsze 9 cyfr jako samodzielny REGON-9, a dopiero potem weryfikuje pełną liczbę.
 
 ### 9-cyfrowy REGON
 
 **Wagi:** `8, 9, 2, 3, 4, 5, 6, 7`
 
 1. Usuń białe znaki. Wymagaj dokładnie 9 cyfr.
-2. Pomnóż pierwsze 8 cyfr przez wagi dla 9 cyfr. Zsumuj. Oblicz `suma mod 11`. Jeśli wynik to `10`, cyfra kontrolna musi wynosić `0`. W przeciwnym razie wynik musi być równy cyfrze 9.
+2. Pomnóż pierwsze 8 cyfr przez wagi i zsumuj. Oblicz `suma mod 11`. Jeśli wynik to `10`, cyfra kontrolna musi wynosić `0` — w przeciwnym razie wynik musi być równy 9. cyfrze.
 
 ### 14-cyfrowy REGON
 
 **Wagi:** `2, 4, 8, 5, 0, 9, 7, 3, 6, 1, 2, 4, 8`
 
 1. Usuń białe znaki. Wymagaj dokładnie 14 cyfr.
-2. Zwaliduj cyfry 1–9 jako samodzielny 9-cyfrowy REGON (patrz wyżej).
-3. Pomnóż pierwsze 13 cyfr przez wagi dla 14 cyfr. Zsumuj. Oblicz `suma mod 11`. Jeśli wynik to `10`, cyfra 14 musi wynosić `0`. W przeciwnym razie wynik musi być równy cyfrze 14.
+2. Zwaliduj cyfry 1–9 jako samodzielny REGON-9 (patrz wyżej).
+3. Pomnóż pierwsze 13 cyfr przez wagi i zsumuj. Oblicz `suma mod 11`. Jeśli wynik to `10`, cyfra 14 musi wynosić `0` — w przeciwnym razie wynik musi być równy 14. cyfrze.
 
 ---
 
 ## KRS
 
-KRS **nie posiada publicznego algorytmu sumy kontrolnej**. Jest to sekwencyjny numer rejestru nadawany przez sąd rejestrowy. Numerik waliduje wyłącznie format i zakres:
+KRS **nie ma publicznego algorytmu sumy kontrolnej** — to sekwencyjny numer nadawany przez sąd rejestrowy przy wpisie do rejestru. Numerik sprawdza wyłącznie format i zakres:
 
 1. Usuń białe znaki. Odrzuć wejścia dłuższe niż 32 znaki. Wymagaj ≤ 10 cyfr.
 2. Odrzuć znaki niebędące cyframi.
-3. Sprawdź, że wartość numeryczna jest większa od `0`; w przeciwnym razie zwróć błąd `AllZeros`.
-4. W trybie ścisłym dopełnij do 10 cyfr zerami i odrzuć wejścia, w których wszystkie cyfry są identyczne; zwróć błąd `AllSameDigit`.
+3. Wartość numeryczna musi być większa od `0` — inaczej błąd `AllZeros`.
+4. W trybie ścisłym: uzupełnij do 10 cyfr zerami i odrzuć wejścia z identycznymi cyframi — błąd `AllSameDigit`.
 
-W celu autorytatywnej weryfikacji, czy dany numer KRS jest rzeczywiście przypisany, skorzystaj z oficjalnego [API rejestru KRS](https://prs.ms.gov.pl/krs/openApi).
+Żeby sprawdzić, czy konkretny numer KRS jest faktycznie przypisany do podmiotu, skorzystaj z oficjalnego [API rejestru KRS](https://prs.ms.gov.pl/krs/openApi).
