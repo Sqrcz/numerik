@@ -28,7 +28,7 @@ $result->isValid;   // true
 $nrb = Numerik::nrb()->parse('61102010260000000000000000');
 
 // null zamiast wyjątku w przypadku błędu
-$nrb = Numerik::nrb()->tryParse('błędny-wejście'); // null
+$nrb = Numerik::nrb()->tryParse('błędny-numer'); // null
 ```
 
 ## API obiektu wartości
@@ -39,7 +39,7 @@ $nrb = Numerik::nrb()->tryParse('błędny-wejście'); // null
 
 | Metoda | Typ zwracany | Opis |
 |--------|--------------|------|
-| `getRaw()` | `string` | Oryginalne wejście bez zmian. |
+| `getRaw()` | `string` | Oryginalny numer bez zmian. |
 | `getNormalized()` | `string` | 26 cyfr bez prefiksu i spacji. |
 | `__toString()` | `string` | Identyczne z `getNormalized()`. |
 
@@ -93,13 +93,13 @@ NRB używa standardowej sumy kontrolnej IBAN MOD-97:
 3. Wymagaj, aby wszystkie znaki były cyframi — inaczej błąd `InvalidCharacters`.
 4. Zweryfikuj sumę kontrolną MOD-97:
    - Przestaw kolejność: cyfry 3–26 (BBAN) + `2521` (kodowanie numeryczne `PL`) + cyfry 1–2 (cyfry kontrolne).
-   - Oblicz resztę z dzielenia przez 97 tak uformowanej liczby.
+   - Oblicz resztę z dzielenia powstałej liczby przez 97.
    - Jeśli wynik nie wynosi `1`, zwróć błąd `InvalidChecksum`.
 
 ## Przyczyny błędów
 
 | Przyczyna | Wartość | Kiedy |
 |-----------|---------|-------|
-| `InvalidLength` | `invalid_length` | Po normalizacji nie ma dokładnie 26 cyfr lub surowe wejście przekracza 40 znaków. |
+| `InvalidLength` | `invalid_length` | Po normalizacji nie ma dokładnie 26 cyfr lub surowa wartość przekracza 40 znaków. |
 | `InvalidCharacters` | `invalid_characters` | Po usunięciu spacji, myślników i prefiksu `PL` pozostają znaki niebędące cyframi. |
 | `InvalidChecksum` | `invalid_checksum` | Reszta z MOD-97 nie wynosi 1. |

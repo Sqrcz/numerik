@@ -3,9 +3,7 @@ title: IBAN
 description: Walidacja i parsowanie polskich numerów IBAN (NRB z prefiksem PL) za pomocą Numerik.
 ---
 
-IBAN (*International Bank Account Number*) to międzynarodowy standard identyfikacji rachunków bankowych. Polski IBAN składa się z dwuliterowego prefiksu kraju `PL` oraz 26-cyfrowego numeru NRB. Walidacja wymaga prefiksu `PL` i stosuje standardową sumę kontrolną MOD-97 do części NRB.
-
-Użyj `Numerik::nrb()` gdy masz 26-cyfrowy numer bez prefiksu kraju. Użyj `Numerik::iban()` gdy oczekujesz pełnej formy międzynarodowej.
+Polski IBAN to dwuliterowy prefiks PL połączony z 26-cyfrowym numerem NRB, walidowany sumą kontrolną MOD-97. Użyj Numerik::nrb() dla samego numeru bez prefiksu, Numerik::iban() dla pełnej formy międzynarodowej.
 
 ## Użycie
 
@@ -89,7 +87,7 @@ $b->getNormalized() === $c->getNormalized(); // true
 ## Algorytm walidacji
 
 1. Usuń spacje i myślniki. Odrzuć wejścia dłuższe niż 40 znaków.
-2. Wymagaj, aby pierwsze dwa znaki to `PL` (bez rozróżniania wielkości liter) — inaczej błąd `InvalidFormat`.
+2. Wymagaj, aby pierwsze dwa znaki były `PL` (bez rozróżniania wielkości liter) — inaczej błąd `InvalidFormat`.
 3. Usuń prefiks. Wymagaj dokładnie 26 cyfr — inaczej błąd `InvalidLength`.
 4. Zastosuj sumę kontrolną NRB MOD-97 — patrz sekcja [Algorytmy](/pl/guide/algorithms/#nrb).
 
@@ -99,5 +97,5 @@ $b->getNormalized() === $c->getNormalized(); // true
 |-----------|---------|-------|
 | `InvalidLength` | `invalid_length` | Część NRB nie ma dokładnie 26 cyfr lub surowe wejście przekracza 40 znaków. |
 | `InvalidFormat` | `invalid_format` | Brak prefiksu `PL`. |
-| `InvalidCharacters` | `invalid_characters` | Część NRB zawiera znaki niebędące cyframi. |
+| `InvalidCharacters` | `invalid_characters` | Część NRB (po usunięciu spacji i myślników) zawiera znaki niebędące cyframi. |
 | `InvalidChecksum` | `invalid_checksum` | Reszta z MOD-97 nie wynosi 1. |
