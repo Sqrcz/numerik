@@ -46,6 +46,8 @@ Numerik::nip()->isValid('5260250274');                       // true
 Numerik::regon()->isValid('691761365');                      // true
 Numerik::krs()->isValid('0000127206');                       // true
 Numerik::nrb()->isValid('61102010260000000000000000');       // true
+Numerik::vatEu()->isValid('PL5260250274');                   // true
+Numerik::iban()->isValid('PL61102010260000000000000000');    // true
 ```
 
 ### Szczegółowa walidacja
@@ -98,7 +100,7 @@ $pesel = Numerik::pesel()->tryParse('zły-numer'); // null
 
 ## Następne kroki
 
-- Przejrzyj dokumentację [PESEL](/pl/identifiers/pesel/), [NIP](/pl/identifiers/nip/), [REGON](/pl/identifiers/regon/), [KRS](/pl/identifiers/krs/) lub [NRB](/pl/identifiers/nrb/) z pełną listą metod.
+- Przejrzyj dokumentację [PESEL](/pl/identifiers/pesel/), [NIP](/pl/identifiers/nip/), [REGON](/pl/identifiers/regon/), [KRS](/pl/identifiers/krs/), [NRB](/pl/identifiers/nrb/), [VAT-EU](/pl/identifiers/vat-eu/) lub [IBAN](/pl/identifiers/iban/) z pełną listą metod.
 - [Obsługa błędów](/pl/guide/error-handling/) — hierarchia wyjątków i kiedy po nie sięgać.
 - [Wyniki walidacji](/pl/guide/validation-results/) — pełne API `ValidationResult`.
 - Używasz Laravela? Zobacz [Integrację z Laravel](/pl/integrations/laravel/) — gotowe reguły walidacji.

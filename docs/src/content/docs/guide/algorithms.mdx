@@ -134,3 +134,25 @@ NRB uses the standard IBAN MOD-97 algorithm:
 3. Assert all characters are digits.
 4. Rearrange as: digits 3–26 (the BBAN) + `2521` (numeric encoding of `PL`) + digits 1–2 (check digits).
 5. Compute the resulting number modulo 97. The result must equal `1`.
+
+---
+
+## VAT-EU
+
+VAT-EU validation is a thin wrapper over NIP:
+
+1. Strip spaces and hyphens. Reject inputs over 32 characters.
+2. Assert the first two characters are `PL` (case-insensitive); fail with `InvalidFormat`.
+3. Strip the prefix. Assert exactly 10 digits remain.
+4. Apply the full [NIP](#nip) algorithm to the extracted digits.
+
+---
+
+## IBAN
+
+IBAN validation is a thin wrapper over NRB:
+
+1. Strip spaces and hyphens. Reject inputs over 40 characters.
+2. Assert the first two characters are `PL` (case-insensitive); fail with `InvalidFormat`.
+3. Strip the prefix. Assert exactly 26 digits remain.
+4. Apply the full [NRB](#nrb) MOD-97 algorithm to the extracted digits.

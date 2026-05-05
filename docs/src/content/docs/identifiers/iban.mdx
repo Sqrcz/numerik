@@ -1,0 +1,103 @@
+---
+title: IBAN
+description: Validate and parse Polish IBAN numbers (PL-prefixed NRB) with Numerik.
+---
+
+IBAN (*International Bank Account Number*) is the international standard for identifying bank accounts. A Polish IBAN is the two-letter country prefix `PL` followed by a 26-digit NRB. Validation requires the `PL` prefix and applies the standard MOD-97 checksum to the NRB portion.
+
+Use `Numerik::nrb()` when you have a 26-digit number without the country prefix. Use `Numerik::iban()` when you expect the full international form.
+
+## Usage
+
+```php
+use SlashLab\Numerik\Numerik;
+
+// Boolean
+Numerik::iban()->isValid('PL61102010260000000000000000');   // true
+
+// Spaced format and lowercase prefix are accepted
+Numerik::iban()->isValid('PL61 1020 1026 0000 0000 0000 0000');   // true
+Numerik::iban()->isValid('pl61102010260000000000000000');          // true
+
+// Bare NRB without prefix is rejected — use Numerik::nrb() for that
+Numerik::iban()->isValid('61102010260000000000000000');   // false
+
+// Rich result
+$result = Numerik::iban()->validate('PL61102010260000000000000000');
+$result->isValid;   // true
+
+// Parse to value object
+$iban = Numerik::iban()->parse('PL61102010260000000000000000');
+
+// Null on failure instead of exception
+$iban = Numerik::iban()->tryParse('bad-input'); // null
+```
+
+## Value object API
+
+`parse()` and `tryParse()` return a `SlashLab\Numerik\ValueObjects\Iban` instance.
+
+### Core
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getRaw()` | `string` | The original input, untouched. |
+| `getNormalized()` | `string` | `PL` + 26 digits, e.g. `PL61102010260000000000000000`. |
+| `__toString()` | `string` | Same as `getNormalized()`. |
+
+### Formatting
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getFormatted()` | `string` | Standard grouped display: `PL61 1020 1026 0000 0000 0000 0000`. |
+
+### Structure
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getCountryCode()` | `string` | Always `PL`. |
+| `getNrb()` | `string` | The 26-digit NRB without the country prefix. |
+| `getCheckDigits()` | `string` | Two MOD-97 check digits (positions 3–4 of the IBAN). |
+| `getSortCode()` | `string` | 8-digit bank sort code. |
+| `getBankCode()` | `string` | First 3 digits of the sort code — identifies the bank. |
+| `getAccountNumber()` | `string` | Last 16 digits — the customer account number. |
+
+## Examples
+
+```php
+$iban = Numerik::iban()->parse('PL61102010260000000000000000');
+
+$iban->getRaw();             // 'PL61102010260000000000000000'
+$iban->getNormalized();      // 'PL61102010260000000000000000'
+$iban->getFormatted();       // 'PL61 1020 1026 0000 0000 0000 0000'
+$iban->getCountryCode();     // 'PL'
+$iban->getNrb();             // '61102010260000000000000000'
+$iban->getCheckDigits();     // '61'
+$iban->getSortCode();        // '10201026'
+$iban->getBankCode();        // '102'
+$iban->getAccountNumber();   // '0000000000000000'
+
+// Spaced and lowercase inputs normalise to the same value
+$a = Numerik::iban()->parse('PL61102010260000000000000000');
+$b = Numerik::iban()->parse('PL61 1020 1026 0000 0000 0000 0000');
+$c = Numerik::iban()->parse('pl61102010260000000000000000');
+
+$a->getNormalized() === $b->getNormalized(); // true
+$b->getNormalized() === $c->getNormalized(); // true
+```
+
+## Validation algorithm
+
+1. Strip spaces and hyphens. Reject inputs over 40 characters.
+2. Assert the first two characters are `PL` (case-insensitive); fail with `InvalidFormat`.
+3. Strip the prefix. Assert exactly 26 digits remain; fail with `InvalidLength`.
+4. Apply the NRB MOD-97 checksum — see the [Algorithms](/guide/algorithms/#nrb) reference.
+
+## Failure reasons
+
+| Reason | Value | When |
+|--------|-------|------|
+| `InvalidLength` | `invalid_length` | NRB portion is not exactly 26 digits, or raw input exceeds 40 characters. |
+| `InvalidFormat` | `invalid_format` | Input does not start with `PL`. |
+| `InvalidCharacters` | `invalid_characters` | NRB portion contains non-digit characters. |
+| `InvalidChecksum` | `invalid_checksum` | MOD-97 remainder is not 1. |

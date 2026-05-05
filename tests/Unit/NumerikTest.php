@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace SlashLab\Numerik\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use SlashLab\Numerik\Identifiers\IbanIdentifier;
 use SlashLab\Numerik\Identifiers\KrsIdentifier;
 use SlashLab\Numerik\Identifiers\NipIdentifier;
 use SlashLab\Numerik\Identifiers\NrbIdentifier;
 use SlashLab\Numerik\Identifiers\PeselIdentifier;
 use SlashLab\Numerik\Identifiers\RegonIdentifier;
+use SlashLab\Numerik\Identifiers\VatEuIdentifier;
 use SlashLab\Numerik\Numerik;
 
 final class NumerikTest extends TestCase
@@ -39,6 +41,16 @@ final class NumerikTest extends TestCase
         $this->assertInstanceOf(NrbIdentifier::class, Numerik::nrb());
     }
 
+    public function test_vat_eu_returns_vat_eu_identifier(): void
+    {
+        $this->assertInstanceOf(VatEuIdentifier::class, Numerik::vatEu());
+    }
+
+    public function test_iban_returns_iban_identifier(): void
+    {
+        $this->assertInstanceOf(IbanIdentifier::class, Numerik::iban());
+    }
+
     public function test_strict_mode_defaults_to_true(): void
     {
         $this->assertInstanceOf(PeselIdentifier::class, Numerik::pesel());
@@ -46,6 +58,8 @@ final class NumerikTest extends TestCase
         $this->assertInstanceOf(RegonIdentifier::class, Numerik::regon());
         $this->assertInstanceOf(KrsIdentifier::class, Numerik::krs());
         $this->assertInstanceOf(NrbIdentifier::class, Numerik::nrb());
+        $this->assertInstanceOf(VatEuIdentifier::class, Numerik::vatEu());
+        $this->assertInstanceOf(IbanIdentifier::class, Numerik::iban());
     }
 
     public function test_strict_mode_can_be_disabled(): void
@@ -55,5 +69,7 @@ final class NumerikTest extends TestCase
         $this->assertInstanceOf(RegonIdentifier::class, Numerik::regon(strict: false));
         $this->assertInstanceOf(KrsIdentifier::class, Numerik::krs(strict: false));
         $this->assertInstanceOf(NrbIdentifier::class, Numerik::nrb(strict: false));
+        $this->assertInstanceOf(VatEuIdentifier::class, Numerik::vatEu(strict: false));
+        $this->assertInstanceOf(IbanIdentifier::class, Numerik::iban(strict: false));
     }
 }
