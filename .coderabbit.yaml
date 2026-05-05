@@ -23,7 +23,7 @@ reviews:
         - tryParse() must return null on any failure, never throw.
         - All public methods must have the #[\Override] attribute where they implement an interface method.
         - normalize() must be a private method that strips only structural separators (spaces, hyphens) and any accepted prefix — never alter digit content.
-        - Reject inputs longer than MAX_LENGTH before normalisation to prevent ReDoS-class abuse.
+        - Use two separate length guards: (1) a RAW_MAX_LENGTH constant checked via strlen() against the raw input before normalize() is called, to reject absurdly long strings early; (2) a DIGITS (or MAX_DIGITS) constant checked against the normalized string to enforce the canonical format length. Never conflate the two — a raw guard set too tight will reject valid spaced/prefixed inputs.
         - No regular expressions for validation logic — use ctype_* and array operations only.
         - declare(strict_types=1) required. Class must be final.
     - path: "src/ValueObjects/*.php"
