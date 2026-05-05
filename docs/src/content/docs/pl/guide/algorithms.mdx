@@ -134,3 +134,25 @@ NRB używa standardowego algorytmu IBAN MOD-97:
 3. Wymagaj, aby wszystkie znaki były cyframi.
 4. Przestaw kolejność: cyfry 3–26 (BBAN) + `2521` (kodowanie numeryczne `PL`) + cyfry 1–2 (cyfry kontrolne).
 5. Oblicz resztę z dzielenia uformowanej liczby przez 97. Wynik musi wynosić `1`.
+
+---
+
+## VAT-EU
+
+Walidacja VAT-EU to cienka warstwa nad NIP:
+
+1. Usuń spacje i myślniki. Odrzuć wejścia dłuższe niż 32 znaki.
+2. Wymagaj, aby pierwsze dwa znaki to `PL` (bez rozróżniania wielkości liter) — inaczej błąd `InvalidFormat`.
+3. Usuń prefiks. Wymagaj dokładnie 10 cyfr.
+4. Zastosuj pełny algorytm [NIP](#nip) do wyodrębnionych cyfr.
+
+---
+
+## IBAN
+
+Walidacja IBAN to cienka warstwa nad NRB:
+
+1. Usuń spacje i myślniki. Odrzuć wejścia dłuższe niż 40 znaków.
+2. Wymagaj, aby pierwsze dwa znaki to `PL` (bez rozróżniania wielkości liter) — inaczej błąd `InvalidFormat`.
+3. Usuń prefiks. Wymagaj dokładnie 26 cyfr.
+4. Zastosuj pełny algorytm MOD-97 [NRB](#nrb) do wyodrębnionych cyfr.

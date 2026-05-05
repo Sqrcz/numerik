@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- VAT-EU (*Numer VAT UE*) validation and parsing — `Numerik::vatEu()->validate()`, `isValid()`, `parse()`, `tryParse()`
+- `VatEu` value object with `getCountryCode()`, `getNip()`, `getFormatted()`
+- IBAN (Polish IBAN = `PL` + NRB) validation and parsing — `Numerik::iban()->validate()`, `isValid()`, `parse()`, `tryParse()`
+- `Iban` value object with `getFormatted()`, `getCountryCode()`, `getNrb()`, `getCheckDigits()`, `getSortCode()`, `getBankCode()`, `getAccountNumber()`
 - NRB (*Numer Rachunku Bankowego*) validation and parsing — `Numerik::nrb()->validate()`, `isValid()`, `parse()`, `tryParse()`
 - `Nrb` value object with `getFormatted()`, `getIban()`, `getFormattedIban()`, `getCheckDigits()`, `getSortCode()`, `getBankCode()`, `getAccountNumber()`
 - Accepts raw 26-digit, spaced, and IBAN (`PL`-prefixed) input formats

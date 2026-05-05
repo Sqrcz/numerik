@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace SlashLab\Numerik;
 
+use SlashLab\Numerik\Identifiers\IbanIdentifier;
 use SlashLab\Numerik\Identifiers\KrsIdentifier;
 use SlashLab\Numerik\Identifiers\NipIdentifier;
 use SlashLab\Numerik\Identifiers\NrbIdentifier;
 use SlashLab\Numerik\Identifiers\PeselIdentifier;
 use SlashLab\Numerik\Identifiers\RegonIdentifier;
+use SlashLab\Numerik\Identifiers\VatEuIdentifier;
 
 final class Numerik
 {
@@ -35,5 +37,15 @@ final class Numerik
     public static function nrb(bool $strict = true): NrbIdentifier
     {
         return new NrbIdentifier(strict: $strict);
+    }
+
+    public static function vatEu(bool $strict = true): VatEuIdentifier
+    {
+        return new VatEuIdentifier(strict: $strict);
+    }
+
+    public static function iban(bool $strict = true): IbanIdentifier
+    {
+        return new IbanIdentifier(strict: $strict);
     }
 }

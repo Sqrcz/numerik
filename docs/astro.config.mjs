@@ -11,7 +11,7 @@ export default defineConfig({
                 en: 'Numerik',
                 pl: 'Numerik',
             },
-            description: 'Modern PHP 8.3+ library for validating and parsing Polish identification numbers (PESEL, NIP, REGON, KRS, NRB).',
+            description: 'Modern PHP 8.3+ library for validating and parsing Polish identification numbers (PESEL, NIP, REGON, KRS, NRB, VAT-EU, IBAN).',
             defaultLocale: 'root',
             locales: {
                 root: {
@@ -53,6 +53,8 @@ export default defineConfig({
                         { label: 'REGON', slug: 'identifiers/regon' },
                         { label: 'KRS', slug: 'identifiers/krs' },
                         { label: 'NRB', slug: 'identifiers/nrb' },
+                        { label: 'VAT-EU', slug: 'identifiers/vat-eu' },
+                        { label: 'IBAN', slug: 'identifiers/iban' },
                     ],
                 },
                 {

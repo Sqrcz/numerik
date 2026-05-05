@@ -1,0 +1,84 @@
+---
+title: VAT-EU
+description: Validate and parse Polish VAT-EU numbers (PL-prefixed NIP) with Numerik.
+---
+
+VAT-EU (*Numer VAT UE*) is the intra-EU VAT identification number used in cross-border transactions within the European Union. For Polish taxpayers it is the two-letter country prefix `PL` followed by a standard 10-digit NIP. Validation strips the prefix and applies the NIP MOD-11 checksum algorithm.
+
+## Usage
+
+```php
+use SlashLab\Numerik\Numerik;
+
+// Boolean
+Numerik::vatEu()->isValid('PL5260250274');   // true
+
+// Separators and lowercase prefix are accepted
+Numerik::vatEu()->isValid('PL526-025-02-74');   // true
+Numerik::vatEu()->isValid('pl5260250274');       // true
+
+// Rich result
+$result = Numerik::vatEu()->validate('PL5260250274');
+$result->isValid;   // true
+
+// Parse to value object
+$vatEu = Numerik::vatEu()->parse('PL5260250274');
+
+// Null on failure instead of exception
+$vatEu = Numerik::vatEu()->tryParse('bad-input'); // null
+```
+
+## Value object API
+
+`parse()` and `tryParse()` return a `SlashLab\Numerik\ValueObjects\VatEu` instance.
+
+### Core
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getRaw()` | `string` | The original input, untouched. |
+| `getNormalized()` | `string` | `PL` + 10 digits, e.g. `PL5260250274`. |
+| `__toString()` | `string` | Same as `getNormalized()`. |
+
+### Formatting & metadata
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getCountryCode()` | `string` | Always `PL`. |
+| `getNip()` | `string` | The 10-digit NIP without the country prefix. |
+| `getFormatted()` | `string` | `PL` + standard NIP display format, e.g. `PL526-025-02-74`. |
+
+## Examples
+
+```php
+$vatEu = Numerik::vatEu()->parse('PL5260250274');
+
+$vatEu->getRaw();           // 'PL5260250274'
+$vatEu->getNormalized();    // 'PL5260250274'
+$vatEu->getCountryCode();   // 'PL'
+$vatEu->getNip();           // '5260250274'
+$vatEu->getFormatted();     // 'PL526-025-02-74'
+
+// Separators are stripped; PL prefix is uppercased
+$vatEu = Numerik::vatEu()->parse('pl526-025-02-74');
+
+$vatEu->getRaw();           // 'pl526-025-02-74'
+$vatEu->getNormalized();    // 'PL5260250274'
+```
+
+## Validation algorithm
+
+1. Strip spaces and hyphens. Reject inputs over 32 characters.
+2. Assert the first two characters are `PL` (case-insensitive); fail with `InvalidFormat`.
+3. Strip the prefix. Assert exactly 10 digits remain; fail with `InvalidLength`.
+4. Apply the NIP MOD-11 checksum — see the [Algorithms](/guide/algorithms/#nip) reference.
+
+## Failure reasons
+
+| Reason | Value | When |
+|--------|-------|------|
+| `InvalidLength` | `invalid_length` | NIP portion is not exactly 10 digits, or raw input exceeds 32 characters. |
+| `InvalidFormat` | `invalid_format` | Input does not start with `PL`, or NIP tax office code is `000`. |
+| `InvalidCharacters` | `invalid_characters` | NIP portion contains non-digit characters. |
+| `InvalidChecksum` | `invalid_checksum` | NIP MOD-11 check digit does not match. |
+| `AllSameDigit` | `all_same_digit` | NIP consists of a single repeated digit — strict mode only. |
