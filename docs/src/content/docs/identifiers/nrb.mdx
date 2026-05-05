@@ -1,0 +1,105 @@
+---
+title: NRB
+description: Validate and parse Polish NRB bank account numbers with Numerik.
+---
+
+NRB (*Numer Rachunku Bankowego*) is the Polish domestic bank account number format. It consists of 26 digits: a 2-digit MOD-97 check, an 8-digit bank sort code, and a 16-digit account number. The international IBAN form is `PL` followed by the 26-digit NRB.
+
+## Usage
+
+```php
+use SlashLab\Numerik\Numerik;
+
+// Boolean
+Numerik::nrb()->isValid('61102010260000000000000000');   // true
+
+// Spaced format is accepted and normalised
+Numerik::nrb()->isValid('61 1020 1026 0000 0000 0000 0000');   // true
+
+// IBAN format (PL prefix) is accepted and stripped during normalisation
+Numerik::nrb()->isValid('PL61102010260000000000000000');        // true
+Numerik::nrb()->isValid('PL61 1020 1026 0000 0000 0000 0000'); // true
+
+// Rich result
+$result = Numerik::nrb()->validate('61102010260000000000000000');
+$result->isValid;   // true
+
+// Parse to value object
+$nrb = Numerik::nrb()->parse('61102010260000000000000000');
+
+// Null on failure instead of exception
+$nrb = Numerik::nrb()->tryParse('bad-input'); // null
+```
+
+## Value object API
+
+`parse()` and `tryParse()` return a `SlashLab\Numerik\ValueObjects\Nrb` instance.
+
+### Core
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getRaw()` | `string` | The original input, untouched. |
+| `getNormalized()` | `string` | 26 digits, no prefix, no spaces. |
+| `__toString()` | `string` | Same as `getNormalized()`. |
+
+### Formatting
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getFormatted()` | `string` | Standard Polish display format: `CC BBBB BBBB AAAA AAAA AAAA AAAA`. |
+| `getIban()` | `string` | Full IBAN string: `PL` + 26 digits, e.g. `PL61102010260000000000000000`. |
+| `getFormattedIban()` | `string` | Grouped IBAN: `PL61 1020 1026 0000 0000 0000 0000`. |
+
+### Structure
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getCheckDigits()` | `string` | First 2 digits — the MOD-97 check value. |
+| `getSortCode()` | `string` | 8-digit bank sort code (bank identifier + branch + internal check). |
+| `getBankCode()` | `string` | First 3 digits of the sort code — identifies the bank. |
+| `getAccountNumber()` | `string` | Last 16 digits — the customer account number. |
+
+## Examples
+
+```php
+$nrb = Numerik::nrb()->parse('61102010260000000000000000');
+
+$nrb->getRaw();             // '61102010260000000000000000'
+$nrb->getNormalized();      // '61102010260000000000000000'
+$nrb->getFormatted();       // '61 1020 1026 0000 0000 0000 0000'
+$nrb->getIban();            // 'PL61102010260000000000000000'
+$nrb->getFormattedIban();   // 'PL61 1020 1026 0000 0000 0000 0000'
+$nrb->getCheckDigits();     // '61'
+$nrb->getSortCode();        // '10201026'
+$nrb->getBankCode();        // '102'
+$nrb->getAccountNumber();   // '0000000000000000'
+
+// Input formats are all equivalent
+$a = Numerik::nrb()->parse('61102010260000000000000000');
+$b = Numerik::nrb()->parse('61 1020 1026 0000 0000 0000 0000');
+$c = Numerik::nrb()->parse('PL61102010260000000000000000');
+
+$a->getNormalized() === $b->getNormalized(); // true
+$b->getNormalized() === $c->getNormalized(); // true
+```
+
+## Validation algorithm
+
+NRB uses the standard IBAN MOD-97 checksum:
+
+1. Strip spaces and hyphens. Strip the optional `PL` country prefix. Reject inputs over 40 characters.
+2. Assert exactly 26 digits remain; fail with `InvalidLength`.
+3. Assert all characters are digits; fail with `InvalidCharacters`.
+4. Verify the MOD-97 checksum:
+   - Rearrange as: digits 3–26 (the BBAN) + `2521` (numeric encoding of `PL`) + digits 1–2 (check digits).
+   - Compute the resulting number modulo 97.
+   - Fail with `InvalidChecksum` if the result is not `1`.
+
+## Failure reasons
+
+| Reason | Value | When |
+|--------|-------|------|
+| `InvalidLength` | `invalid_length` | Input is not exactly 26 digits after normalisation, or exceeds 40 characters raw. |
+| `InvalidCharacters` | `invalid_characters` | Non-digit characters remain after stripping whitespace, hyphens, and the `PL` prefix. |
+| `InvalidChecksum` | `invalid_checksum` | MOD-97 remainder is not 1. |

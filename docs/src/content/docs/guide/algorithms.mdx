@@ -122,3 +122,15 @@ KRS has **no public checksum algorithm**. It is a sequential registry number ass
 4. In strict mode, zero-pad to 10 digits and reject inputs where all digits are identical; fail with `AllSameDigit`.
 
 For authoritative verification that a KRS number is actually assigned, query the official [KRS registry API](https://prs.ms.gov.pl/krs/openApi).
+
+---
+
+## NRB
+
+NRB uses the standard IBAN MOD-97 algorithm:
+
+1. Strip spaces and hyphens. Strip the optional `PL` country prefix. Reject inputs over 40 characters.
+2. Assert exactly 26 digits remain.
+3. Assert all characters are digits.
+4. Rearrange as: digits 3–26 (the BBAN) + `2521` (numeric encoding of `PL`) + digits 1–2 (check digits).
+5. Compute the resulting number modulo 97. The result must equal `1`.

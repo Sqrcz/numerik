@@ -41,10 +41,11 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 ```php
 use SlashLab\Numerik\Numerik;
 
-Numerik::pesel()->isValid('92060512186');  // true
-Numerik::nip()->isValid('5260250274');     // true
-Numerik::regon()->isValid('691761365');    // true
-Numerik::krs()->isValid('0000127206');     // true
+Numerik::pesel()->isValid('92060512186');                    // true
+Numerik::nip()->isValid('5260250274');                       // true
+Numerik::regon()->isValid('691761365');                      // true
+Numerik::krs()->isValid('0000127206');                       // true
+Numerik::nrb()->isValid('61102010260000000000000000');       // true
 ```
 
 ### Rich validation result
@@ -97,7 +98,7 @@ $pesel = Numerik::pesel()->tryParse('bad-input'); // null
 
 ## Next steps
 
-- Browse the [PESEL](/identifiers/pesel/), [NIP](/identifiers/nip/), [REGON](/identifiers/regon/), or [KRS](/identifiers/krs/) reference for full method listings.
+- Browse the [PESEL](/identifiers/pesel/), [NIP](/identifiers/nip/), [REGON](/identifiers/regon/), [KRS](/identifiers/krs/), or [NRB](/identifiers/nrb/) reference for full method listings.
 - Read [Error Handling](/guide/error-handling/) to understand the exception hierarchy.
 - Read [Validation Results](/guide/validation-results/) for the complete `ValidationResult` API.
 - Using Laravel? See the [Laravel Integration](/integrations/laravel/) guide for drop-in validation rules.
