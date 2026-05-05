@@ -68,7 +68,7 @@ public function rules(): array
 {
     return [
         'pesel'  => ['required', new PeselRule()],              // strict mode on by default
-        'pesel'  => ['required', new PeselRule(strict: false)], // disable strict checks
+        // 'pesel'  => ['required', new PeselRule(strict: false)], // disable strict checks
         'nip'    => ['required', new NipRule()],
         'regon'  => ['required', new RegonRule()],
         'krs'    => ['required', new KrsRule()],
