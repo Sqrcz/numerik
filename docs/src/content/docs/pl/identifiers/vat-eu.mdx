@@ -3,7 +3,7 @@ title: VAT-EU
 description: Walidacja i parsowanie polskich numerów VAT-EU (NIP z prefiksem PL) za pomocą Numerik.
 ---
 
-VAT-EU (*Numer VAT UE*) to numer identyfikacji podatkowej stosowany w transakcjach wewnątrzunijnych. W przypadku polskich podatników składa się z dwuliterowego prefiksu kraju `PL` oraz standardowego 10-cyfrowego numeru NIP. Walidacja polega na usunięciu prefiksu i zastosowaniu algorytmu sumy kontrolnej MOD-11 używanego przez NIP.
+VAT-EU (*Numer VAT UE*) to numer identyfikacji podatkowej stosowany w transakcjach wewnątrzunijnych. W przypadku polskich podatników składa się z dwuliterowego prefiksu kraju `PL` oraz standardowego 10-cyfrowego numeru NIP. Walidacja polega na usunięciu prefiksu i zastosowaniu algorytmu NIP (suma kontrolna MOD-11).
 
 ## Użycie
 
@@ -13,7 +13,7 @@ use SlashLab\Numerik\Numerik;
 // Walidacja logiczna
 Numerik::vatEu()->isValid('PL5260250274');   // true
 
-// Separatory i małe litery w prefiksie są akceptowane
+// Separatory i małe litery w prefiksie są usuwane podczas normalizacji
 Numerik::vatEu()->isValid('PL526-025-02-74');   // true
 Numerik::vatEu()->isValid('pl5260250274');       // true
 
@@ -69,7 +69,7 @@ $vatEu->getNormalized();    // 'PL5260250274'
 ## Algorytm walidacji
 
 1. Usuń spacje i myślniki. Odrzuć wejścia dłuższe niż 32 znaki.
-2. Wymagaj, aby pierwsze dwa znaki to `PL` (bez rozróżniania wielkości liter) — inaczej błąd `InvalidFormat`.
+2. Wymagaj, aby pierwsze dwa znaki były `PL` (bez rozróżniania wielkości liter) — inaczej błąd `InvalidFormat`.
 3. Usuń prefiks. Wymagaj dokładnie 10 cyfr — inaczej błąd `InvalidLength`.
 4. Zastosuj sumę kontrolną NIP MOD-11 — patrz sekcja [Algorytmy](/pl/guide/algorithms/#nip).
 
@@ -78,7 +78,7 @@ $vatEu->getNormalized();    // 'PL5260250274'
 | Przyczyna | Wartość | Kiedy |
 |-----------|---------|-------|
 | `InvalidLength` | `invalid_length` | Część NIP nie ma dokładnie 10 cyfr lub surowe wejście przekracza 32 znaki. |
-| `InvalidFormat` | `invalid_format` | Brak prefiksu `PL` lub kod urzędu skarbowego NIP to `000`. |
+| `InvalidFormat` | `invalid_format` | Brak prefiksu `PL` lub część NIP zaczyna się od `000`. |
 | `InvalidCharacters` | `invalid_characters` | Część NIP zawiera znaki niebędące cyframi. |
 | `InvalidChecksum` | `invalid_checksum` | Cyfra kontrolna MOD-11 nie zgadza się. |
 | `AllSameDigit` | `all_same_digit` | NIP składa się z jednej powtarzającej się cyfry — tylko w trybie ścisłym. |

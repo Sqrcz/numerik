@@ -132,17 +132,17 @@ NRB używa standardowego algorytmu IBAN MOD-97:
 1. Usuń spacje i myślniki. Usuń opcjonalny prefiks `PL`. Odrzuć wejścia dłuższe niż 40 znaków.
 2. Wymagaj dokładnie 26 cyfr.
 3. Wymagaj, aby wszystkie znaki były cyframi.
-4. Przestaw kolejność: cyfry 3–26 (BBAN) + `2521` (kodowanie numeryczne `PL`) + cyfry 1–2 (cyfry kontrolne).
-5. Oblicz resztę z dzielenia uformowanej liczby przez 97. Wynik musi wynosić `1`.
+4. Przestaw znaki w następującej kolejności: cyfry 3–26 (BBAN) + `2521` (kodowanie numeryczne `PL`) + cyfry 1–2 (cyfry kontrolne).
+5. Oblicz resztę z dzielenia powstałej liczby przez 97. Wynik musi wynosić `1`.
 
 ---
 
 ## VAT-EU
 
-Walidacja VAT-EU to cienka warstwa nad NIP:
+Walidacja VAT-EU to nakładka na algorytm NIP:
 
 1. Usuń spacje i myślniki. Odrzuć wejścia dłuższe niż 32 znaki.
-2. Wymagaj, aby pierwsze dwa znaki to `PL` (bez rozróżniania wielkości liter) — inaczej błąd `InvalidFormat`.
+2. Wymagaj, aby pierwsze dwa znaki były `PL` (bez rozróżniania wielkości liter) — inaczej błąd `InvalidFormat`.
 3. Usuń prefiks. Wymagaj dokładnie 10 cyfr.
 4. Zastosuj pełny algorytm [NIP](#nip) do wyodrębnionych cyfr.
 
@@ -150,9 +150,9 @@ Walidacja VAT-EU to cienka warstwa nad NIP:
 
 ## IBAN
 
-Walidacja IBAN to cienka warstwa nad NRB:
+Walidacja IBAN to nakładka na algorytm NRB:
 
 1. Usuń spacje i myślniki. Odrzuć wejścia dłuższe niż 40 znaków.
-2. Wymagaj, aby pierwsze dwa znaki to `PL` (bez rozróżniania wielkości liter) — inaczej błąd `InvalidFormat`.
-3. Usuń prefiks. Wymagaj dokładnie 26 cyfr.
+2. Wymagaj, aby pierwsze dwa znaki były `PL` (bez rozróżniania wielkości liter) — inaczej błąd `InvalidFormat`.
+3. Usuń prefiks. Wymagaj dokładnie 26 cyfr — inaczej błąd `InvalidLength`.
 4. Zastosuj pełny algorytm MOD-97 [NRB](#nrb) do wyodrębnionych cyfr.
