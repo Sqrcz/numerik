@@ -84,7 +84,7 @@ final class VatEuIdentifierTest extends TestCase
         $failure = $result->getFirstFailure();
 
         $this->assertNotNull($failure);
-        $this->assertStringNotContainsString('exceeds maximum', $failure->message);
+        $this->assertNotSame(ValidationFailureReason::InvalidLength, $failure->reason);
     }
 
     // --- isValid() ---
