@@ -7,6 +7,7 @@ namespace SlashLab\Numerik\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use SlashLab\Numerik\Identifiers\KrsIdentifier;
 use SlashLab\Numerik\Identifiers\NipIdentifier;
+use SlashLab\Numerik\Identifiers\NrbIdentifier;
 use SlashLab\Numerik\Identifiers\PeselIdentifier;
 use SlashLab\Numerik\Identifiers\RegonIdentifier;
 use SlashLab\Numerik\Numerik;
@@ -33,12 +34,18 @@ final class NumerikTest extends TestCase
         $this->assertInstanceOf(KrsIdentifier::class, Numerik::krs());
     }
 
+    public function test_nrb_returns_nrb_identifier(): void
+    {
+        $this->assertInstanceOf(NrbIdentifier::class, Numerik::nrb());
+    }
+
     public function test_strict_mode_defaults_to_true(): void
     {
         $this->assertInstanceOf(PeselIdentifier::class, Numerik::pesel());
         $this->assertInstanceOf(NipIdentifier::class, Numerik::nip());
         $this->assertInstanceOf(RegonIdentifier::class, Numerik::regon());
         $this->assertInstanceOf(KrsIdentifier::class, Numerik::krs());
+        $this->assertInstanceOf(NrbIdentifier::class, Numerik::nrb());
     }
 
     public function test_strict_mode_can_be_disabled(): void
@@ -47,5 +54,6 @@ final class NumerikTest extends TestCase
         $this->assertInstanceOf(NipIdentifier::class, Numerik::nip(strict: false));
         $this->assertInstanceOf(RegonIdentifier::class, Numerik::regon(strict: false));
         $this->assertInstanceOf(KrsIdentifier::class, Numerik::krs(strict: false));
+        $this->assertInstanceOf(NrbIdentifier::class, Numerik::nrb(strict: false));
     }
 }

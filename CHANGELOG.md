@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- NRB (*Numer Rachunku Bankowego*) validation and parsing — `Numerik::nrb()->validate()`, `isValid()`, `parse()`, `tryParse()`
+- `Nrb` value object with `getFormatted()`, `getIban()`, `getFormattedIban()`, `getCheckDigits()`, `getSortCode()`, `getBankCode()`, `getAccountNumber()`
+- Accepts raw 26-digit, spaced, and IBAN (`PL`-prefixed) input formats
 - Polish (`pl`) translations for all documentation pages, with full content parity to the English version
 
 ### Fixed

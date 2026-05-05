@@ -41,10 +41,11 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 ```php
 use SlashLab\Numerik\Numerik;
 
-Numerik::pesel()->isValid('92060512186');  // true
-Numerik::nip()->isValid('5260250274');     // true
-Numerik::regon()->isValid('691761365');    // true
-Numerik::krs()->isValid('0000127206');     // true
+Numerik::pesel()->isValid('92060512186');                    // true
+Numerik::nip()->isValid('5260250274');                       // true
+Numerik::regon()->isValid('691761365');                      // true
+Numerik::krs()->isValid('0000127206');                       // true
+Numerik::nrb()->isValid('61102010260000000000000000');       // true
 ```
 
 ### Szczegółowa walidacja
@@ -97,7 +98,7 @@ $pesel = Numerik::pesel()->tryParse('zły-numer'); // null
 
 ## Następne kroki
 
-- Przejrzyj dokumentację [PESEL](/pl/identifiers/pesel/), [NIP](/pl/identifiers/nip/), [REGON](/pl/identifiers/regon/) lub [KRS](/pl/identifiers/krs/) z pełną listą metod.
+- Przejrzyj dokumentację [PESEL](/pl/identifiers/pesel/), [NIP](/pl/identifiers/nip/), [REGON](/pl/identifiers/regon/), [KRS](/pl/identifiers/krs/) lub [NRB](/pl/identifiers/nrb/) z pełną listą metod.
 - [Obsługa błędów](/pl/guide/error-handling/) — hierarchia wyjątków i kiedy po nie sięgać.
 - [Wyniki walidacji](/pl/guide/validation-results/) — pełne API `ValidationResult`.
 - Używasz Laravela? Zobacz [Integrację z Laravel](/pl/integrations/laravel/) — gotowe reguły walidacji.

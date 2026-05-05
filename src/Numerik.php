@@ -6,6 +6,7 @@ namespace SlashLab\Numerik;
 
 use SlashLab\Numerik\Identifiers\KrsIdentifier;
 use SlashLab\Numerik\Identifiers\NipIdentifier;
+use SlashLab\Numerik\Identifiers\NrbIdentifier;
 use SlashLab\Numerik\Identifiers\PeselIdentifier;
 use SlashLab\Numerik\Identifiers\RegonIdentifier;
 
@@ -29,5 +30,10 @@ final class Numerik
     public static function krs(bool $strict = true): KrsIdentifier
     {
         return new KrsIdentifier(strict: $strict);
+    }
+
+    public static function nrb(bool $strict = true): NrbIdentifier
+    {
+        return new NrbIdentifier(strict: $strict);
     }
 }

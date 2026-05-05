@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/github/license/sqrcz/numerik.svg)](LICENSE)
 
 > Modern PHP 8.3+ library for validating and parsing Polish identification
-> numbers — PESEL, NIP, REGON, and KRS. Rich value objects, detailed error
+> numbers — PESEL, NIP, REGON, KRS, and NRB. Rich value objects, detailed error
 > reasons, zero production dependencies.
 
 ## Installation
@@ -58,16 +58,18 @@ use SlashLab\NumerikLaravel\Rules\PeselRule;
 use SlashLab\NumerikLaravel\Rules\NipRule;
 use SlashLab\NumerikLaravel\Rules\RegonRule;
 use SlashLab\NumerikLaravel\Rules\KrsRule;
+use SlashLab\NumerikLaravel\Rules\NrbRule;
 
 // Class-based (supports options)
 public function rules(): array
 {
     return [
-        'pesel' => ['required', new PeselRule()],           // strict mode on by default
+        'pesel' => ['required', new PeselRule()],              // strict mode on by default
         'pesel' => ['required', new PeselRule(strict: false)], // disable strict checks
         'nip'   => ['required', new NipRule()],
         'regon' => ['required', new RegonRule()],
         'krs'   => ['required', new KrsRule()],
+        'nrb'   => ['required', new NrbRule()],
     ];
 }
 
@@ -79,6 +81,7 @@ public function rules(): array
         'nip'   => ['required', 'nip'],
         'regon' => ['required', 'regon'],
         'krs'   => ['required', 'krs'],
+        'nrb'   => ['required', 'nrb'],
     ];
 }
 ```

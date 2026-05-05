@@ -1,9 +1,9 @@
 ---
 title: Numerik
-description: Nowoczesna biblioteka PHP 8.3+ do walidacji i parsowania polskich numerów identyfikacyjnych — PESEL, NIP, REGON i KRS.
+description: Nowoczesna biblioteka PHP 8.3+ do walidacji i parsowania polskich numerów identyfikacyjnych — PESEL, NIP, REGON, KRS i NRB.
 template: splash
 hero:
-  tagline: Walidacja i parsowanie polskich numerów identyfikacyjnych (PESEL, NIP, REGON, KRS). Zwraca czytelne obiekty danych i precyzyjnie wskazuje przyczyny błędów.
+  tagline: Walidacja i parsowanie polskich numerów identyfikacyjnych (PESEL, NIP, REGON, KRS, NRB). Zwraca czytelne obiekty danych i precyzyjnie wskazuje przyczyny błędów.
   actions:
     - text: Pierwsze kroki
       link: /pl/getting-started/
@@ -34,8 +34,11 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
   <Card title="KRS" icon="approve-check">
     Waliduje numery rejestru sądowego z automatyczną normalizacją zer wiodących. Dokumentuje ograniczenie weryfikacji offline kontra online.
   </Card>
+  <Card title="NRB" icon="approve-check">
+    Waliduje polskie numery rachunków bankowych algorytmem MOD-97. Obsługuje formaty surowy, ze spacjami i IBAN (z prefiksem `PL`). Zwraca numer rozliczeniowy, kod banku i numer rachunku.
+  </Card>
   <Card title="Laravel" icon="puzzle">
-    Gotowe reguły walidacji Laravel dla wszystkich czterech identyfikatorów przez `slashlab/numerik-laravel`. Obsługuje składnię klasową i łańcuchową z kontrolą trybu ścisłego dla PESEL.
+    Gotowe reguły walidacji Laravel dla wszystkich pięciu identyfikatorów przez `slashlab/numerik-laravel`. Obsługuje składnię klasową i łańcuchową z kontrolą trybu ścisłego dla PESEL.
   </Card>
 </CardGrid>
 

@@ -122,3 +122,15 @@ KRS **nie ma publicznego algorytmu sumy kontrolnej** — to sekwencyjny numer na
 4. W trybie ścisłym: uzupełnij do 10 cyfr zerami i odrzuć wejścia z identycznymi cyframi — błąd `AllSameDigit`.
 
 Żeby sprawdzić, czy konkretny numer KRS jest faktycznie przypisany do podmiotu, skorzystaj z oficjalnego [API rejestru KRS](https://prs.ms.gov.pl/krs/openApi).
+
+---
+
+## NRB
+
+NRB używa standardowego algorytmu IBAN MOD-97:
+
+1. Usuń spacje i myślniki. Usuń opcjonalny prefiks `PL`. Odrzuć wejścia dłuższe niż 40 znaków.
+2. Wymagaj dokładnie 26 cyfr.
+3. Wymagaj, aby wszystkie znaki były cyframi.
+4. Przestaw kolejność: cyfry 3–26 (BBAN) + `2521` (kodowanie numeryczne `PL`) + cyfry 1–2 (cyfry kontrolne).
+5. Oblicz resztę z dzielenia uformowanej liczby przez 97. Wynik musi wynosić `1`.
