@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+language: "en-US"
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+  path_instructions:
+    - path: "src/Identifiers/*.php"
+      instructions: |
+        - Must implement both ValidatorInterface and ParserInterface.
+        - validate() must return ValidationResult, never throw.
+        - parse() must throw the most specific ValidationException subclass matching the failure reason.
+        - tryParse() must return null on any failure, never throw.
+        - All public methods must have the #[\Override] attribute where they implement an interface method.
+        - normalize() must be a private method that strips only structural separators (spaces, hyphens) and any accepted prefix — never alter digit content.
+        - Reject inputs longer than MAX_LENGTH before normalisation to prevent ReDoS-class abuse.
+        - No regular expressions for validation logic — use ctype_* and array operations only.
+        - declare(strict_types=1) required. Class must be final.
+    - path: "src/ValueObjects/*.php"
+      instructions: |
+        - Must be declared as `final readonly class`.
+        - Must implement IdentifierInterface.
+        - getRaw() returns the original unmodified input.
+        - getNormalized() returns the canonical digit-only (or prefix-stripped) form.
+        - __toString() must return the same value as getNormalized().
+        - Domain-specific getters must derive their values from $normalized, not $raw.
+        - No setters, no mutable state.
+        - declare(strict_types=1) required.
+    - path: "src/Enums/*.php"
+      instructions: |
+        - All enums must include a label(): string method following the existing pattern.
+        - declare(strict_types=1) required.
+    - path: "tests/**/*.php"
+      instructions: |
+        - Test method names must use snake_case prefixed with test_.
+        - Each test must assert one logical thing — avoid multi-assertion tests unless they test a single behaviour from multiple angles.
+        - Data providers must be static and return array<string, array{...}> with descriptive string keys.
+        - Do not mock internal classes — test against real implementations.
+        - Fixture classes live in tests/Fixtures/ and must cover: valid inputs (including all accepted formats), invalid inputs for every ValidationFailureReason the identifier can produce, and strict-mode cases if applicable.
+
+chat:
+  auto_reply: true
