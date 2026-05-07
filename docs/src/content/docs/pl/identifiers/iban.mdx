@@ -3,7 +3,7 @@ title: IBAN
 description: Walidacja i parsowanie polskich numerów IBAN (NRB z prefiksem PL) za pomocą Numerik.
 ---
 
-Polski IBAN to dwuliterowy prefiks PL połączony z 26-cyfrowym numerem NRB, walidowany sumą kontrolną MOD-97. Użyj Numerik::nrb() dla samego numeru bez prefiksu, Numerik::iban() dla pełnej formy międzynarodowej.
+Polski IBAN to dwuliterowy prefiks PL połączony z 26-cyfrowym numerem NRB, walidowany sumą kontrolną MOD-97. Użyj `Numerik::nrb()` dla samego numeru bez prefiksu, `Numerik::iban()` dla pełnej formy międzynarodowej.
 
 ## Użycie
 
@@ -28,14 +28,14 @@ $result->isValid;   // true
 $iban = Numerik::iban()->parse('PL61102010260000000000000000');
 
 // null zamiast wyjątku w przypadku błędu
-$iban = Numerik::iban()->tryParse('błędne-wejście'); // null
+$iban = Numerik::iban()->tryParse('błędny-numer'); // null
 ```
 
-## API obiektu wartości
+## Metody zwracanego obiektu
 
 `parse()` i `tryParse()` zwracają instancję `SlashLab\Numerik\ValueObjects\Iban`.
 
-### Rdzeń
+### Podstawowe
 
 | Metoda | Typ zwracany | Opis |
 |--------|--------------|------|
@@ -91,7 +91,7 @@ $b->getNormalized() === $c->getNormalized(); // true
 3. Usuń prefiks. Wymagaj dokładnie 26 cyfr — inaczej błąd `InvalidLength`.
 4. Zastosuj sumę kontrolną NRB MOD-97 — patrz sekcja [Algorytmy](/pl/guide/algorithms/#nrb).
 
-## Przyczyny błędów
+## Powody błędów
 
 | Przyczyna | Wartość | Kiedy |
 |-----------|---------|-------|
