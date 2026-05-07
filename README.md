@@ -8,7 +8,7 @@
 [![CodeRabbit](https://img.shields.io/coderabbit/prs/github/sqrcz/numerik)](https://coderabbit.ai)
 
 > Modern PHP 8.3+ library for validating and parsing Polish identification
-> numbers — PESEL, NIP, REGON, KRS, NRB, VAT-EU, and IBAN. Rich value objects, detailed error
+> numbers — PESEL, NIP, REGON, KRS, NRB, VAT-EU, IBAN, ID Card, and Passport. Rich value objects, detailed error
 > reasons, zero production dependencies.
 
 ## Installation
@@ -62,19 +62,23 @@ use SlashLab\NumerikLaravel\Rules\KrsRule;
 use SlashLab\NumerikLaravel\Rules\NrbRule;
 use SlashLab\NumerikLaravel\Rules\VatEuRule;
 use SlashLab\NumerikLaravel\Rules\IbanRule;
+use SlashLab\NumerikLaravel\Rules\IdCardRule;
+use SlashLab\NumerikLaravel\Rules\PassportRule;
 
 // Class-based (supports options)
 public function rules(): array
 {
     return [
-        'pesel'  => ['required', new PeselRule()],              // strict mode on by default
+        'pesel'    => ['required', new PeselRule()],              // strict mode on by default
         // 'pesel'  => ['required', new PeselRule(strict: false)], // disable strict checks
-        'nip'    => ['required', new NipRule()],
-        'regon'  => ['required', new RegonRule()],
-        'krs'    => ['required', new KrsRule()],
-        'nrb'    => ['required', new NrbRule()],
-        'vat_eu' => ['required', new VatEuRule()],
-        'iban'   => ['required', new IbanRule()],
+        'nip'      => ['required', new NipRule()],
+        'regon'    => ['required', new RegonRule()],
+        'krs'      => ['required', new KrsRule()],
+        'nrb'      => ['required', new NrbRule()],
+        'vat_eu'   => ['required', new VatEuRule()],
+        'iban'     => ['required', new IbanRule()],
+        'id_card'  => ['required', new IdCardRule()],
+        'passport' => ['required', new PassportRule()],
     ];
 }
 
@@ -82,13 +86,15 @@ public function rules(): array
 public function rules(): array
 {
     return [
-        'pesel'  => ['required', 'pesel'],
-        'nip'    => ['required', 'nip'],
-        'regon'  => ['required', 'regon'],
-        'krs'    => ['required', 'krs'],
-        'nrb'    => ['required', 'nrb'],
-        'vat_eu' => ['required', 'vat_eu'],
-        'iban'   => ['required', 'iban'],
+        'pesel'    => ['required', 'pesel'],
+        'nip'      => ['required', 'nip'],
+        'regon'    => ['required', 'regon'],
+        'krs'      => ['required', 'krs'],
+        'nrb'      => ['required', 'nrb'],
+        'vat_eu'   => ['required', 'vat_eu'],
+        'iban'     => ['required', 'iban'],
+        'id_card'  => ['required', 'id_card'],
+        'passport' => ['required', 'passport'],
     ];
 }
 ```

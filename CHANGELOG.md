@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- ID Card (*Dowód osobisty*) validation and parsing — `Numerik::idCard()->validate()`, `isValid()`, `parse()`, `tryParse()`
+- `IdCard` value object with `getSeries()`, `getSequentialNumber()`, `getCheckDigit()`
+- Passport (*Paszport*) validation and parsing — `Numerik::passport()->validate()`, `isValid()`, `parse()`, `tryParse()`
+- `Passport` value object with `getSeries()`, `getSequentialNumber()`, `getCheckDigit()`
+- Both identifiers use the ICAO 9303 weighted checksum algorithm (weights 7-3-1, check digit at position 9)
 - VAT-EU (*Numer VAT UE*) validation and parsing — `Numerik::vatEu()->validate()`, `isValid()`, `parse()`, `tryParse()`
 - `VatEu` value object with `getCountryCode()`, `getNip()`, `getFormatted()`
 - IBAN (Polish IBAN = `PL` + NRB) validation and parsing — `Numerik::iban()->validate()`, `isValid()`, `parse()`, `tryParse()`

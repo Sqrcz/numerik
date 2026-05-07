@@ -6,9 +6,11 @@ namespace SlashLab\Numerik\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use SlashLab\Numerik\Identifiers\IbanIdentifier;
+use SlashLab\Numerik\Identifiers\IdCardIdentifier;
 use SlashLab\Numerik\Identifiers\KrsIdentifier;
 use SlashLab\Numerik\Identifiers\NipIdentifier;
 use SlashLab\Numerik\Identifiers\NrbIdentifier;
+use SlashLab\Numerik\Identifiers\PassportIdentifier;
 use SlashLab\Numerik\Identifiers\PeselIdentifier;
 use SlashLab\Numerik\Identifiers\RegonIdentifier;
 use SlashLab\Numerik\Identifiers\VatEuIdentifier;
@@ -51,6 +53,16 @@ final class NumerikTest extends TestCase
         $this->assertInstanceOf(IbanIdentifier::class, Numerik::iban());
     }
 
+    public function test_id_card_returns_id_card_identifier(): void
+    {
+        $this->assertInstanceOf(IdCardIdentifier::class, Numerik::idCard());
+    }
+
+    public function test_passport_returns_passport_identifier(): void
+    {
+        $this->assertInstanceOf(PassportIdentifier::class, Numerik::passport());
+    }
+
     public function test_pesel_strict_mode_defaults_to_true(): void
     {
         $this->assertTrue(Numerik::pesel()->isStrict());
@@ -86,6 +98,16 @@ final class NumerikTest extends TestCase
         $this->assertTrue(Numerik::iban()->isStrict());
     }
 
+    public function test_id_card_strict_mode_defaults_to_true(): void
+    {
+        $this->assertTrue(Numerik::idCard()->isStrict());
+    }
+
+    public function test_passport_strict_mode_defaults_to_true(): void
+    {
+        $this->assertTrue(Numerik::passport()->isStrict());
+    }
+
     public function test_pesel_strict_mode_can_be_disabled(): void
     {
         $this->assertFalse(Numerik::pesel(strict: false)->isStrict());
@@ -119,5 +141,15 @@ final class NumerikTest extends TestCase
     public function test_iban_strict_mode_can_be_disabled(): void
     {
         $this->assertFalse(Numerik::iban(strict: false)->isStrict());
+    }
+
+    public function test_id_card_strict_mode_can_be_disabled(): void
+    {
+        $this->assertFalse(Numerik::idCard(strict: false)->isStrict());
+    }
+
+    public function test_passport_strict_mode_can_be_disabled(): void
+    {
+        $this->assertFalse(Numerik::passport(strict: false)->isStrict());
     }
 }
