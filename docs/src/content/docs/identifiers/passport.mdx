@@ -29,7 +29,7 @@ $passport = Numerik::passport()->tryParse('bad-input'); // null
 
 ## Value object API
 
-`parse()` and `tryParse()` return a `SlashLab\Numerik\ValueObjects\Passport` instance.
+`parse()` returns a `SlashLab\Numerik\ValueObjects\Passport` instance or throws on failure. `tryParse()` returns a `SlashLab\Numerik\ValueObjects\Passport` instance or `null` if parsing fails.
 
 ### Core
 

@@ -38,7 +38,7 @@ final class IdCardIdentifier implements ValidatorInterface, ParserInterface
             );
         }
 
-        $normalized = $this->normalize($input);
+        $normalized = $this->canonicalizeUppercase($this->normalize($input));
 
         if (strlen($normalized) !== self::LENGTH) {
             return ValidationResult::failWithReason(
@@ -100,7 +100,7 @@ final class IdCardIdentifier implements ValidatorInterface, ParserInterface
 
         return new IdCard(
             raw: $input,
-            normalized: $this->normalize($input),
+            normalized: $this->canonicalizeUppercase($this->normalize($input)),
         );
     }
 
@@ -116,7 +116,12 @@ final class IdCardIdentifier implements ValidatorInterface, ParserInterface
 
     private function normalize(string $input): string
     {
-        return strtoupper(str_replace(['-', ' '], '', $input));
+        return str_replace(['-', ' '], '', $input);
+    }
+
+    private function canonicalizeUppercase(string $input): string
+    {
+        return strtoupper($input);
     }
 
     private function isValidChecksum(string $normalized): bool
