@@ -18,6 +18,7 @@ final class PassportFixtures
             'all same series letter' => ['ZZ1234561'],
             'zeros in number'        => ['AA0000000'],
             'lowercase with spaces'  => ['ab 123456 4'],
+            'uppercase with hyphens' => ['AB-1234564'],
         ];
     }
 

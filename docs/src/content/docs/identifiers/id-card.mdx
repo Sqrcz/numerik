@@ -29,7 +29,7 @@ $idCard = Numerik::idCard()->tryParse('bad-input'); // null
 
 ## Value object API
 
-`parse()` and `tryParse()` return a `SlashLab\Numerik\ValueObjects\IdCard` instance.
+`parse()` returns a `SlashLab\Numerik\ValueObjects\IdCard` instance or throws on failure. `tryParse()` returns a `SlashLab\Numerik\ValueObjects\IdCard` instance or `null` if parsing fails.
 
 ### Core
 

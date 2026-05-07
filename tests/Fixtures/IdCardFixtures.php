@@ -18,6 +18,7 @@ final class IdCardFixtures
             'different series'     => ['XYZ987659'],
             'zeros in number'      => ['ZBA000008'],
             'lowercase with hyphens' => ['abc-123-454'],
+            'lowercase with spaces'  => ['abc 123 454'],
         ];
     }
 
