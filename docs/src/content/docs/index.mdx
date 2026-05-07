@@ -1,6 +1,6 @@
 ---
 title: Numerik
-description: Modern PHP 8.3+ library for validating and parsing Polish identification numbers — PESEL, NIP, REGON, KRS, NRB, VAT-EU, and IBAN.
+description: Modern PHP 8.3+ library for validating and parsing Polish identification numbers — PESEL, NIP, REGON, KRS, NRB, VAT-EU, IBAN, ID Card, and Passport.
 template: splash
 hero:
   tagline: Validate and parse Polish identification numbers with rich value objects and detailed error reasons.
@@ -21,12 +21,28 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 Numerik is a zero-dependency PHP 8.3+ library. Validation tells you *why* input failed, not just *that* it failed.
 
+### Personal
+
 <CardGrid stagger>
   <Card title="PESEL" icon="approve-check">
     Validates and parses Poland's universal citizen identifier. Extracts birth date, gender, century, age, and ordinal number directly from the number.
   </Card>
+  <Card title="ID Card" icon="approve-check">
+    Validates Polish national identity card numbers (dowód osobisty). Three-letter series plus six digits, validated with the ICAO 9303 weighted checksum.
+  </Card>
+  <Card title="Passport" icon="approve-check">
+    Validates Polish passport numbers. Two-letter series plus seven digits, validated with the same ICAO 9303 algorithm used in travel documents globally.
+  </Card>
+</CardGrid>
+
+### Tax & Business
+
+<CardGrid stagger>
   <Card title="NIP" icon="approve-check">
     Validates tax identification numbers for individuals and legal entities. Returns the issuing tax office code and formatted display form.
+  </Card>
+  <Card title="VAT-EU" icon="approve-check">
+    Validates intra-EU VAT numbers for Polish taxpayers (`PL` + NIP). Strips the country prefix and applies the NIP MOD-11 algorithm. Returns the NIP and formatted display form.
   </Card>
   <Card title="REGON" icon="approve-check">
     Handles both 9-digit (individual) and 14-digit (legal entity with local unit) REGON numbers, including multi-stage checksum validation.
@@ -34,15 +50,22 @@ Numerik is a zero-dependency PHP 8.3+ library. Validation tells you *why* input 
   <Card title="KRS" icon="approve-check">
     Validates court register numbers with automatic zero-padding normalisation. Documents the offline vs. online verification limitation.
   </Card>
+</CardGrid>
+
+### Banking
+
+<CardGrid stagger>
   <Card title="NRB" icon="approve-check">
     Validates Polish bank account numbers using the MOD-97 checksum. Accepts raw, spaced, and IBAN (`PL`-prefixed) formats. Returns sort code, bank code, and account number.
-  </Card>
-  <Card title="VAT-EU" icon="approve-check">
-    Validates intra-EU VAT numbers for Polish taxpayers (`PL` + NIP). Strips the country prefix and applies the NIP MOD-11 algorithm. Returns the NIP and formatted display form.
   </Card>
   <Card title="IBAN" icon="approve-check">
     Validates Polish IBANs (`PL` + NRB). Requires the country prefix and applies MOD-97. Returns NRB, sort code, bank code, and account number.
   </Card>
+</CardGrid>
+
+### Integrations
+
+<CardGrid stagger>
   <Card title="Laravel" icon="puzzle">
     Drop-in Laravel validation rules for all identifiers via `slashlab/numerik-laravel`. Supports class-based and string-based syntax, with strict-mode control for PESEL.
   </Card>

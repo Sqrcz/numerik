@@ -1,9 +1,9 @@
 ---
 title: Numerik
-description: Nowoczesna biblioteka PHP 8.3+ do walidacji i parsowania polskich numerów identyfikacyjnych — PESEL, NIP, REGON, KRS, NRB, VAT-EU i IBAN.
+description: Nowoczesna biblioteka PHP 8.3+ do walidacji i parsowania polskich numerów identyfikacyjnych — PESEL, NIP, REGON, KRS, NRB, VAT-EU, IBAN, dowód osobisty i paszport.
 template: splash
 hero:
-  tagline: Walidacja i parsowanie polskich numerów identyfikacyjnych (PESEL, NIP, REGON, KRS, NRB, VAT-EU, IBAN). Zwraca czytelne obiekty danych i precyzyjnie wskazuje przyczyny błędów.
+  tagline: Walidacja i parsowanie polskich numerów identyfikacyjnych (PESEL, NIP, REGON, KRS, NRB, VAT-EU, IBAN). Zwraca czytelne obiekty danych i precyzyjnie wskazuje powody błędów.
   actions:
     - text: Pierwsze kroki
       link: /pl/getting-started/
@@ -21,12 +21,28 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 **Numerik** to biblioteka PHP 8.3+ bez zewnętrznych zależności produkcyjnych. Dzięki niej dowiesz się nie tylko czy podany numer jest błędny, ale przede wszystkim dlaczego.
 
+### Osobowe
+
 <CardGrid stagger>
   <Card title="PESEL" icon="approve-check">
     Waliduje i parsuje powszechny numer ewidencyjny PESEL. Wyodrębnia datę urodzenia, płeć, stulecie, wiek i numer porządkowy bezpośrednio z numeru.
   </Card>
+  <Card title="Dowód osobisty" icon="approve-check">
+    Waliduje numery polskich dowodów osobistych. Trzy litery serii i sześć cyfr — z sumą kontrolną ICAO 9303. Zwraca serię, numer kolejny i cyfrę kontrolną.
+  </Card>
+  <Card title="Paszport" icon="approve-check">
+    Waliduje numery polskich paszportów. Dwie litery serii i siedem cyfr — z tym samym algorytmem ICAO 9303. Zwraca serię, numer kolejny i cyfrę kontrolną.
+  </Card>
+</CardGrid>
+
+### Podatkowe i rejestrowe
+
+<CardGrid stagger>
   <Card title="NIP" icon="approve-check">
     Waliduje numery identyfikacji podatkowej osób fizycznych i prawnych. Zwraca kod urzędu skarbowego i sformatowaną postać wyświetlaną.
+  </Card>
+  <Card title="VAT-EU" icon="approve-check">
+    Waliduje unijne numery VAT polskich podatników (`PL` + NIP). Usuwa prefiks kraju i stosuje algorytm MOD-11 dla NIP. Zwraca numer NIP i sformatowaną postać wyświetlaną.
   </Card>
   <Card title="REGON" icon="approve-check">
     Obsługuje zarówno 9-cyfrowy REGON podmiotu, jak i 14-cyfrowy REGON jednostki lokalnej — z pełną walidacją sum kontrolnych dla obu wariantów.
@@ -34,15 +50,22 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
   <Card title="KRS" icon="approve-check">
     Waliduje numery rejestru sądowego z automatyczną normalizacją zer wiodących. Dokumentuje ograniczenie weryfikacji offline kontra online.
   </Card>
+</CardGrid>
+
+### Bankowe
+
+<CardGrid stagger>
   <Card title="NRB" icon="approve-check">
     Waliduje polskie numery rachunków bankowych algorytmem MOD-97. Obsługuje formaty surowy, ze spacjami i IBAN (z prefiksem `PL`). Zwraca numer rozliczeniowy, kod banku i numer rachunku.
-  </Card>
-  <Card title="VAT-EU" icon="approve-check">
-    Waliduje unijne numery VAT polskich podatników (`PL` + NIP). Usuwa prefiks kraju i stosuje algorytm MOD-11 dla NIP. Zwraca numer NIP i sformatowaną postać wyświetlaną.
   </Card>
   <Card title="IBAN" icon="approve-check">
     Waliduje polskie numery IBAN (`PL` + NRB). Wymaga prefiksu kraju i stosuje MOD-97. Zwraca NRB, numer rozliczeniowy, kod banku i numer rachunku.
   </Card>
+</CardGrid>
+
+### Integracje
+
+<CardGrid stagger>
   <Card title="Laravel" icon="puzzle">
     Gotowe reguły walidacji Laravel dla wszystkich identyfikatorów przez `slashlab/numerik-laravel`. Obsługuje składnię klasową i łańcuchową z kontrolą trybu ścisłego dla PESEL.
   </Card>
@@ -53,16 +76,16 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 ```php
 use SlashLab\Numerik\Numerik;
 
-// Proste sprawdzenie boolowskie
+// Sprawdzenie poprawności
 Numerik::pesel()->isValid('92060512186');   // true
 Numerik::nip()->isValid('5260250274');      // true
 
-// Bogaty wynik ze szczegółami błędu
+// Szczegółowe wyniki z informacją o błędzie
 $result = Numerik::pesel()->validate('92060512185');  // zła cyfra kontrolna
 $result->isFailed();                        // true
 $result->getFirstFailure()->reason;         // ValidationFailureReason::InvalidChecksum
 
-// Parsowanie do obiektu wartości
+// Parsowanie do obiektu z danymi
 $pesel = Numerik::pesel()->parse('92060512186');
 $pesel->getBirthDate()->format('Y-m-d');    // '1992-06-05'
 $pesel->getGender();                        // Gender::Female
@@ -73,9 +96,9 @@ $pesel->isAdult();                          // true
 ## Kluczowe właściwości
 
 - **Zero zewnętrznych zależności produkcyjnych** — wymaga jedynie `php: ^8.3`.
-- **Niemutowalne obiekty wartości** — wszystkie obiekty wartości to klasy `readonly`.
-- **Ścisłe typy wszędzie** — `declare(strict_types=1)` w każdym pliku.
-- **Bogate powody błędów** — enum `ValidationFailureReason` obejmuje błędy formatu, sumy kontrolnej, zakodowanej daty i semantyczne.
+- **Niemutowalne struktury danych** — wszystkie zwracane obiekty to klasy `readonly`.
+- **Typowanie w każdym pliku** — `declare(strict_types=1)` w każdym pliku.
+- **Precyzyjne komunikaty błędów** — enum `ValidationFailureReason` obejmuje błędy formatu, sumy kontrolnej, zakodowanej daty i semantyczne.
 - **Bez wyrażeń regularnych** — walidacja oparta na operacjach tablicowych, co eliminuje podatność na ataki ReDoS.
-- **Wczesne odrzucanie nieprawidłowych wejść** — ciągi dłuższe niż 32 znaki są od razu odrzucane, bez zbędnych obliczeń.
+- **Szybkie odrzucanie błędnych wartości** — ciągi dłuższe niż 32 znaki są od razu odrzucane, bez zbędnych obliczeń.
 - **Łatwe do zrozumienia API** — intuicyjne metody `isValid()`, `validate()` i `parse()` z jasnymi kontraktami.

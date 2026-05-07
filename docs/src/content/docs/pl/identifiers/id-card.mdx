@@ -1,0 +1,90 @@
+---
+title: Dowód osobisty
+description: Walidacja i parsowanie numerów polskich dowodów osobistych za pomocą Numerik.
+---
+
+Numer dowodu osobistego składa się z trzech wielkich liter (seria) oraz sześciu cyfr, gdzie ostatnia cyfra jest sumą kontrolną obliczaną algorytmem wagowym ICAO 9303. Litery O i Q są wykluczone z serii.
+
+## Użycie
+
+```php
+use SlashLab\Numerik\Numerik;
+
+// Walidacja logiczna
+Numerik::idCard()->isValid('ABC123454');   // true
+
+// Małe litery i myślniki są usuwane podczas normalizacji
+Numerik::idCard()->isValid('abc-123-454');   // true
+
+// Szczegółowy wynik
+$result = Numerik::idCard()->validate('ABC123454');
+$result->isValid;   // true
+
+// Parsowanie do obiektu wartości
+$idCard = Numerik::idCard()->parse('ABC123454');
+
+// null zamiast wyjątku w przypadku błędu
+$idCard = Numerik::idCard()->tryParse('błędne-wejście'); // null
+```
+
+## API obiektu wartości
+
+`parse()` i `tryParse()` zwracają instancję `SlashLab\Numerik\ValueObjects\IdCard`.
+
+### Rdzeń
+
+| Metoda | Typ zwracany | Opis |
+|--------|--------------|------|
+| `getRaw()` | `string` | Oryginalne wejście bez zmian. |
+| `getNormalized()` | `string` | 3 wielkie litery + 6 cyfr, np. `ABC123454`. |
+| `__toString()` | `string` | Identyczne z `getNormalized()`. |
+
+### Struktura
+
+| Metoda | Typ zwracany | Opis |
+|--------|--------------|------|
+| `getSeries()` | `string` | Pierwsze 3 litery — seria dokumentu, np. `ABC`. |
+| `getSequentialNumber()` | `string` | 5-cyfrowy numer kolejny (pozycje 4–8), np. `12345`. |
+| `getCheckDigit()` | `string` | Cyfra kontrolna na pozycji 9, np. `4`. |
+
+## Przykłady
+
+```php
+$idCard = Numerik::idCard()->parse('ABC123454');
+
+$idCard->getRaw();                // 'ABC123454'
+$idCard->getNormalized();         // 'ABC123454'
+$idCard->getSeries();             // 'ABC'
+$idCard->getSequentialNumber();   // '12345'
+$idCard->getCheckDigit();         // '4'
+
+// Małe litery i myślniki normalizują się do tej samej wartości
+$idCard = Numerik::idCard()->parse('abc-123-454');
+
+$idCard->getRaw();                // 'abc-123-454'
+$idCard->getNormalized();         // 'ABC123454'
+```
+
+## Algorytm walidacji
+
+1. Odrzuć wejścia dłuższe niż 32 znaki — błąd `InvalidLength`.
+2. Usuń spacje i myślniki. Zamień na wielkie litery.
+3. Wymagaj dokładnie 9 znaków — inaczej błąd `InvalidLength`.
+4. Pierwsze 3 znaki muszą być literami — inaczej błąd `InvalidCharacters`.
+5. Seria nie może zawierać liter O ani Q — inaczej błąd `InvalidFormat`.
+6. Znaki 4–9 muszą być cyframi — inaczej błąd `InvalidCharacters`.
+7. Zastosuj sumę kontrolną ICAO 9303 na pozycjach 1–8 — patrz sekcja [Algorytmy](/pl/guide/algorithms/#icao-9303).
+
+## Powody błędów
+
+| Przyczyna | Wartość | Kiedy |
+|-----------|---------|-------|
+| `InvalidLength` | `invalid_length` | Numer nie ma dokładnie 9 znaków po normalizacji lub surowe wejście przekracza 32 znaki. |
+| `InvalidCharacters` | `invalid_characters` | Znaki niebędące literami w serii lub znaki niebędące cyframi w części numerycznej. |
+| `InvalidFormat` | `invalid_format` | Seria zawiera literę O lub Q. |
+| `InvalidChecksum` | `invalid_checksum` | Cyfra kontrolna ICAO 9303 nie zgadza się. |
+
+## Powiązane
+
+- [Paszport](/pl/identifiers/passport) — ten sam algorytm sumy kontrolnej ICAO 9303; identyfikuje tę samą osobę w kontekście międzynarodowym.
+- [PESEL](/pl/identifiers/pesel) — powszechny identyfikator osobowy powiązany z tą samą osobą.

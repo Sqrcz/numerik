@@ -1,0 +1,88 @@
+---
+title: Paszport
+description: Walidacja i parsowanie numerów polskich paszportów za pomocą Numerik.
+---
+
+Numer polskiego paszportu składa się z dwóch wielkich liter (seria) oraz siedmiu cyfr, gdzie ostatnia cyfra jest sumą kontrolną obliczaną algorytmem wagowym ICAO 9303.
+
+## Użycie
+
+```php
+use SlashLab\Numerik\Numerik;
+
+// Walidacja logiczna
+Numerik::passport()->isValid('AB1234564');   // true
+
+// Małe litery i spacje są usuwane podczas normalizacji
+Numerik::passport()->isValid('ab 123456 4');   // true
+
+// Szczegółowy wynik
+$result = Numerik::passport()->validate('AB1234564');
+$result->isValid;   // true
+
+// Parsowanie do obiektu wartości
+$passport = Numerik::passport()->parse('AB1234564');
+
+// null zamiast wyjątku w przypadku błędu
+$passport = Numerik::passport()->tryParse('błędne-wejście'); // null
+```
+
+## API obiektu wartości
+
+`parse()` i `tryParse()` zwracają instancję `SlashLab\Numerik\ValueObjects\Passport`.
+
+### Rdzeń
+
+| Metoda | Typ zwracany | Opis |
+|--------|--------------|------|
+| `getRaw()` | `string` | Oryginalne wejście bez zmian. |
+| `getNormalized()` | `string` | 2 wielkie litery + 7 cyfr, np. `AB1234564`. |
+| `__toString()` | `string` | Identyczne z `getNormalized()`. |
+
+### Struktura
+
+| Metoda | Typ zwracany | Opis |
+|--------|--------------|------|
+| `getSeries()` | `string` | Pierwsze 2 litery — seria dokumentu, np. `AB`. |
+| `getSequentialNumber()` | `string` | 6-cyfrowy numer kolejny (pozycje 3–8), np. `123456`. |
+| `getCheckDigit()` | `string` | Cyfra kontrolna na pozycji 9, np. `4`. |
+
+## Przykłady
+
+```php
+$passport = Numerik::passport()->parse('AB1234564');
+
+$passport->getRaw();                // 'AB1234564'
+$passport->getNormalized();         // 'AB1234564'
+$passport->getSeries();             // 'AB'
+$passport->getSequentialNumber();   // '123456'
+$passport->getCheckDigit();         // '4'
+
+// Małe litery i spacje normalizują się do tej samej wartości
+$passport = Numerik::passport()->parse('ab 123456 4');
+
+$passport->getRaw();                // 'ab 123456 4'
+$passport->getNormalized();         // 'AB1234564'
+```
+
+## Algorytm walidacji
+
+1. Odrzuć wejścia dłuższe niż 32 znaki — błąd `InvalidLength`.
+2. Usuń spacje i myślniki. Zamień na wielkie litery.
+3. Wymagaj dokładnie 9 znaków — inaczej błąd `InvalidLength`.
+4. Pierwsze 2 znaki muszą być literami — inaczej błąd `InvalidCharacters`.
+5. Znaki 3–9 muszą być cyframi — inaczej błąd `InvalidCharacters`.
+6. Zastosuj sumę kontrolną ICAO 9303 na pozycjach 1–8 — patrz sekcja [Algorytmy](/pl/guide/algorithms/#icao-9303).
+
+## Powody błędów
+
+| Przyczyna | Wartość | Kiedy |
+|-----------|---------|-------|
+| `InvalidLength` | `invalid_length` | Numer nie ma dokładnie 9 znaków po normalizacji lub surowe wejście przekracza 32 znaki. |
+| `InvalidCharacters` | `invalid_characters` | Znaki niebędące literami w serii lub znaki niebędące cyframi w części numerycznej. |
+| `InvalidChecksum` | `invalid_checksum` | Cyfra kontrolna ICAO 9303 nie zgadza się. |
+
+## Powiązane
+
+- [Dowód osobisty](/pl/identifiers/id-card) — ten sam algorytm sumy kontrolnej ICAO 9303; identyfikuje tę samą osobę w Polsce.
+- [PESEL](/pl/identifiers/pesel) — powszechny identyfikator osobowy powiązany z tą samą osobą.

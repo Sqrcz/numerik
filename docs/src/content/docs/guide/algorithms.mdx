@@ -1,6 +1,6 @@
 ---
 title: Algorithms
-description: Reference for the checksum algorithms used by Numerik to validate PESEL, NIP, and REGON numbers.
+description: Reference for the checksum algorithms used by Numerik to validate PESEL, NIP, REGON, NRB, ID Card, and Passport numbers.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -156,3 +156,42 @@ IBAN validation is a thin wrapper over NRB:
 2. Assert the first two characters are `PL` (case-insensitive); fail with `InvalidFormat`.
 3. Strip the prefix. Assert exactly 26 digits remain.
 4. Apply the full [NRB](#nrb) MOD-97 algorithm to the extracted digits.
+
+---
+
+## ICAO 9303
+
+Used by both [ID Card](/identifiers/id-card/) and [Passport](/identifiers/passport/) — the same international standard applied to travel document numbers.
+
+**Weights:** `7, 3, 1` repeating over positions 1–8 (8 input characters). Position 9 is the check digit.
+
+**Character values:**
+- Digits `0`–`9` → face value (`0`–`9`)
+- Letters `A`–`Z` → `10`–`35` (`A`=10, `B`=11, … `Z`=35)
+
+### Steps
+
+1. Strip spaces and hyphens. Convert to uppercase. Reject inputs over 32 characters.
+2. Assert exactly 9 characters; fail with `InvalidLength`.
+3. Validate character types per identifier (see individual pages).
+4. Multiply each of the first 8 characters by its weight and sum the products.
+5. Compute `sum mod 10`. The result must equal the 9th character; fail with `InvalidChecksum`.
+
+### Calculation example
+
+Number: `A B C 1 2 3 4 5 4` (ID card)
+
+| Position | Char | Value | Weight | Product |
+| -------- | ---- | ----- | ------ | ------- |
+| 1        | A    | 10    | 7      | 70      |
+| 2        | B    | 11    | 3      | 33      |
+| 3        | C    | 12    | 1      | 12      |
+| 4        | 1    | 1     | 7      | 7       |
+| 5        | 2    | 2     | 3      | 6       |
+| 6        | 3    | 3     | 1      | 3       |
+| 7        | 4    | 4     | 7      | 28      |
+| 8        | 5    | 5     | 3      | 15      |
+
+Sum = 70 + 33 + 12 + 7 + 6 + 3 + 28 + 15 = **174**
+
+`174 mod 10 = 4` — position 9 is `4` ✓

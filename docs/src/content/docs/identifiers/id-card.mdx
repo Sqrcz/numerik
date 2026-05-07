@@ -1,0 +1,90 @@
+---
+title: ID Card
+description: Validate and parse Polish national identity card numbers (dowód osobisty) with Numerik.
+---
+
+The Polish national identity card number (*numer dowodu osobistego*) consists of three uppercase letters followed by six digits, where the final digit is a checksum computed using the ICAO 9303 weighted algorithm. The letters O and Q are excluded from the series.
+
+## Usage
+
+```php
+use SlashLab\Numerik\Numerik;
+
+// Boolean validation
+Numerik::idCard()->isValid('ABC123454');   // true
+
+// Lowercase input and hyphens are stripped during normalisation
+Numerik::idCard()->isValid('abc-123-454');   // true
+
+// Rich result
+$result = Numerik::idCard()->validate('ABC123454');
+$result->isValid;   // true
+
+// Parse to value object
+$idCard = Numerik::idCard()->parse('ABC123454');
+
+// Null on failure instead of exception
+$idCard = Numerik::idCard()->tryParse('bad-input'); // null
+```
+
+## Value object API
+
+`parse()` and `tryParse()` return a `SlashLab\Numerik\ValueObjects\IdCard` instance.
+
+### Core
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getRaw()` | `string` | The original input, untouched. |
+| `getNormalized()` | `string` | 3 uppercase letters + 6 digits, e.g. `ABC123454`. |
+| `__toString()` | `string` | Same as `getNormalized()`. |
+
+### Structure
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getSeries()` | `string` | First 3 letters — the document series, e.g. `ABC`. |
+| `getSequentialNumber()` | `string` | 5-digit sequential number (positions 4–8), e.g. `12345`. |
+| `getCheckDigit()` | `string` | Single check digit at position 9, e.g. `4`. |
+
+## Examples
+
+```php
+$idCard = Numerik::idCard()->parse('ABC123454');
+
+$idCard->getRaw();                // 'ABC123454'
+$idCard->getNormalized();         // 'ABC123454'
+$idCard->getSeries();             // 'ABC'
+$idCard->getSequentialNumber();   // '12345'
+$idCard->getCheckDigit();         // '4'
+
+// Lowercase and hyphens normalise to the same value
+$idCard = Numerik::idCard()->parse('abc-123-454');
+
+$idCard->getRaw();                // 'abc-123-454'
+$idCard->getNormalized();         // 'ABC123454'
+```
+
+## Validation algorithm
+
+1. Reject inputs over 32 characters; fail with `InvalidLength`.
+2. Strip spaces and hyphens. Convert to uppercase.
+3. Assert exactly 9 characters remain; fail with `InvalidLength`.
+4. Assert the first 3 characters are letters; fail with `InvalidCharacters`.
+5. Assert the series contains no O or Q; fail with `InvalidFormat`.
+6. Assert characters 4–9 are digits; fail with `InvalidCharacters`.
+7. Apply the ICAO 9303 checksum over positions 1–8; fail with `InvalidChecksum` if the result does not match position 9. See [Algorithms](/guide/algorithms/#icao-9303).
+
+## Failure reasons
+
+| Reason | Value | When |
+|--------|-------|------|
+| `InvalidLength` | `invalid_length` | Number is not exactly 9 characters after normalisation, or raw input exceeds 32 characters. |
+| `InvalidCharacters` | `invalid_characters` | Non-letter characters in the series, or non-digit characters in the number portion. |
+| `InvalidFormat` | `invalid_format` | Series contains the letter O or Q. |
+| `InvalidChecksum` | `invalid_checksum` | ICAO 9303 check digit does not match. |
+
+## Related
+
+- [Passport](/identifiers/passport) — same ICAO 9303 checksum algorithm; identifies the same person in an international context.
+- [PESEL](/identifiers/pesel) — universal personal identifier linked to the same individual.

@@ -1,6 +1,6 @@
 ---
 title: Algorytmy
-description: Dokumentacja algorytmów sum kontrolnych używanych przez Numerik do walidacji numerów PESEL, NIP i REGON.
+description: Dokumentacja algorytmów sum kontrolnych używanych przez Numerik do walidacji numerów PESEL, NIP, REGON, NRB, dowodów osobistych i paszportów.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -156,3 +156,42 @@ Walidacja IBAN to nakładka na algorytm NRB:
 2. Wymagaj, aby pierwsze dwa znaki były `PL` (bez rozróżniania wielkości liter) — inaczej błąd `InvalidFormat`.
 3. Usuń prefiks. Wymagaj dokładnie 26 cyfr — inaczej błąd `InvalidLength`.
 4. Zastosuj pełny algorytm MOD-97 [NRB](#nrb) do wyodrębnionych cyfr.
+
+---
+
+## ICAO 9303
+
+Używany przez [dowód osobisty](/pl/identifiers/id-card/) i [paszport](/pl/identifiers/passport/) — ten sam międzynarodowy standard stosowany w dokumentach podróży na całym świecie.
+
+**Wagi:** `7, 3, 1` powtarzane na pozycjach 1–8 (8 znaków wejściowych). Pozycja 9 to cyfra kontrolna.
+
+**Wartości znaków:**
+- Cyfry `0`–`9` → wartość nominalna (`0`–`9`)
+- Litery `A`–`Z` → `10`–`35` (`A`=10, `B`=11, … `Z`=35)
+
+### Kroki
+
+1. Usuń spacje i myślniki. Zamień na wielkie litery. Odrzuć wejścia dłuższe niż 32 znaki.
+2. Wymagaj dokładnie 9 znaków — inaczej błąd `InvalidLength`.
+3. Sprawdź typy znaków zgodnie ze specyfikacją identyfikatora (patrz strony poszczególnych identyfikatorów).
+4. Pomnóż każdy z pierwszych 8 znaków przez odpowiednią wagę i zsumuj iloczyny.
+5. Oblicz `suma mod 10`. Wynik musi być równy 9. znakowi — inaczej błąd `InvalidChecksum`.
+
+### Przykład obliczenia
+
+Numer: `A B C 1 2 3 4 5 4` (dowód osobisty)
+
+| Pozycja | Znak | Wartość | Waga | Iloczyn |
+| ------- | ---- | ------- | ---- | ------- |
+| 1       | A    | 10      | 7    | 70      |
+| 2       | B    | 11      | 3    | 33      |
+| 3       | C    | 12      | 1    | 12      |
+| 4       | 1    | 1       | 7    | 7       |
+| 5       | 2    | 2       | 3    | 6       |
+| 6       | 3    | 3       | 1    | 3       |
+| 7       | 4    | 4       | 7    | 28      |
+| 8       | 5    | 5       | 3    | 15      |
+
+Suma = 70 + 33 + 12 + 7 + 6 + 3 + 28 + 15 = **174**
+
+`174 mod 10 = 4` — cyfra 9 wynosi `4` ✓

@@ -1,0 +1,88 @@
+---
+title: Passport
+description: Validate and parse Polish passport numbers with Numerik.
+---
+
+The Polish passport number consists of two uppercase letters followed by seven digits, where the final digit is a checksum computed using the ICAO 9303 weighted algorithm.
+
+## Usage
+
+```php
+use SlashLab\Numerik\Numerik;
+
+// Boolean validation
+Numerik::passport()->isValid('AB1234564');   // true
+
+// Lowercase input and spaces are stripped during normalisation
+Numerik::passport()->isValid('ab 123456 4');   // true
+
+// Rich result
+$result = Numerik::passport()->validate('AB1234564');
+$result->isValid;   // true
+
+// Parse to value object
+$passport = Numerik::passport()->parse('AB1234564');
+
+// Null on failure instead of exception
+$passport = Numerik::passport()->tryParse('bad-input'); // null
+```
+
+## Value object API
+
+`parse()` and `tryParse()` return a `SlashLab\Numerik\ValueObjects\Passport` instance.
+
+### Core
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getRaw()` | `string` | The original input, untouched. |
+| `getNormalized()` | `string` | 2 uppercase letters + 7 digits, e.g. `AB1234564`. |
+| `__toString()` | `string` | Same as `getNormalized()`. |
+
+### Structure
+
+| Method | Return type | Description |
+|--------|-------------|-------------|
+| `getSeries()` | `string` | First 2 letters — the document series, e.g. `AB`. |
+| `getSequentialNumber()` | `string` | 6-digit sequential number (positions 3–8), e.g. `123456`. |
+| `getCheckDigit()` | `string` | Single check digit at position 9, e.g. `4`. |
+
+## Examples
+
+```php
+$passport = Numerik::passport()->parse('AB1234564');
+
+$passport->getRaw();                // 'AB1234564'
+$passport->getNormalized();         // 'AB1234564'
+$passport->getSeries();             // 'AB'
+$passport->getSequentialNumber();   // '123456'
+$passport->getCheckDigit();         // '4'
+
+// Lowercase and spaces normalise to the same value
+$passport = Numerik::passport()->parse('ab 123456 4');
+
+$passport->getRaw();                // 'ab 123456 4'
+$passport->getNormalized();         // 'AB1234564'
+```
+
+## Validation algorithm
+
+1. Reject inputs over 32 characters; fail with `InvalidLength`.
+2. Strip spaces and hyphens. Convert to uppercase.
+3. Assert exactly 9 characters remain; fail with `InvalidLength`.
+4. Assert the first 2 characters are letters; fail with `InvalidCharacters`.
+5. Assert characters 3–9 are digits; fail with `InvalidCharacters`.
+6. Apply the ICAO 9303 checksum over positions 1–8; fail with `InvalidChecksum` if the result does not match position 9. See [Algorithms](/guide/algorithms/#icao-9303).
+
+## Failure reasons
+
+| Reason | Value | When |
+|--------|-------|------|
+| `InvalidLength` | `invalid_length` | Number is not exactly 9 characters after normalisation, or raw input exceeds 32 characters. |
+| `InvalidCharacters` | `invalid_characters` | Non-letter characters in the series, or non-digit characters in the number portion. |
+| `InvalidChecksum` | `invalid_checksum` | ICAO 9303 check digit does not match. |
+
+## Related
+
+- [ID Card](/identifiers/id-card) — same ICAO 9303 checksum algorithm; identifies the same person within Poland.
+- [PESEL](/identifiers/pesel) — universal personal identifier linked to the same individual.

@@ -22,9 +22,9 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 2. **Brak konfiguracji**
 
-   Pakiet ładuje się automatycznie dzięki PSR-4 — nie wymaga żadnej konfiguracji ani inicjalizacji.
+   Biblioteka ładuje się automatycznie dzięki PSR-4 — nie wymaga żadnej konfiguracji ani inicjalizacji.
 
-3. **Użyj**
+3. **Korzystaj**
 
    ```php
    use SlashLab\Numerik\Numerik;
@@ -36,17 +36,19 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 ## Szybki start
 
-### Walidacja boolowska
+### Sprawdzenie poprawności
 
 ```php
 use SlashLab\Numerik\Numerik;
 
 Numerik::pesel()->isValid('92060512186');                    // true
+Numerik::idCard()->isValid('ABC123454');                     // true
+Numerik::passport()->isValid('AB1234564');                   // true
 Numerik::nip()->isValid('5260250274');                       // true
+Numerik::vatEu()->isValid('PL5260250274');                   // true
 Numerik::regon()->isValid('691761365');                      // true
 Numerik::krs()->isValid('0000127206');                       // true
 Numerik::nrb()->isValid('61102010260000000000000000');       // true
-Numerik::vatEu()->isValid('PL5260250274');                   // true
 Numerik::iban()->isValid('PL61102010260000000000000000');    // true
 ```
 
@@ -69,7 +71,7 @@ $result->getFirstFailure()->message;        // komunikat czytelny dla człowieka
 
 Zobacz [Wyniki walidacji](/pl/guide/validation-results/) aby poznać pełne API.
 
-### Pełny obiekt z danymi
+### Parsowanie do obiektu z danymi
 
 `parse()` zwraca obiekt wartości lub — jeśli numer jest nieprawidłowy — rzuca `ValidationException`.
 
@@ -93,14 +95,14 @@ $pesel = Numerik::pesel()->tryParse('zły-numer'); // null
 
 | Metoda       | Zwraca                     | Rzuca                 | Kiedy używać                                                            |
 | ------------ | -------------------------- | --------------------- | ----------------------------------------------------------------------- |
-| `isValid()`  | `bool`                     | nigdy                 | Proste sprawdzenie istnienia                                            |
+| `isValid()`  | `bool`                     | nigdy                 | Szybkie sprawdzenie poprawności                                            |
 | `validate()` | `ValidationResult`         | nigdy                 | Gdy potrzebujesz powodu błędu                                           |
 | `parse()`    | obiekt wartości            | `ValidationException` | Gdy potrzebujesz wyodrębnionych danych i wolisz wyjątki                 |
 | `tryParse()` | obiekt wartości lub `null` | nigdy                 | Gdy potrzebujesz wyodrębnionych danych, ale wolisz null zamiast wyjątku |
 
 ## Następne kroki
 
-- Przejrzyj dokumentację [PESEL](/pl/identifiers/pesel/), [NIP](/pl/identifiers/nip/), [REGON](/pl/identifiers/regon/), [KRS](/pl/identifiers/krs/), [NRB](/pl/identifiers/nrb/), [VAT-EU](/pl/identifiers/vat-eu/) lub [IBAN](/pl/identifiers/iban/) z pełną listą metod.
+- Zobacz dokumentację [PESEL](/pl/identifiers/pesel/), [Dowód osobisty](/pl/identifiers/id-card/), [Paszport](/pl/identifiers/passport/), [NIP](/pl/identifiers/nip/), [VAT-EU](/pl/identifiers/vat-eu/), [REGON](/pl/identifiers/regon/), [KRS](/pl/identifiers/krs/), [NRB](/pl/identifiers/nrb/) lub [IBAN](/pl/identifiers/iban/) z pełną listą metod.
 - [Obsługa błędów](/pl/guide/error-handling/) — hierarchia wyjątków i kiedy po nie sięgać.
 - [Wyniki walidacji](/pl/guide/validation-results/) — pełne API `ValidationResult`.
 - Używasz Laravela? Zobacz [Integrację z Laravel](/pl/integrations/laravel/) — gotowe reguły walidacji.

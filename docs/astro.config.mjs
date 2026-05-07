@@ -1,7 +1,10 @@
-import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-import starlightThemeFlexoki from 'starlight-theme-flexoki';
+
 import starlightLlmsTxt from 'starlight-llms-txt';
+import starlightThemeFlexoki from 'starlight-theme-flexoki';
+import starlightUiTweaks from 'starlight-ui-tweaks';
+
+import { defineConfig } from 'astro/config';
 
 export default defineConfig({
     site: 'https://numerik.slashlab.pl',
@@ -48,13 +51,33 @@ export default defineConfig({
                     label: 'Identifiers',
                     translations: { pl: 'Identyfikatory' },
                     items: [
-                        { label: 'PESEL', slug: 'identifiers/pesel' },
-                        { label: 'NIP', slug: 'identifiers/nip' },
-                        { label: 'REGON', slug: 'identifiers/regon' },
-                        { label: 'KRS', slug: 'identifiers/krs' },
-                        { label: 'NRB', slug: 'identifiers/nrb' },
-                        { label: 'VAT-EU', slug: 'identifiers/vat-eu' },
-                        { label: 'IBAN', slug: 'identifiers/iban' },
+                        {
+                            label: 'Personal',
+                            translations: { pl: 'Osobowe' },
+                            items: [
+                                { label: 'PESEL', slug: 'identifiers/pesel' },
+                                { label: 'ID Card', slug: 'identifiers/id-card', translations: { pl: 'Dowód osobisty' } },
+                                { label: 'Passport', slug: 'identifiers/passport', translations: { pl: 'Paszport' } },
+                            ],
+                        },
+                        {
+                            label: 'Tax & Business',
+                            translations: { pl: 'Podatkowe i rejestrowe' },
+                            items: [
+                                { label: 'NIP', slug: 'identifiers/nip' },
+                                { label: 'VAT-EU', slug: 'identifiers/vat-eu' },
+                                { label: 'REGON', slug: 'identifiers/regon' },
+                                { label: 'KRS', slug: 'identifiers/krs' },
+                            ],
+                        },
+                        {
+                            label: 'Banking',
+                            translations: { pl: 'Bankowe' },
+                            items: [
+                                { label: 'NRB', slug: 'identifiers/nrb' },
+                                { label: 'IBAN', slug: 'identifiers/iban' },
+                            ],
+                        },
                     ],
                 },
                 {
@@ -88,7 +111,11 @@ export default defineConfig({
             pagination: true,
             plugins: [
                 starlightLlmsTxt(),
+                starlightUiTweaks(),
                 starlightThemeFlexoki({ accentColor: "cyan" }),
+            ],
+            customCss: [
+                './src/styles/custom.css',
             ],
         }),
     ],
