@@ -34,18 +34,33 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
   <TabItem label="Reguły klasowe">
 
     ```php
+    // Osobowe
     use SlashLab\NumerikLaravel\Rules\PeselRule;
+    use SlashLab\NumerikLaravel\Rules\IdCardRule;
+    use SlashLab\NumerikLaravel\Rules\PassportRule;
+
+    // Podatkowe i rejestrowe
     use SlashLab\NumerikLaravel\Rules\NipRule;
+    use SlashLab\NumerikLaravel\Rules\VatEuRule;
     use SlashLab\NumerikLaravel\Rules\RegonRule;
     use SlashLab\NumerikLaravel\Rules\KrsRule;
+
+    // Bankowe
+    use SlashLab\NumerikLaravel\Rules\NrbRule;
+    use SlashLab\NumerikLaravel\Rules\IbanRule;
 
     public function rules(): array
     {
         return [
-            'pesel' => ['required', new PeselRule()],
-            'nip'   => ['required', new NipRule()],
-            'regon' => ['required', new RegonRule()],
-            'krs'   => ['required', new KrsRule()],
+            'pesel'    => ['required', new PeselRule()],
+            'id_card'  => ['required', new IdCardRule()],
+            'passport' => ['required', new PassportRule()],
+            'nip'      => ['required', new NipRule()],
+            'vat_eu'   => ['required', new VatEuRule()],
+            'regon'    => ['required', new RegonRule()],
+            'krs'      => ['required', new KrsRule()],
+            'nrb'      => ['required', new NrbRule()],
+            'iban'     => ['required', new IbanRule()],
         ];
     }
     ```
@@ -59,10 +74,15 @@ import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
     public function rules(): array
     {
         return [
-            'pesel' => ['required', 'pesel'],
-            'nip'   => ['required', 'nip'],
-            'regon' => ['required', 'regon'],
-            'krs'   => ['required', 'krs'],
+            'pesel'    => ['required', 'pesel'],
+            'id_card'  => ['required', 'id_card'],
+            'passport' => ['required', 'passport'],
+            'nip'      => ['required', 'nip'],
+            'vat_eu'   => ['required', 'vat_eu'],
+            'regon'    => ['required', 'regon'],
+            'krs'      => ['required', 'krs'],
+            'nrb'      => ['required', 'nrb'],
+            'iban'     => ['required', 'iban'],
         ];
     }
     ```
@@ -109,7 +129,7 @@ new PeselRule()
 new PeselRule(strict: false)
 ```
 
-Ten sam parametr jest akceptowany przez `NipRule`, `RegonRule` i `KrsRule`.
+Ten sam parametr jest akceptowany przez pozostałe reguły: `NipRule`, `VatEuRule`, `RegonRule`, `KrsRule`, `NrbRule`, `IbanRule`, `IdCardRule` i `PassportRule`.
 
 <Aside type="tip">
   Wyłącz tryb ścisły gdy potrzebujesz akceptować dane testowe lub syntetyczne — fikcyjne numery jak `22222222222` są typowe w środowiskach typu staging.
