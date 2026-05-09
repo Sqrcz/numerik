@@ -55,15 +55,20 @@ composer require slashlab/numerik-laravel
 Use class-based rules or plain strings — both styles work:
 
 ```php
+// Personal
 use SlashLab\NumerikLaravel\Rules\PeselRule;
-use SlashLab\NumerikLaravel\Rules\NipRule;
-use SlashLab\NumerikLaravel\Rules\RegonRule;
-use SlashLab\NumerikLaravel\Rules\KrsRule;
-use SlashLab\NumerikLaravel\Rules\NrbRule;
-use SlashLab\NumerikLaravel\Rules\VatEuRule;
-use SlashLab\NumerikLaravel\Rules\IbanRule;
 use SlashLab\NumerikLaravel\Rules\IdCardRule;
 use SlashLab\NumerikLaravel\Rules\PassportRule;
+
+// Tax & Business
+use SlashLab\NumerikLaravel\Rules\NipRule;
+use SlashLab\NumerikLaravel\Rules\VatEuRule;
+use SlashLab\NumerikLaravel\Rules\RegonRule;
+use SlashLab\NumerikLaravel\Rules\KrsRule;
+
+// Banking
+use SlashLab\NumerikLaravel\Rules\NrbRule;
+use SlashLab\NumerikLaravel\Rules\IbanRule;
 
 // Class-based (supports options)
 public function rules(): array
@@ -71,14 +76,14 @@ public function rules(): array
     return [
         'pesel'    => ['required', new PeselRule()],              // strict mode on by default
         // 'pesel'  => ['required', new PeselRule(strict: false)], // disable strict checks
+        'id_card'  => ['required', new IdCardRule()],
+        'passport' => ['required', new PassportRule()],
         'nip'      => ['required', new NipRule()],
+        'vat_eu'   => ['required', new VatEuRule()],
         'regon'    => ['required', new RegonRule()],
         'krs'      => ['required', new KrsRule()],
         'nrb'      => ['required', new NrbRule()],
-        'vat_eu'   => ['required', new VatEuRule()],
         'iban'     => ['required', new IbanRule()],
-        'id_card'  => ['required', new IdCardRule()],
-        'passport' => ['required', new PassportRule()],
     ];
 }
 
@@ -87,14 +92,14 @@ public function rules(): array
 {
     return [
         'pesel'    => ['required', 'pesel'],
+        'id_card'  => ['required', 'id_card'],
+        'passport' => ['required', 'passport'],
         'nip'      => ['required', 'nip'],
+        'vat_eu'   => ['required', 'vat_eu'],
         'regon'    => ['required', 'regon'],
         'krs'      => ['required', 'krs'],
         'nrb'      => ['required', 'nrb'],
-        'vat_eu'   => ['required', 'vat_eu'],
         'iban'     => ['required', 'iban'],
-        'id_card'  => ['required', 'id_card'],
-        'passport' => ['required', 'passport'],
     ];
 }
 ```

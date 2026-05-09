@@ -1,18 +1,23 @@
 {
   "name": "slashlab/numerik",
-  "description": "Modern PHP 8.3+ library for validating and parsing Polish identification numbers (PESEL, NIP, REGON, KRS).",
+  "description": "Modern PHP 8.3+ library for validating and parsing Polish identification numbers (PESEL, NIP, REGON, KRS, NRB, VAT-EU, IBAN, ID Card, Passport).",
   "type": "library",
   "license": "MIT",
   "keywords": [
-    "pesel",
-    "nip",
-    "regon",
+    "iban",
+    "id-card",
     "krs",
+    "nip",
+    "nrb",
+    "numerik",
+    "passport",
+    "pesel",
     "poland",
     "polish",
-    "validator",
+    "regon",
     "validation",
-    "numerik"
+    "validator",
+    "vat-eu"
   ],
   "authors": [
     {
