@@ -27,9 +27,6 @@ Numerik::pesel()->isValid('92060512186');  // true
 Numerik::nip()->isValid('5260250274');     // true
 
 // Rich validation result with failure reasons
-$result = Numerik::pesel()->validate('92060512186');
-$result->isValid;                          // true
-
 $result = Numerik::pesel()->validate('92060512185');  // wrong checksum digit
 $result->isFailed();                       // true
 $result->getFirstFailure()->reason;        // ValidationFailureReason::InvalidChecksum
@@ -38,75 +35,42 @@ $result->getFirstFailure()->reason;        // ValidationFailureReason::InvalidCh
 $pesel = Numerik::pesel()->parse('92060512186');
 $pesel->getBirthDate()->format('Y-m-d');  // '1992-06-05'
 $pesel->getGender();                      // Gender::Female
+
+// Try-parse — returns null on failure instead of throwing
+$nip = Numerik::nip()->tryParse('5260250274');
+$nip?->getFormatted();                     // '526-025-02-74'
+```
+
+## Strict Mode
+
+All identifiers accept an optional `strict` parameter (default `true`). In non-strict mode, formatting variations such as spaces and dashes are accepted:
+
+```php
+Numerik::nip(strict: false)->isValid('526 025 02 74');  // true
+Numerik::nip(strict: true)->isValid('526 025 02 74');   // false
 ```
 
 ## Documentation
 
 Full documentation at **[numerik.slashlab.pl](https://numerik.slashlab.pl)**
 
+## JavaScript / TypeScript Port
+
+A TypeScript port is available at [`@slashlab/numerik-js`](https://github.com/sqrcz/numerik-js). It mirrors this library's API — same identifiers, same value objects, same strict mode — with Zod integration included.
+
+```bash
+npm install @slashlab/numerik-js
+```
+
 ## Laravel Integration
 
-A dedicated Laravel package is available at [`slashlab/numerik-laravel`](https://github.com/Sqrcz/numerik-laravel) (requires PHP 8.3+, Laravel 11/12/13). The service provider is auto-discovered — no manual registration needed.
+A dedicated Laravel package is available at [`slashlab/numerik-laravel`](https://github.com/sqrcz/numerik-laravel) (PHP 8.3+, Laravel 12/13). It provides class-based and string-based validation rules with per-failure-reason error messages, English and Polish translations, and extended `PeselRule` constraints (`gender`, `bornBefore`, `bornAfter`).
 
 ```bash
 composer require slashlab/numerik-laravel
 ```
 
-Use class-based rules or plain strings — both styles work:
-
-```php
-// Personal
-use SlashLab\NumerikLaravel\Rules\PeselRule;
-use SlashLab\NumerikLaravel\Rules\IdCardRule;
-use SlashLab\NumerikLaravel\Rules\PassportRule;
-
-// Tax & Business
-use SlashLab\NumerikLaravel\Rules\NipRule;
-use SlashLab\NumerikLaravel\Rules\VatEuRule;
-use SlashLab\NumerikLaravel\Rules\RegonRule;
-use SlashLab\NumerikLaravel\Rules\KrsRule;
-
-// Banking
-use SlashLab\NumerikLaravel\Rules\NrbRule;
-use SlashLab\NumerikLaravel\Rules\IbanRule;
-
-// Class-based (supports options)
-public function rules(): array
-{
-    return [
-        'pesel'    => ['required', new PeselRule()],              // strict mode on by default
-        // 'pesel'  => ['required', new PeselRule(strict: false)], // disable strict checks
-        'id_card'  => ['required', new IdCardRule()],
-        'passport' => ['required', new PassportRule()],
-        'nip'      => ['required', new NipRule()],
-        'vat_eu'   => ['required', new VatEuRule()],
-        'regon'    => ['required', new RegonRule()],
-        'krs'      => ['required', new KrsRule()],
-        'nrb'      => ['required', new NrbRule()],
-        'iban'     => ['required', new IbanRule()],
-    ];
-}
-
-// String-based
-public function rules(): array
-{
-    return [
-        'pesel'    => ['required', 'pesel'],
-        'id_card'  => ['required', 'id_card'],
-        'passport' => ['required', 'passport'],
-        'nip'      => ['required', 'nip'],
-        'vat_eu'   => ['required', 'vat_eu'],
-        'regon'    => ['required', 'regon'],
-        'krs'      => ['required', 'krs'],
-        'nrb'      => ['required', 'nrb'],
-        'iban'     => ['required', 'iban'],
-    ];
-}
-```
-
-Class-based rules return a distinct message per failure reason (e.g. wrong checksum vs invalid length). Messages resolve the field label from `validation.attributes` when available, falling back to a humanised field name. The package ships with English and Polish translations — publish them with `php artisan vendor:publish --tag=numerik-lang`.
-
-`PeselRule` also accepts `gender`, `bornBefore`, and `bornAfter` constraints for stricter identity checks. See the [full Laravel documentation](https://numerik.slashlab.pl/integrations/laravel/) for details.
+See the [numerik-laravel README](https://github.com/sqrcz/numerik-laravel#readme) for full usage.
 
 ## Changelog
 
@@ -115,6 +79,10 @@ See [CHANGELOG.md](CHANGELOG.md).
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Security
+
+See [SECURITY.md](SECURITY.md).
 
 ## License
 
