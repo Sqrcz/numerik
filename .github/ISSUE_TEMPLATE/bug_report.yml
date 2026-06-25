@@ -18,11 +18,19 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: identifier
+    attributes:
+      label: Affected identifier
+      placeholder: "PESEL, NIP, REGON, …"
+    validations:
+      required: true
+
   - type: textarea
     id: description
     attributes:
       label: What happened?
-      description: Include the input value and the unexpected result.
+      description: Include the input value and the result you got.
     validations:
       required: true
 

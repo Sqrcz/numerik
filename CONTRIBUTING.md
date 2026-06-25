@@ -1,6 +1,4 @@
-# Contributing to Numerik
-
-Thank you for your interest in contributing!
+# Contributing to numerik
 
 ## Development Setup
 
@@ -10,7 +8,7 @@ cd numerik
 composer install
 ```
 
-## Running Checks Locally
+## Running Checks
 
 ```bash
 composer test        # PHPUnit test suite
@@ -27,14 +25,32 @@ composer check       # Run cs-check + stan + test in sequence
 - Keep PRs focused — one feature or fix per PR
 - Use [Conventional Commits](https://www.conventionalcommits.org) for commit messages
 
-## Commit Message Format
+## Branch Naming
 
-- `feat`: add personal ID validation
-- `fix`: correct PESEL century detection for 2100s
-- `docs`: update REGON algorithm description
-- `test`: add NIP fixtures for invalid tax office codes
-- `chore`: update PHPStan to 2.0
-- `refactor`: extract checksum calculation to dedicated method
+| Type     | Pattern              | Example                        |
+| -------- | -------------------- | ------------------------------ |
+| Feature  | `feat/<short-name>`  | `feat/passport-identifier`     |
+| Fix      | `fix/<short-name>`   | `fix/pesel-century-calc`       |
+| Chore    | `chore/<short-name>` | `chore/update-phpstan`         |
+
+## Pull Request Process
+
+1. Fork the repository and create your branch from `main`.
+2. Add tests for any new behaviour — all tests must pass.
+3. Run `composer check` before opening a PR.
+4. Fill in the PR template completely.
+5. PRs are merged with rebase — each commit lands on `main` individually, so keep your history clean and meaningful.
+
+## Commit Messages
+
+```
+feat: add PassportIdentifier
+fix: correct PESEL century detection for 2100s
+docs: update REGON algorithm description
+test: add NIP fixtures for invalid tax office codes
+chore: update PHPStan to 2.0
+refactor: extract checksum calculation to dedicated method
+```
 
 ## Adding a New Identifier
 
