@@ -43,7 +43,7 @@ composer check       # Run cs-check + stan + test in sequence
 
 ## Commit Messages
 
-```
+```text
 feat: add PassportIdentifier
 fix: correct PESEL century detection for 2100s
 docs: update REGON algorithm description
