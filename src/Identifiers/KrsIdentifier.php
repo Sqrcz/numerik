@@ -83,7 +83,7 @@ final class KrsIdentifier implements ValidatorInterface, ParserInterface
         $result = $this->validate($input);
 
         foreach ($result->getFailures() as $failure) {
-            throw new InvalidFormatException($failure->message);
+            throw $failure->toException();
         }
 
         return new Krs(

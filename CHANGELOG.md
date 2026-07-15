@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `ValidationFailure::toException()` — builds the right `ValidationException` subclass (`InvalidChecksumException`, `InvalidDateException`, `InvalidFormatException`) directly from a failure, without going through `parse()`.
+
 ## [1.1.0] - 2026-05-07
 
 ### Added
@@ -35,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2026-04-18
 
 ### Added
+
 - PESEL validation and parsing — `Numerik::pesel()->validate()`, `isValid()`, `parse()`, `tryParse()`
 - REGON validation and parsing — `Numerik::regon()->validate()`, `isValid()`, `parse()`, `tryParse()`
 - KRS validation and parsing — `Numerik::krs()->validate()`, `isValid()`, `parse()`, `tryParse()`
