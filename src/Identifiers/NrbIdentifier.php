@@ -75,10 +75,7 @@ final class NrbIdentifier implements ValidatorInterface, ParserInterface
         $result = $this->validate($input);
 
         foreach ($result->getFailures() as $failure) {
-            throw match ($failure->reason) {
-                ValidationFailureReason::InvalidChecksum => new InvalidChecksumException($failure->message),
-                default                                  => new InvalidFormatException($failure->message),
-            };
+            throw $failure->toException();
         }
 
         return new Nrb(

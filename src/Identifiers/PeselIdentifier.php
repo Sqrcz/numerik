@@ -123,13 +123,7 @@ final class PeselIdentifier implements ValidatorInterface, ParserInterface
         $result = $this->validate($input);
 
         foreach ($result->getFailures() as $failure) {
-            throw match ($failure->reason) {
-                ValidationFailureReason::InvalidChecksum => new InvalidChecksumException($failure->message),
-                ValidationFailureReason::InvalidDate,
-                ValidationFailureReason::FutureDate,
-                ValidationFailureReason::InvalidMonth    => new InvalidDateException($failure->message),
-                default                                  => new InvalidFormatException($failure->message),
-            };
+            throw $failure->toException();
         }
 
         $normalized   = $this->normalize($input);
