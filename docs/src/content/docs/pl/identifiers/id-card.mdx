@@ -10,42 +10,42 @@ Numer dowodu osobistego składa się z trzech wielkich liter (seria) oraz sześc
 ```php
 use SlashLab\Numerik\Numerik;
 
-// Walidacja logiczna
+// Szybkie sprawdzenie
 Numerik::idCard()->isValid('ABC123454');   // true
 
 // Małe litery i myślniki są usuwane podczas normalizacji
 Numerik::idCard()->isValid('abc-123-454');   // true
 
-// Szczegółowy wynik
+// Pełny obiekt z danymi
 $result = Numerik::idCard()->validate('ABC123454');
 $result->isValid;   // true
 
-// Parsowanie do obiektu wartości
+// Parsowanie do obiektu z danymi
 $idCard = Numerik::idCard()->parse('ABC123454');
 
 // null zamiast wyjątku w przypadku błędu
 $idCard = Numerik::idCard()->tryParse('błędne-wejście'); // null
 ```
 
-## API obiektu wartości
+## Metody zwracanego obiektu
 
 `parse()` i `tryParse()` zwracają instancję `SlashLab\Numerik\ValueObjects\IdCard`.
 
 ### Rdzeń
 
-| Metoda | Typ zwracany | Opis |
-|--------|--------------|------|
-| `getRaw()` | `string` | Oryginalne wejście bez zmian. |
-| `getNormalized()` | `string` | 3 wielkie litery + 6 cyfr, np. `ABC123454`. |
-| `__toString()` | `string` | Identyczne z `getNormalized()`. |
+| Metoda            | Typ zwracany | Opis                                        |
+| ----------------- | ------------ | ------------------------------------------- |
+| `getRaw()`        | `string`     | Oryginalne wejście bez zmian.               |
+| `getNormalized()` | `string`     | 3 wielkie litery + 6 cyfr, np. `ABC123454`. |
+| `__toString()`    | `string`     | Identyczne z `getNormalized()`.             |
 
 ### Struktura
 
-| Metoda | Typ zwracany | Opis |
-|--------|--------------|------|
-| `getSeries()` | `string` | Pierwsze 3 litery — seria dokumentu, np. `ABC`. |
-| `getSequentialNumber()` | `string` | 5-cyfrowy numer kolejny (pozycje 4–8), np. `12345`. |
-| `getCheckDigit()` | `string` | Cyfra kontrolna na pozycji 9, np. `4`. |
+| Metoda                  | Typ zwracany | Opis                                                |
+| ----------------------- | ------------ | --------------------------------------------------- |
+| `getSeries()`           | `string`     | Pierwsze 3 litery — seria dokumentu, np. `ABC`.     |
+| `getSequentialNumber()` | `string`     | 5-cyfrowy numer kolejny (pozycje 4–8), np. `12345`. |
+| `getCheckDigit()`       | `string`     | Cyfra kontrolna na pozycji 9, np. `4`.              |
 
 ## Przykłady
 
@@ -77,12 +77,12 @@ $idCard->getNormalized();         // 'ABC123454'
 
 ## Powody błędów
 
-| Przyczyna | Wartość | Kiedy |
-|-----------|---------|-------|
-| `InvalidLength` | `invalid_length` | Numer nie ma dokładnie 9 znaków po normalizacji lub surowe wejście przekracza 32 znaki. |
-| `InvalidCharacters` | `invalid_characters` | Znaki niebędące literami w serii lub znaki niebędące cyframi w części numerycznej. |
-| `InvalidFormat` | `invalid_format` | Seria zawiera literę O lub Q. |
-| `InvalidChecksum` | `invalid_checksum` | Cyfra kontrolna ICAO 9303 nie zgadza się. |
+| Powód               | Wartość              | Warunek                                                                                 |
+| ------------------- | -------------------- | --------------------------------------------------------------------------------------- |
+| `InvalidLength`     | `invalid_length`     | Numer nie ma dokładnie 9 znaków po normalizacji lub surowe wejście przekracza 32 znaki. |
+| `InvalidCharacters` | `invalid_characters` | Znaki niebędące literami w serii lub znaki niebędące cyframi w części numerycznej.      |
+| `InvalidFormat`     | `invalid_format`     | Seria zawiera literę O lub Q.                                                           |
+| `InvalidChecksum`   | `invalid_checksum`   | Cyfra kontrolna ICAO 9303 nie zgadza się.                                               |
 
 ## Powiązane
 

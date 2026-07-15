@@ -10,42 +10,42 @@ Numer polskiego paszportu składa się z dwóch wielkich liter (seria) oraz sied
 ```php
 use SlashLab\Numerik\Numerik;
 
-// Walidacja logiczna
+// Szybkie sprawdzenie
 Numerik::passport()->isValid('AB1234564');   // true
 
 // Małe litery i spacje są usuwane podczas normalizacji
 Numerik::passport()->isValid('ab 123456 4');   // true
 
-// Szczegółowy wynik
+// Pełny obiekt z danymi
 $result = Numerik::passport()->validate('AB1234564');
 $result->isValid;   // true
 
-// Parsowanie do obiektu wartości
+// Parsowanie do obiektu z danymi
 $passport = Numerik::passport()->parse('AB1234564');
 
 // null zamiast wyjątku w przypadku błędu
 $passport = Numerik::passport()->tryParse('błędne-wejście'); // null
 ```
 
-## API obiektu wartości
+## Metody zwracanego obiektu
 
 `parse()` i `tryParse()` zwracają instancję `SlashLab\Numerik\ValueObjects\Passport`.
 
 ### Rdzeń
 
-| Metoda | Typ zwracany | Opis |
-|--------|--------------|------|
-| `getRaw()` | `string` | Oryginalne wejście bez zmian. |
-| `getNormalized()` | `string` | 2 wielkie litery + 7 cyfr, np. `AB1234564`. |
-| `__toString()` | `string` | Identyczne z `getNormalized()`. |
+| Metoda            | Typ zwracany | Opis                                        |
+| ----------------- | ------------ | ------------------------------------------- |
+| `getRaw()`        | `string`     | Oryginalne wejście bez zmian.               |
+| `getNormalized()` | `string`     | 2 wielkie litery + 7 cyfr, np. `AB1234564`. |
+| `__toString()`    | `string`     | Identyczne z `getNormalized()`.             |
 
 ### Struktura
 
-| Metoda | Typ zwracany | Opis |
-|--------|--------------|------|
-| `getSeries()` | `string` | Pierwsze 2 litery — seria dokumentu, np. `AB`. |
-| `getSequentialNumber()` | `string` | 6-cyfrowy numer kolejny (pozycje 3–8), np. `123456`. |
-| `getCheckDigit()` | `string` | Cyfra kontrolna na pozycji 9, np. `4`. |
+| Metoda                  | Typ zwracany | Opis                                                 |
+| ----------------------- | ------------ | ---------------------------------------------------- |
+| `getSeries()`           | `string`     | Pierwsze 2 litery — seria dokumentu, np. `AB`.       |
+| `getSequentialNumber()` | `string`     | 6-cyfrowy numer kolejny (pozycje 3–8), np. `123456`. |
+| `getCheckDigit()`       | `string`     | Cyfra kontrolna na pozycji 9, np. `4`.               |
 
 ## Przykłady
 
@@ -76,11 +76,11 @@ $passport->getNormalized();         // 'AB1234564'
 
 ## Powody błędów
 
-| Przyczyna | Wartość | Kiedy |
-|-----------|---------|-------|
-| `InvalidLength` | `invalid_length` | Numer nie ma dokładnie 9 znaków po normalizacji lub surowe wejście przekracza 32 znaki. |
-| `InvalidCharacters` | `invalid_characters` | Znaki niebędące literami w serii lub znaki niebędące cyframi w części numerycznej. |
-| `InvalidChecksum` | `invalid_checksum` | Cyfra kontrolna ICAO 9303 nie zgadza się. |
+| Powód               | Wartość              | Warunek                                                                                 |
+| ------------------- | -------------------- | --------------------------------------------------------------------------------------- |
+| `InvalidLength`     | `invalid_length`     | Numer nie ma dokładnie 9 znaków po normalizacji lub surowe wejście przekracza 32 znaki. |
+| `InvalidCharacters` | `invalid_characters` | Znaki niebędące literami w serii lub znaki niebędące cyframi w części numerycznej.      |
+| `InvalidChecksum`   | `invalid_checksum`   | Cyfra kontrolna ICAO 9303 nie zgadza się.                                               |
 
 ## Powiązane
 
