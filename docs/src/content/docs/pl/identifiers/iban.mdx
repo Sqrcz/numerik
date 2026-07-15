@@ -10,7 +10,7 @@ Polski IBAN to dwuliterowy prefiks PL połączony z 26-cyfrowym numerem NRB, wal
 ```php
 use SlashLab\Numerik\Numerik;
 
-// Walidacja logiczna
+// Szybkie sprawdzenie
 Numerik::iban()->isValid('PL61102010260000000000000000');   // true
 
 // Format ze spacjami i małe litery w prefiksie są akceptowane
@@ -20,11 +20,11 @@ Numerik::iban()->isValid('pl61102010260000000000000000');          // true
 // Samo NRB bez prefiksu jest odrzucane — użyj Numerik::nrb()
 Numerik::iban()->isValid('61102010260000000000000000');   // false
 
-// Szczegółowy wynik
+// Pełny obiekt z danymi
 $result = Numerik::iban()->validate('PL61102010260000000000000000');
 $result->isValid;   // true
 
-// Parsowanie do obiektu wartości
+// Parsowanie do obiektu z danymi
 $iban = Numerik::iban()->parse('PL61102010260000000000000000');
 
 // null zamiast wyjątku w przypadku błędu
@@ -37,28 +37,28 @@ $iban = Numerik::iban()->tryParse('błędny-numer'); // null
 
 ### Podstawowe
 
-| Metoda | Typ zwracany | Opis |
-|--------|--------------|------|
-| `getRaw()` | `string` | Oryginalne wejście bez zmian. |
-| `getNormalized()` | `string` | `PL` + 26 cyfr, np. `PL61102010260000000000000000`. |
-| `__toString()` | `string` | Identyczne z `getNormalized()`. |
+| Metoda            | Typ zwracany | Opis                                                |
+| ----------------- | ------------ | --------------------------------------------------- |
+| `getRaw()`        | `string`     | Oryginalne wejście bez zmian.                       |
+| `getNormalized()` | `string`     | `PL` + 26 cyfr, np. `PL61102010260000000000000000`. |
+| `__toString()`    | `string`     | Identyczne z `getNormalized()`.                     |
 
 ### Formatowanie
 
-| Metoda | Typ zwracany | Opis |
-|--------|--------------|------|
-| `getFormatted()` | `string` | Standardowy format grupowany: `PL61 1020 1026 0000 0000 0000 0000`. |
+| Metoda           | Typ zwracany | Opis                                                                |
+| ---------------- | ------------ | ------------------------------------------------------------------- |
+| `getFormatted()` | `string`     | Standardowy format grupowany: `PL61 1020 1026 0000 0000 0000 0000`. |
 
 ### Struktura
 
-| Metoda | Typ zwracany | Opis |
-|--------|--------------|------|
-| `getCountryCode()` | `string` | Zawsze `PL`. |
-| `getNrb()` | `string` | 26-cyfrowy NRB bez prefiksu kraju. |
-| `getCheckDigits()` | `string` | Dwie cyfry kontrolne MOD-97 (pozycje 3–4 numeru IBAN). |
-| `getSortCode()` | `string` | 8-cyfrowy numer rozliczeniowy banku. |
-| `getBankCode()` | `string` | Pierwsze 3 cyfry numeru rozliczeniowego — identyfikator banku. |
-| `getAccountNumber()` | `string` | Ostatnie 16 cyfr — numer rachunku klienta. |
+| Metoda               | Typ zwracany | Opis                                                           |
+| -------------------- | ------------ | -------------------------------------------------------------- |
+| `getCountryCode()`   | `string`     | Zawsze `PL`.                                                   |
+| `getNrb()`           | `string`     | 26-cyfrowy NRB bez prefiksu kraju.                             |
+| `getCheckDigits()`   | `string`     | Dwie cyfry kontrolne MOD-97 (pozycje 3–4 numeru IBAN).         |
+| `getSortCode()`      | `string`     | 8-cyfrowy numer rozliczeniowy banku.                           |
+| `getBankCode()`      | `string`     | Pierwsze 3 cyfry numeru rozliczeniowego — identyfikator banku. |
+| `getAccountNumber()` | `string`     | Ostatnie 16 cyfr — numer rachunku klienta.                     |
 
 ## Przykłady
 
@@ -93,9 +93,9 @@ $b->getNormalized() === $c->getNormalized(); // true
 
 ## Powody błędów
 
-| Przyczyna | Wartość | Kiedy |
-|-----------|---------|-------|
-| `InvalidLength` | `invalid_length` | Część NRB nie ma dokładnie 26 cyfr lub surowe wejście przekracza 40 znaków. |
-| `InvalidFormat` | `invalid_format` | Brak prefiksu `PL`. |
+| Powód               | Wartość              | Warunek                                                                      |
+| ------------------- | -------------------- | ---------------------------------------------------------------------------- |
+| `InvalidLength`     | `invalid_length`     | Część NRB nie ma dokładnie 26 cyfr lub surowe wejście przekracza 40 znaków.  |
+| `InvalidFormat`     | `invalid_format`     | Brak prefiksu `PL`.                                                          |
 | `InvalidCharacters` | `invalid_characters` | Część NRB (po usunięciu spacji i myślników) zawiera znaki niebędące cyframi. |
-| `InvalidChecksum` | `invalid_checksum` | Reszta z MOD-97 nie wynosi 1. |
+| `InvalidChecksum`   | `invalid_checksum`   | Reszta z MOD-97 nie wynosi 1.                                                |

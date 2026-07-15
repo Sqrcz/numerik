@@ -1,5 +1,7 @@
+import mdx from '@astrojs/mdx';
 import starlight from '@astrojs/starlight';
 
+import remarkGfm from 'remark-gfm';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightThemeFlexoki from 'starlight-theme-flexoki';
 import starlightUiTweaks from 'starlight-ui-tweaks';
@@ -117,6 +119,9 @@ export default defineConfig({
             customCss: [
                 './src/styles/custom.css',
             ],
+        }),
+        mdx({
+            remarkPlugins: [remarkGfm],
         }),
     ],
 });

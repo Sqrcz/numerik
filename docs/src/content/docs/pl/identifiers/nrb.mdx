@@ -10,7 +10,7 @@ NRB (*Numer Rachunku Bankowego*) to polski krajowy format numeru rachunku bankow
 ```php
 use SlashLab\Numerik\Numerik;
 
-// Walidacja logiczna
+// Szybkie sprawdzenie
 Numerik::nrb()->isValid('61102010260000000000000000');   // true
 
 // Format ze spacjami jest akceptowany i normalizowany
@@ -20,45 +20,45 @@ Numerik::nrb()->isValid('61 1020 1026 0000 0000 0000 0000');   // true
 Numerik::nrb()->isValid('PL61102010260000000000000000');        // true
 Numerik::nrb()->isValid('PL61 1020 1026 0000 0000 0000 0000'); // true
 
-// Szczegółowy wynik
+// Pełny obiekt z danymi
 $result = Numerik::nrb()->validate('61102010260000000000000000');
 $result->isValid;   // true
 
-// Parsowanie do obiektu wartości
+// Parsowanie do obiektu z danymi
 $nrb = Numerik::nrb()->parse('61102010260000000000000000');
 
 // null zamiast wyjątku w przypadku błędu
 $nrb = Numerik::nrb()->tryParse('błędny-numer'); // null
 ```
 
-## API obiektu wartości
+## Metody zwracanego obiektu
 
 `parse()` i `tryParse()` zwracają instancję `SlashLab\Numerik\ValueObjects\Nrb`.
 
 ### Rdzeń
 
-| Metoda | Typ zwracany | Opis |
-|--------|--------------|------|
-| `getRaw()` | `string` | Oryginalny numer bez zmian. |
-| `getNormalized()` | `string` | 26 cyfr bez prefiksu i spacji. |
-| `__toString()` | `string` | Identyczne z `getNormalized()`. |
+| Metoda            | Typ zwracany | Opis                            |
+| ----------------- | ------------ | ------------------------------- |
+| `getRaw()`        | `string`     | Oryginalny numer bez zmian.     |
+| `getNormalized()` | `string`     | 26 cyfr bez prefiksu i spacji.  |
+| `__toString()`    | `string`     | Identyczne z `getNormalized()`. |
 
 ### Formatowanie
 
-| Metoda | Typ zwracany | Opis |
-|--------|--------------|------|
-| `getFormatted()` | `string` | Standardowy polski format wyświetlania: `CC BBBB BBBB AAAA AAAA AAAA AAAA`. |
-| `getIban()` | `string` | Pełny numer IBAN: `PL` + 26 cyfr, np. `PL61102010260000000000000000`. |
-| `getFormattedIban()` | `string` | IBAN w grupach: `PL61 1020 1026 0000 0000 0000 0000`. |
+| Metoda               | Typ zwracany | Opis                                                                        |
+| -------------------- | ------------ | --------------------------------------------------------------------------- |
+| `getFormatted()`     | `string`     | Standardowy polski format wyświetlania: `CC BBBB BBBB AAAA AAAA AAAA AAAA`. |
+| `getIban()`          | `string`     | Pełny numer IBAN: `PL` + 26 cyfr, np. `PL61102010260000000000000000`.       |
+| `getFormattedIban()` | `string`     | IBAN w grupach: `PL61 1020 1026 0000 0000 0000 0000`.                       |
 
 ### Struktura
 
-| Metoda | Typ zwracany | Opis |
-|--------|--------------|------|
-| `getCheckDigits()` | `string` | Pierwsze 2 cyfry — wartość kontrolna MOD-97. |
-| `getSortCode()` | `string` | 8-cyfrowy numer rozliczeniowy banku (identyfikator banku + oddziału + cyfra kontrolna). |
-| `getBankCode()` | `string` | Pierwsze 3 cyfry numeru rozliczeniowego — identyfikator banku. |
-| `getAccountNumber()` | `string` | Ostatnie 16 cyfr — numer rachunku klienta. |
+| Metoda               | Typ zwracany | Opis                                                                                    |
+| -------------------- | ------------ | --------------------------------------------------------------------------------------- |
+| `getCheckDigits()`   | `string`     | Pierwsze 2 cyfry — wartość kontrolna MOD-97.                                            |
+| `getSortCode()`      | `string`     | 8-cyfrowy numer rozliczeniowy banku (identyfikator banku + oddziału + cyfra kontrolna). |
+| `getBankCode()`      | `string`     | Pierwsze 3 cyfry numeru rozliczeniowego — identyfikator banku.                          |
+| `getAccountNumber()` | `string`     | Ostatnie 16 cyfr — numer rachunku klienta.                                              |
 
 ## Przykłady
 
@@ -98,8 +98,8 @@ NRB używa standardowej sumy kontrolnej IBAN MOD-97:
 
 ## Powody błędów
 
-| Przyczyna | Wartość | Kiedy |
-|-----------|---------|-------|
-| `InvalidLength` | `invalid_length` | Po normalizacji nie ma dokładnie 26 cyfr lub surowa wartość przekracza 40 znaków. |
+| Powód               | Wartość              | Warunek                                                                           |
+| ------------------- | -------------------- | --------------------------------------------------------------------------------- |
+| `InvalidLength`     | `invalid_length`     | Po normalizacji nie ma dokładnie 26 cyfr lub surowa wartość przekracza 40 znaków. |
 | `InvalidCharacters` | `invalid_characters` | Po usunięciu spacji, myślników i prefiksu `PL` pozostają znaki niebędące cyframi. |
-| `InvalidChecksum` | `invalid_checksum` | Reszta z MOD-97 nie wynosi 1. |
+| `InvalidChecksum`   | `invalid_checksum`   | Reszta z MOD-97 nie wynosi 1.                                                     |

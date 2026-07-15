@@ -10,43 +10,43 @@ VAT-EU (*Numer VAT UE*) to numer identyfikacji podatkowej stosowany w transakcja
 ```php
 use SlashLab\Numerik\Numerik;
 
-// Walidacja logiczna
+// Szybkie sprawdzenie
 Numerik::vatEu()->isValid('PL5260250274');   // true
 
 // Separatory i małe litery w prefiksie są usuwane podczas normalizacji
 Numerik::vatEu()->isValid('PL526-025-02-74');   // true
 Numerik::vatEu()->isValid('pl5260250274');       // true
 
-// Szczegółowy wynik
+// Pełny obiekt z danymi
 $result = Numerik::vatEu()->validate('PL5260250274');
 $result->isValid;   // true
 
-// Parsowanie do obiektu wartości
+// Parsowanie do obiektu z danymi
 $vatEu = Numerik::vatEu()->parse('PL5260250274');
 
 // null zamiast wyjątku w przypadku błędu
 $vatEu = Numerik::vatEu()->tryParse('błędne-wejście'); // null
 ```
 
-## API obiektu wartości
+## Metody zwracanego obiektu
 
 `parse()` i `tryParse()` zwracają instancję `SlashLab\Numerik\ValueObjects\VatEu`.
 
 ### Rdzeń
 
-| Metoda | Typ zwracany | Opis |
-|--------|--------------|------|
-| `getRaw()` | `string` | Oryginalne wejście bez zmian. |
-| `getNormalized()` | `string` | `PL` + 10 cyfr, np. `PL5260250274`. |
-| `__toString()` | `string` | Identyczne z `getNormalized()`. |
+| Metoda            | Typ zwracany | Opis                                |
+| ----------------- | ------------ | ----------------------------------- |
+| `getRaw()`        | `string`     | Oryginalne wejście bez zmian.       |
+| `getNormalized()` | `string`     | `PL` + 10 cyfr, np. `PL5260250274`. |
+| `__toString()`    | `string`     | Identyczne z `getNormalized()`.     |
 
 ### Formatowanie i metadane
 
-| Metoda | Typ zwracany | Opis |
-|--------|--------------|------|
-| `getCountryCode()` | `string` | Zawsze `PL`. |
-| `getNip()` | `string` | 10-cyfrowy NIP bez prefiksu kraju. |
-| `getFormatted()` | `string` | `PL` + standardowy format NIP, np. `PL526-025-02-74`. |
+| Metoda             | Typ zwracany | Opis                                                  |
+| ------------------ | ------------ | ----------------------------------------------------- |
+| `getCountryCode()` | `string`     | Zawsze `PL`.                                          |
+| `getNip()`         | `string`     | 10-cyfrowy NIP bez prefiksu kraju.                    |
+| `getFormatted()`   | `string`     | `PL` + standardowy format NIP, np. `PL526-025-02-74`. |
 
 ## Przykłady
 
@@ -75,10 +75,10 @@ $vatEu->getNormalized();    // 'PL5260250274'
 
 ## Powody błędów
 
-| Przyczyna | Wartość | Kiedy |
-|-----------|---------|-------|
-| `InvalidLength` | `invalid_length` | Część NIP nie ma dokładnie 10 cyfr lub surowe wejście przekracza 32 znaki. |
-| `InvalidFormat` | `invalid_format` | Brak prefiksu `PL` lub część NIP zaczyna się od `000`. |
-| `InvalidCharacters` | `invalid_characters` | Część NIP zawiera znaki niebędące cyframi. |
-| `InvalidChecksum` | `invalid_checksum` | Cyfra kontrolna MOD-11 nie zgadza się. |
-| `AllSameDigit` | `all_same_digit` | NIP składa się z jednej powtarzającej się cyfry — tylko w trybie ścisłym. |
+| Powód               | Wartość              | Warunek                                                                    |
+| ------------------- | -------------------- | -------------------------------------------------------------------------- |
+| `InvalidLength`     | `invalid_length`     | Część NIP nie ma dokładnie 10 cyfr lub surowe wejście przekracza 32 znaki. |
+| `InvalidFormat`     | `invalid_format`     | Brak prefiksu `PL` lub część NIP zaczyna się od `000`.                     |
+| `InvalidCharacters` | `invalid_characters` | Część NIP zawiera znaki niebędące cyframi.                                 |
+| `InvalidChecksum`   | `invalid_checksum`   | Cyfra kontrolna MOD-11 nie zgadza się.                                     |
+| `AllSameDigit`      | `all_same_digit`     | NIP składa się z jednej powtarzającej się cyfry — tylko w trybie ścisłym.  |
