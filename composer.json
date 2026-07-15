@@ -3,6 +3,7 @@
   "description": "Modern PHP 8.3+ library for validating and parsing Polish identification numbers (PESEL, NIP, REGON, KRS, NRB, VAT-EU, IBAN, ID Card, Passport).",
   "type": "library",
   "license": "MIT",
+  "homepage": "https://numerik.slashlab.pl",
   "keywords": [
     "iban",
     "id-card",
