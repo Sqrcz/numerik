@@ -43,11 +43,11 @@ $nip?->getFormatted();                     // '526-025-02-74'
 
 ## Strict Mode
 
-All identifiers accept an optional `strict` parameter (default `true`). In non-strict mode, formatting variations such as spaces and dashes are accepted:
+All identifiers accept an optional `strict` parameter (default `true`), and it never affects how input is normalized — normalization (stripping spaces, and dashes where the format allows them) is the same in both modes. What `strict` gates is extra semantic plausibility checks: rejecting all-same-digit numbers (PESEL, NIP, KRS, VAT-EU) and future birth dates (PESEL). ID Card, Passport, REGON, NRB, and IBAN have no additional strict-mode checks.
 
 ```php
-Numerik::nip(strict: false)->isValid('526 025 02 74');  // true
-Numerik::nip(strict: true)->isValid('526 025 02 74');   // false
+Numerik::nip(strict: false)->isValid('1111111111');  // true
+Numerik::nip(strict: true)->isValid('1111111111');   // false — all-same-digit
 ```
 
 ## Documentation
