@@ -10,6 +10,9 @@ import { defineConfig } from 'astro/config';
 
 export default defineConfig({
     site: 'https://numerik.slashlab.pl',
+    markdown: {
+        remarkPlugins: [remarkGfm],
+    },
     integrations: [
         starlight({
             title: {
@@ -120,8 +123,6 @@ export default defineConfig({
                 './src/styles/custom.css',
             ],
         }),
-        mdx({
-            remarkPlugins: [remarkGfm],
-        }),
+        mdx(),
     ],
 });
