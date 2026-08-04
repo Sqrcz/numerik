@@ -47,7 +47,8 @@ final readonly class VatEu implements IdentifierInterface
         $nip = $this->getNip();
 
         return sprintf(
-            'PL%s-%s-%s-%s',
+            '%s%s-%s-%s-%s',
+            $this->getCountryCode(),
             substr($nip, 0, 3),
             substr($nip, 3, 3),
             substr($nip, 6, 2),
