@@ -46,7 +46,7 @@ final readonly class Nrb implements IdentifierInterface
 
     public function getFormattedIban(): string
     {
-        return implode(' ', str_split('PL' . $this->normalized, 4));
+        return implode(' ', str_split($this->getIban(), 4));
     }
 
     public function getCheckDigits(): string
