@@ -12,6 +12,7 @@ permissions:
 jobs:
   phpstan:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     name: PHPStan
 
     steps:
