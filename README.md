@@ -1,3 +1,5 @@
+[🇬🇧 English](README.md) | [🇵🇱 Polski](README.pl.md)
+
 # Numerik
 
 [![Tests](https://github.com/sqrcz/numerik/actions/workflows/tests.yml/badge.svg)](https://github.com/sqrcz/numerik/actions/workflows/tests.yml)
