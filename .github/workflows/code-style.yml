@@ -12,6 +12,7 @@ permissions:
 jobs:
   php-cs-fixer:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     name: PHP CS Fixer
 
     steps:
