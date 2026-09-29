@@ -13,12 +13,14 @@
     "numerik",
     "passport",
     "pesel",
+    "php",
     "poland",
     "polish",
     "regon",
     "validation",
     "validator",
-    "vat-eu"
+    "vat-eu",
+    "walidacja"
   ],
   "authors": [
     {
