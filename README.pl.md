@@ -1,16 +1,14 @@
-[🇬🇧 English](README.md) | [🇵🇱 Polski](README.pl.md)
-
 # Numerik
 
 [![Tests](https://github.com/sqrcz/numerik/actions/workflows/tests.yml/badge.svg)](https://github.com/sqrcz/numerik/actions/workflows/tests.yml)
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%2010-brightgreen.svg)](https://phpstan.org)
 [![Latest Version](https://img.shields.io/packagist/v/slashlab/numerik.svg)](https://packagist.org/packages/slashlab/numerik)
 [![PHP Version](https://img.shields.io/packagist/php-v/slashlab/numerik.svg)](https://packagist.org/packages/slashlab/numerik)
-[![License](https://img.shields.io/github/license/sqrcz/numerik.svg)](LICENSE)
-[![CodeRabbit](https://img.shields.io/coderabbit/prs/github/sqrcz/numerik)](https://coderabbit.ai)
+[![License](https://img.shields.io/packagist/l/slashlab/numerik.svg)](LICENSE)
 
-> Nowoczesna biblioteka PHP 8.3+ do walidacji i parsowania polskich numerów
-> identyfikacyjnych — PESEL, NIP, REGON, KRS, NRB, VAT-UE, IBAN, dowód osobisty i paszport. Bogate obiekty wartości, szczegółowe przyczyny błędów, zero zależności produkcyjnych.
+[English](README.md) | **Polski**
+
+Nowoczesna biblioteka PHP 8.3+ do walidacji i parsowania polskich numerów identyfikacyjnych — PESEL, NIP, REGON, KRS, NRB, VAT-EU, IBAN, dowód osobisty oraz paszport. Zwraca czytelne, niemutowalne obiekty danych (`readonly`), precyzyjnie wskazuje powody błędów i nie posiada żadnych zewnętrznych zależności produkcyjnych.
 
 ## Instalacja
 
@@ -23,75 +21,84 @@ composer require slashlab/numerik
 ```php
 use SlashLab\Numerik\Numerik;
 
-// Prosty wynik boolowski
-Numerik::pesel()->isValid('92060512186');  // true
-Numerik::nip()->isValid('5260250274');     // true
+// Proste sprawdzenie poprawności (zwraca bool)
+Numerik::pesel()->isValid('92060512186'); // true
+Numerik::nip()->isValid('5260250274');    // true
 
-// Szczegółowy wynik walidacji wraz z przyczyną błędu
-$result = Numerik::pesel()->validate('92060512185');  // błędna cyfra kontrolna
-$result->isFailed();                       // true
-$result->getFirstFailure()->reason;        // ValidationFailureReason::InvalidChecksum
+// Szczegółowy wynik walidacji z precyzyjnym powodem błędu
+$result = Numerik::pesel()->validate('92060512185'); // błędna cyfra kontrolna
+$result->isFailed();                      // true
+$result->getFirstFailure()->reason;       // ValidationFailureReason::InvalidChecksum
 
-// Parsowanie do obiektu wartości
+// Parsowanie do czytelnego obiektu danych
 $pesel = Numerik::pesel()->parse('92060512186');
 $pesel->getBirthDate()->format('Y-m-d');  // '1992-06-05'
 $pesel->getGender();                      // Gender::Female
 
-// Parsowanie bez wyjątków — zwraca null zamiast rzucać wyjątek
+// Bezpieczne parsowanie (tryParse) — zwraca null w przypadku błędu zamiast rzucać wyjątek
 $nip = Numerik::nip()->tryParse('5260250274');
-$nip?->getFormatted();                     // '526-025-02-74'
+$nip?->getFormatted();                    // '526-025-02-74'
 ```
 
-## Tryb strict
+## Tryb ścisły (Strict Mode)
 
-Wszystkie identyfikatory przyjmują opcjonalny parametr `strict` (domyślnie `true`), który nigdy nie wpływa na sposób normalizacji danych wejściowych — normalizacja (usuwanie spacji i myślników tam, gdzie format na to pozwala) jest taka sama w obu trybach. Parametr `strict` włącza dodatkowe sprawdzenia sensowności semantycznej: odrzucanie numerów złożonych z samych identycznych cyfr (PESEL, NIP, KRS, VAT-UE) oraz dat urodzenia w przyszłości (PESEL). Dowód osobisty, paszport, REGON, NRB i IBAN nie mają dodatkowych sprawdzeń w trybie strict.
+Wszystkie identyfikatory przyjmują opcjonalny parametr `strict` (domyślnie `true`). Nie wpływa on na sposób normalizacji danych wejściowych — usuwanie spacji oraz myślników (tam, gdzie format na to pozwala) działa identycznie w obu trybach.
+
+Parametr `strict` uruchamia dodatkowe, semantyczne sprawdzenie wiarygodności numeru: odrzuca ciągi składające się z tej samej powtórzonej cyfry (dla PESEL, NIP, KRS, VAT-EU) oraz daty urodzenia z przyszłości (dla PESEL). Dowód osobisty, paszport, REGON, NRB oraz IBAN nie posiadają dodatkowych reguł w trybie ścisłym.
 
 ```php
-Numerik::nip(strict: false)->isValid('1111111111');  // true
-Numerik::nip(strict: true)->isValid('1111111111');   // false — same cyfry
+Numerik::nip(strict: false)->isValid('1111111111'); // true (poprawna suma kontrolna)
+Numerik::nip(strict: true)->isValid('1111111111');  // false — ciąg identycznych cyfr
 ```
+
+## Obsługiwane identyfikatory
+
+* **PESEL** — waliduje i parsuje numer PESEL; wyodrębnia datę urodzenia, płeć, stulecie, wiek oraz numer porządkowy.
+* **NIP** — waliduje numery identyfikacji podatkowej; zwraca kod urzędu skarbowego oraz sformatowaną postać wyświetlaną.
+* **VAT-EU** — waliduje unijne numery VAT polskich podatników (`PL` + NIP) algorytmem MOD-11.
+* **REGON** — obsługuje warianty 9-cyfrowe (podmiot bazowy) oraz 14-cyfrowe (jednostka lokalna).
+* **KRS** — waliduje numery w rejestrze sądowym z automatyczną normalizacją zer wiodących.
+* **NRB i IBAN** — waliduje polskie numery rachunków bankowych algorytmem MOD-97; zwraca numer rozliczeniowy, kod banku i numer rachunku.
+* **Dowód osobisty i Paszport** — waliduje serię i numer dokumentu zgodnie ze standardem sumy kontrolnej ICAO 9303.
 
 ## Dokumentacja
 
-Pełna dokumentacja dostępna pod adresem **[numerik.slashlab.pl](https://numerik.slashlab.pl)**
+Pełna dokumentacja w języku polskim jest dostępna pod adresem **[numerik.slashlab.pl/pl/](https://numerik.slashlab.pl/pl/)**.
 
 ## Port JavaScript / TypeScript
 
-Port TypeScript jest dostępny jako [`@slashlab/numerik-js`](https://github.com/sqrcz/numerik-js). Odzwierciedla API tej biblioteki — te same identyfikatory, te same obiekty wartości, ten sam tryb strict — wraz z integracją Zod.
+Wersja dla środowiska TypeScript/JavaScript jest dostępna jako pakiet [`@slashlab/numerik-js`](https://www.npmjs.com/package/@slashlab/numerik-js). Odwzorowuje ona API tej biblioteki — obsługuje te same identyfikatory, zwraca analogiczne obiekty danych, wspiera tryb ścisły oraz zawiera gotową integrację z biblioteką Zod.
 
 ```bash
 npm install @slashlab/numerik-js
 ```
 
-## Integracja z Laravelem
+## Integracja z Laravel
 
-Dedykowany pakiet Laravel jest dostępny jako [`slashlab/numerik-laravel`](https://github.com/sqrcz/numerik-laravel) (PHP 8.3+, Laravel 12/13). Udostępnia reguły walidacji klasowe i stringowe z komunikatem dla każdej przyczyny błędu, tłumaczeniami angielskimi i polskimi oraz rozszerzonymi ograniczeniami `PeselRule` (`gender`, `bornBefore`, `bornAfter`).
+Dedykowany pakiet dla frameworka Laravel jest dostępny jako [`slashlab/numerik-laravel`](https://packagist.org/packages/slashlab/numerik-laravel) (PHP 8.3+, Laravel 12/13). Udostępnia gotowe reguły walidacji (w składni obiektowej oraz tekstowej) z komunikatami błędów dopasowanymi do konkretnej przyczyny odrzucenia, wbudowane tłumaczenia (PL/EN) oraz rozszerzone ograniczenia dla reguły `PeselRule` (`gender`, `bornBefore`, `bornAfter`).
 
 ```bash
 composer require slashlab/numerik-laravel
 ```
 
-Pełny opis użycia znajdziesz w [README numerik-laravel](https://github.com/sqrcz/numerik-laravel#readme).
+Szczegółowe informacje o użyciu znajdują się w [dokumentacji pakietu numerik-laravel](https://github.com/slashlabpl/numerik-laravel).
 
-## Historia zmian
+## Dziennik zmian (Changelog)
 
-Zobacz [CHANGELOG.md](CHANGELOG.md).
+Zobacz plik [CHANGELOG.md](CHANGELOG.md).
 
-## Współpraca
+## Współtworzenie (Contributing)
 
-Zobacz [CONTRIBUTING.md](CONTRIBUTING.md).
+Zobacz plik [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Bezpieczeństwo
 
-Zobacz [SECURITY.md](SECURITY.md).
+Zobacz plik [SECURITY.md](SECURITY.md).
 
 ## Licencja
 
-MIT — zobacz [LICENSE](LICENSE).
+Licencja MIT — szczegóły w pliku [LICENSE](LICENSE).
 
 ---
 
-Jeśli ta biblioteka zaoszczędziła Ci czasu → [☕ postaw mi kawę](https://buymeacoffee.com/sqrcz)
-
----
-**Słowa kluczowe:** php, walidacja pesel, sprawdzanie nip, walidacja regon, walidacja krs, walidacja polskich numerów identyfikacyjnych, biblioteka pesel php, nip php, dowód osobisty, paszport, vat-ue, nrb, iban
+Jeśli ta biblioteka zaoszczędziła Twój czas → [☕ Postaw mi kawę](https://buymeacoffee.com/sqrcz)
