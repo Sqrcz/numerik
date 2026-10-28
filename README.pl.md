@@ -81,7 +81,7 @@ Dedykowany pakiet dla frameworka Laravel jest dostępny jako [`slashlab/numerik-
 composer require slashlab/numerik-laravel
 ```
 
-Szczegółowe informacje o użyciu znajdują się w [dokumentacji pakietu numerik-laravel](https://github.com/slashlabpl/numerik-laravel).
+Szczegółowe informacje o użyciu znajdują się w [dokumentacji pakietu numerik-laravel](https://numerik.slashlab.pl/pl/integrations/laravel/).
 
 ## Dziennik zmian (Changelog)
 
