@@ -1,5 +1,3 @@
-[🇬🇧 English](README.md) | [🇵🇱 Polski](README.pl.md)
-
 # Numerik
 
 [![Tests](https://github.com/sqrcz/numerik/actions/workflows/tests.yml/badge.svg)](https://github.com/sqrcz/numerik/actions/workflows/tests.yml)
@@ -8,6 +6,8 @@
 [![PHP Version](https://img.shields.io/packagist/php-v/slashlab/numerik.svg)](https://packagist.org/packages/slashlab/numerik)
 [![License](https://img.shields.io/github/license/sqrcz/numerik.svg)](LICENSE)
 [![CodeRabbit](https://img.shields.io/coderabbit/prs/github/sqrcz/numerik)](https://coderabbit.ai)
+
+**English** | [Polski](README.pl.md)
 
 > Modern PHP 8.3+ library for validating and parsing Polish identification
 > numbers — PESEL, NIP, REGON, KRS, NRB, VAT-EU, IBAN, ID Card, and Passport. Rich value objects, detailed error
