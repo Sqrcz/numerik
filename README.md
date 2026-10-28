@@ -4,8 +4,7 @@
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%2010-brightgreen.svg)](https://phpstan.org)
 [![Latest Version](https://img.shields.io/packagist/v/slashlab/numerik.svg)](https://packagist.org/packages/slashlab/numerik)
 [![PHP Version](https://img.shields.io/packagist/php-v/slashlab/numerik.svg)](https://packagist.org/packages/slashlab/numerik)
-[![License](https://img.shields.io/github/license/sqrcz/numerik.svg)](LICENSE)
-[![CodeRabbit](https://img.shields.io/coderabbit/prs/github/sqrcz/numerik)](https://coderabbit.ai)
+[![License](https://img.shields.io/packagist/l/slashlab/numerik.svg)](LICENSE)
 
 **English** | [Polski](README.pl.md)
 
