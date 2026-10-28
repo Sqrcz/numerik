@@ -8,7 +8,7 @@
 
 [English](README.md) | **Polski**
 
-Nowoczesna biblioteka PHP 8.3+ do walidacji i parsowania polskich numerów identyfikacyjnych — PESEL, NIP, REGON, KRS, NRB, VAT-EU, IBAN, dowód osobisty oraz paszport. Zwraca czytelne, niemutowalne obiekty danych (`readonly`), precyzyjnie wskazuje powody błędów i nie posiada żadnych zewnętrznych zależności produkcyjnych.
+> Nowoczesna biblioteka PHP 8.3+ do walidacji i parsowania polskich numerów identyfikacyjnych — PESEL, NIP, REGON, KRS, NRB, VAT-EU, IBAN, dowód osobisty oraz paszport. Zwraca czytelne, niemutowalne obiekty danych (`readonly`), precyzyjnie wskazuje powody błędów i nie posiada żadnych zewnętrznych zależności produkcyjnych.
 
 ## Instalacja
 
